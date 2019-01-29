@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/trip_main"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+       <!-- <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_alignParentTop="true"
+            android:id="@+id/view"
+            android:background="#9a9a9a"
+            />-->
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_below="@+id/view"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="1"
+            android:id="@+id/linearLayout"
+            android:background="#fff"
+            android:gravity="center">
+
+            <LinearLayout
+                android:id="@+id/main"
+                android:orientation="horizontal"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                android:layout_width="match_parent"
+                >
+
+                <LinearLayout
+                    android:gravity="center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:src="@drawable/icon_car"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="10dp"
+                    android:gravity="center_vertical"
+                    android:layout_height="match_parent">
+                    <com.eleganzit.msafiridriver.utils.RobotoMediumTextView
+                        android:id="@+id/trip_time"
+                        android:layout_width="wrap_content"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        android:layout_height="wrap_content"
+                        android:textColor="#000"
+                        android:text="02 Sep, 2017 06:30 AM"/>
+                    <TableLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <TableRow>
+                            <com.eleganzit.msafiridriver.utils.RobotoMediumTextView
+                                android:layout_width="wrap_content"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                                android:layout_height="wrap_content"
+                                android:textColor="#000"
+                                android:textStyle="bold"
+                                android:text="From"/>
+                            <com.eleganzit.msafiridriver.utils.RobotoMediumTextView
+                                android:id="@+id/from"
+                                android:layout_width="wrap_content"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                                android:layout_height="wrap_content"
+                                android:textColor="#000"
+                                android:singleLine="true"
+                                android:ellipsize="marquee"
+                                android:marqueeRepeatLimit="marquee_forever"
+                                android:layout_marginLeft="10dp"
+                                android:text="Nairoobi, Nairobi Area, Kenya"/>
+
+                        </TableRow>
+                        <TableRow>
+                            <com.eleganzit.msafiridriver.utils.RobotoMediumTextView
+                                android:layout_width="wrap_content"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                                android:layout_height="wrap_content"
+                                android:textColor="#000"
+                                android:textStyle="bold"
+
+                                android:text="To"/>
+                            <com.eleganzit.msafiridriver.utils.RobotoMediumTextView
+                                android:id="@+id/to"
+                                android:layout_width="wrap_content"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="10dp"
+                                android:singleLine="true"
+                                android:ellipsize="marquee"
+                                android:marqueeRepeatLimit="marquee_forever"
+                                android:textColor="#000"
+                                android:text="Mombasa, Mombasa, Kenya"/>
+
+                        </TableRow>
+
+                    </TableLayout>
+
+
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:layout_height="match_parent">
+                    <ImageView
+                        android:id="@+id/more"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_marginTop="2dp"
+                        android:background="@drawable/ic_more_dark"
+                        android:src="@drawable/ic_more"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+        <!--<View
+            android:layout_below="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:id="@+id/bview"
+            android:background="#9a9a9a"
+            />-->
+    </RelativeLayout>
+
+</LinearLayout>

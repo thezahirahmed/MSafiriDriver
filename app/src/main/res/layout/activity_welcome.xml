@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#fff"
+    android:fillViewport="true"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:descendantFocusability="blocksDescendants"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="#fff"
+        tools:context="com.example.dell.newapp.Settings">
+
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/myactionbar11"
+            android:layout_width="match_parent"
+            app:contentInsetRight="0dp"
+            app:contentInsetLeft="0dp"
+            app:contentInsetEnd="0dp"
+            android:contentInsetEnd="0dp"
+            android:contentInsetLeft="0dp"
+            android:contentInsetRight="0dp"
+            app:contentInsetStart="0dp"
+            android:contentInsetStart="0dp"
+            android:layout_alignParentTop="true"
+            android:layout_height="200dp"
+            android:background="#0192D2">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:text="Welcome,"
+                    android:layout_weight="0.5"
+                    android:textColor="#fff"
+                    android:textSize="28dp"/>
+                <TextView
+                    android:id="@+id/username"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:text="User Name"
+                    android:layout_weight="0.5"
+                    android:textColor="#fff"
+                    android:textSize="28dp"/>
+
+            </LinearLayout>
+        </android.support.v7.widget.Toolbar>
+
+        <LinearLayout
+            android:id="@+id/content"
+            android:layout_below="@+id/myactionbar11"
+            android:focusableInTouchMode="true"
+            android:layout_width="match_parent"
+            android:layout_margin="10dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#fff"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="#000"
+                android:text="3 steps away from getting new customers:"/>
+
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                >
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    >
+                    <TextView
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:text="1"
+                    android:layout_gravity="center"
+                    android:textColor="#8f8f8f"
+                    android:gravity="center"
+                    android:background="@drawable/steps_bg"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_gravity="left|center"
+                        android:textSize="16sp"
+                        android:ellipsize="marquee"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:layout_marginLeft="18dp"
+                        android:text="Complete Your Profile"
+                        android:textColor="#000"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true" />
+                </TableRow>
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    >
+                    <ImageView
+
+                        android:layout_height="match_parent"
+                        android:layout_width="wrap_content"
+                        android:src="@drawable/lin_gray"/>
+
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                        android:layout_marginLeft="18dp"
+                        android:paddingRight="60dp"
+                        android:text="@string/complete_profile"/>
+
+                </TableRow>
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    ><TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2"
+                    android:layout_gravity="center"
+                    android:textColor="#8f8f8f"
+                    android:gravity="center"
+                    android:background="@drawable/steps_bg"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_gravity="left|center"
+                        android:textSize="16sp"
+                        android:ellipsize="marquee"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:layout_marginLeft="18dp"
+                        android:text="Profile Verification and Approval"
+                        android:textColor="#000"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true" />
+                </TableRow>
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    >
+
+                    <ImageView
+
+                        android:layout_height="match_parent"
+                        android:layout_width="1dp"
+                        android:src="@drawable/lin_gray"/>
+
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:layout_marginLeft="18dp"
+                        android:paddingRight="60dp"
+                        android:text="@string/verify_profile"/>
+
+                </TableRow>
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    ><TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3"
+                    android:layout_gravity="center"
+                    android:textColor="#8f8f8f"
+                    android:gravity="center"
+                    android:background="@drawable/steps_bg"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_gravity="left|center"
+                        android:textSize="16sp"
+                        android:ellipsize="marquee"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:layout_marginLeft="20dp"
+                        android:text="Buy Credits and Respond to Leads"
+                        android:textColor="#000"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true" />
+                </TableRow>
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    >
+
+                    <ImageView
+                        android:scaleType="fitStart"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_width="wrap_content"
+                        android:src="@drawable/lin_gray"/>
+
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:layout_marginLeft="18dp"
+                        android:paddingRight="60dp"
+                        android:text="@string/buy_credits"/>
+
+                </TableRow>
+
+            </TableLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAllCaps="false"
+                android:id="@+id/create"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/button_bg"
+                android:text="Sign In"
+                android:textColor="@android:color/white" >
+
+                <com.eleganzit.msafiridriver.utils.RobotoMediumTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Create your peofile"
+                    android:padding="12dp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textColor="#fff"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+</ScrollView>

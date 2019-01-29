@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "774764779929",
+    "firebase_url": "https://msafiridriver.firebaseio.com",
+    "project_id": "msafiridriver",
+    "storage_bucket": "msafiridriver.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:774764779929:android:5cfd199c55f18eb7",
+        "android_client_info": {
+          "package_name": "com.eleganzit.msafiridriver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "774764779929-3jljpbgfjg6toedo5nhkk1scft00up68.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.eleganzit.msafiridriver",
+            "certificate_hash": "f84caf755af70056e55d33d573b7df08ba0c6c7d"
+          }
+        },
+        {
+          "client_id": "774764779929-d7jm80ih22r3shpes9u7kommgqtji9na.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADNFjRXEfKp4ERZS_J20xagNSN0_hc15M"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "774764779929-d7jm80ih22r3shpes9u7kommgqtji9na.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

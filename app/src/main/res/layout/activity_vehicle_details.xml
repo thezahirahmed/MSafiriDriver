@@ -1,0 +1,527 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="#fff">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        app:contentInsetRight="0dp"
+        app:contentInsetLeft="0dp"
+        app:contentInsetEnd="0dp"
+        android:contentInsetEnd="0dp"
+        android:contentInsetLeft="0dp"
+        android:contentInsetRight="0dp"
+        app:contentInsetStart="0dp"
+        android:contentInsetStart="0dp"
+        android:layout_alignParentTop="true"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#0192D2">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+            <ImageView
+                android:id="@+id/back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@mipmap/go_back"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:text="Vehicle Details"
+                android:layout_weight="0.5"
+                android:textColor="#fff"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"/>
+
+            <ImageView
+                android:id="@+id/save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/save"/>
+
+        </LinearLayout>
+    </android.support.v7.widget.Toolbar>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:background="#fff"
+        android:fillViewport="true"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:orientation="vertical"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_below="@+id/first"
+                android:layout_width="match_parent"
+                android:padding="10dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border_bg"
+                android:orientation="vertical">
+
+                <com.eleganzit.msafiridriver.utils.RobotoMediumTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textStyle="bold"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:text="Vehicle Images"
+                    android:textColor="#000"/>
+
+                <LinearLayout
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:id="@+id/vehicle_add1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:layout_margin="10dp">
+                        <LinearLayout
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:gravity="center"
+                            android:scaleType="centerInside"
+                            android:background="@drawable/dotted_border_bg"
+                            android:orientation="vertical" >
+
+                            <ImageView
+                                android:layout_width="35dp"
+                                android:layout_height="35dp"
+                                android:layout_gravity="center"
+                                android:scaleType="centerInside"
+                                android:src="@mipmap/circle_img" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:textColor="#0D3A61"
+                                android:textSize="12sp"
+                                android:text="Add Photo"/>
+
+                        </LinearLayout>
+                        <ImageView
+                            android:scaleType="centerCrop"
+                            android:id="@+id/vehicle_pic1"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp" />
+                    </FrameLayout>
+                    <FrameLayout
+                        android:id="@+id/vehicle_add2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:layout_margin="10dp">
+                        <LinearLayout
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:gravity="center"
+                            android:scaleType="centerInside"
+                            android:background="@drawable/dotted_border_bg"
+                            android:orientation="vertical" >
+
+                            <ImageView
+                                android:layout_width="35dp"
+                                android:layout_height="35dp"
+                                android:layout_gravity="center"
+                                android:scaleType="centerInside"
+                                android:src="@mipmap/circle_img" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:textColor="#0D3A61"
+                                android:textSize="12sp"
+                                android:text="Add Photo"/>
+
+                        </LinearLayout>
+                        <ImageView
+                            android:scaleType="centerCrop"
+                            android:id="@+id/vehicle_pic2"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp" />
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:id="@+id/vehicle_add3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp">
+                        <LinearLayout
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:gravity="center"
+                            android:scaleType="centerInside"
+                            android:background="@drawable/dotted_border_bg"
+                            android:orientation="vertical" >
+
+                            <ImageView
+                                android:layout_width="35dp"
+                                android:layout_height="35dp"
+                                android:layout_gravity="center"
+                                android:scaleType="centerInside"
+                                android:src="@mipmap/circle_img" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:textColor="#0D3A61"
+                                android:textSize="12sp"
+                                android:text="Add Photo"/>
+
+                        </LinearLayout>
+                        <ImageView
+                            android:id="@+id/vehicle_pic3"
+                            android:scaleType="centerCrop"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp" />
+                    </FrameLayout>
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rc_vehicle_images"
+                        android:layout_width="wrap_content"
+                        android:overScrollMode="never"
+                        android:layout_height="wrap_content"/>
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:padding="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border_bg"
+                android:orientation="vertical">
+
+                <com.eleganzit.msafiridriver.utils.RobotoMediumTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textStyle="bold"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:text="Vehicle Number Plate Photos"
+                    android:textColor="#000"/>
+
+                <LinearLayout
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:id="@+id/num_add1"
+                        android:visibility="gone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp">
+                        <LinearLayout
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:gravity="center"
+                            android:scaleType="centerInside"
+                            android:background="@drawable/dotted_border_bg"
+                            android:orientation="vertical" >
+
+                            <ImageView
+                                android:layout_width="35dp"
+                                android:layout_height="35dp"
+                                android:layout_gravity="center"
+                                android:scaleType="centerInside"
+                                android:src="@mipmap/circle_img" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:textColor="#0D3A61"
+                                android:textSize="12sp"
+                                android:text="Add Photo"/>
+
+                        </LinearLayout>
+                        <ImageView
+                            android:scaleType="centerCrop"
+                            android:id="@+id/num_pic1"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp" />
+                    </FrameLayout>
+                    <FrameLayout
+                        android:id="@+id/num_add2"
+                        android:visibility="gone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp">
+                        <LinearLayout
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:gravity="center"
+                            android:scaleType="centerInside"
+                            android:background="@drawable/dotted_border_bg"
+                            android:orientation="vertical" >
+
+                            <ImageView
+                                android:layout_width="35dp"
+                                android:layout_height="35dp"
+                                android:layout_gravity="center"
+                                android:scaleType="centerInside"
+                                android:src="@mipmap/circle_img" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:textColor="#0D3A61"
+                                android:textSize="12sp"
+                                android:text="Add Photo"/>
+
+                        </LinearLayout>
+                        <ImageView
+                            android:scaleType="centerCrop"
+                            android:id="@+id/num_pic2"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp" />
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:id="@+id/num_add3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp">
+                        <LinearLayout
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:gravity="center"
+                            android:scaleType="centerInside"
+                            android:background="@drawable/dotted_border_bg"
+                            android:orientation="vertical" >
+
+                            <ImageView
+                                android:id="@+id/nnnn"
+                                android:layout_width="35dp"
+                                android:layout_height="35dp"
+                                android:layout_gravity="center"
+                                android:scaleType="centerInside"
+                                android:src="@mipmap/circle_img" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:textColor="#0D3A61"
+                                android:textSize="12sp"
+                                android:text="Add Photo"/>
+
+                        </LinearLayout>
+                        <ImageView
+                            android:id="@+id/num_pic3"
+                            android:scaleType="centerCrop"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp" />
+                    </FrameLayout>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rc_number_images"
+                        android:layout_width="wrap_content"
+                        android:overScrollMode="never"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginTop="5dp"
+                android:focusableInTouchMode="true"
+                android:layout_width="match_parent"
+                android:padding="15dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border_bg"
+                android:orientation="vertical">
+
+                <com.eleganzit.msafiridriver.utils.RobotoMediumTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textStyle="bold"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:text="Vehicle Name"
+                    android:textColor="#000"/>
+
+                <LinearLayout
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical">
+
+                    <EditText
+                        android:id="@+id/vehicle_name"
+                        android:layout_gravity="center"
+                        android:cursorVisible="false"
+                        android:background="@drawable/edittxt_bg"
+                        android:padding="10dp"
+                        android:inputType="textCapWords"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Vehicle Name"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginTop="5dp"
+                android:focusableInTouchMode="true"
+                android:layout_width="match_parent"
+                android:padding="15dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border_bg"
+                android:orientation="vertical">
+
+                <com.eleganzit.msafiridriver.utils.RobotoMediumTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textStyle="bold"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:text="Vehicle Type"
+                    android:textColor="#000"/>
+
+                <LinearLayout
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical">
+
+                    <EditText
+                        android:id="@+id/vehicle_type"
+                        android:layout_gravity="center"
+                        android:cursorVisible="false"
+                        android:background="@drawable/edittxt_bg"
+                        android:focusable="false"
+                        android:paddingLeft="10dp"
+                        android:paddingTop="6dp"
+                        android:paddingBottom="6dp"
+                        android:drawableRight="@drawable/arrow_down"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Select Vehicle Type"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginTop="5dp"
+                android:focusableInTouchMode="true"
+                android:layout_width="match_parent"
+                android:padding="15dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border_bg"
+                android:orientation="vertical">
+
+                <com.eleganzit.msafiridriver.utils.RobotoMediumTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textStyle="bold"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:text="Vehicle Number Plate"
+                    android:textColor="#000"/>
+
+                <LinearLayout
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical">
+
+                    <EditText
+                        android:id="@+id/vehicle_number"
+                        android:layout_gravity="center"
+                        android:cursorVisible="false"
+                        android:background="@drawable/edittxt_bg"
+                        android:inputType="textCapCharacters"
+                        android:padding="10dp"
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Vehicle Number Plate"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginTop="5dp"
+                android:layout_width="match_parent"
+                android:padding="15dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border_bg"
+                android:orientation="vertical">
+
+                <com.eleganzit.msafiridriver.utils.RobotoMediumTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textStyle="bold"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:text="Number of Seat"
+                    android:textColor="#000"/>
+
+                <LinearLayout
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical">
+
+                    <EditText
+                        android:id="@+id/seats"
+                        android:layout_gravity="center"
+                        android:cursorVisible="false"
+                        android:inputType="number"
+                        android:background="@drawable/edittxt_bg"
+                        android:padding="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Total Seat"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

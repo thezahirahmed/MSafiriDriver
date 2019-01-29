@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <dimen name="fab_margin">10dp</dimen>
+    <dimen name="design_bottom_navigation_item_max_width" tools:override="true">600dp</dimen>
+    <dimen name="design_bottom_navigation_active_item_max_width" tools:override="true">600dp</dimen>
+
+    <dimen name="footer_height">95dp</dimen>
+    <dimen name="rel_height_main">315dp</dimen>
+    <dimen name="rel_height_inside">290dp</dimen>
+
+</resources>

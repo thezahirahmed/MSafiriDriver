@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:orientation="vertical"
+    android:layout_gravity="center_horizontal|center_vertical"
+    android:gravity="center_vertical|center_horizontal"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="15dp"
+        android:background="@drawable/dialog_header">
+
+        <TextView
+            android:text="Options"
+            android:textStyle="bold"
+            android:textColor="#fff"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dialog_bg"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:id="@+id/car"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:text="Update Trip"
+            android:textColor="#333333"
+            android:background="?android:selectableItemBackground"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+            android:layout_marginTop="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.7dp"
+            android:layout_marginTop="15dp"
+            android:background="#c9c9c9"/>
+
+        <TextView
+            android:id="@+id/van"
+            android:layout_marginLeft="15dp"
+            android:textColor="#333333"
+            android:layout_marginRight="15dp"
+            android:text="Delete Trip"
+            android:background="?android:selectableItemBackground"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+            android:layout_marginTop="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.7dp"
+            android:layout_marginTop="15dp"
+            android:background="#c9c9c9"/>
+
+        <TextView
+            android:id="@+id/bike"
+            android:layout_marginLeft="15dp"
+            android:textColor="#333333"
+            android:layout_marginRight="15dp"
+            android:text="Passenger List"
+            android:background="?android:selectableItemBackground"
+            android:layout_marginBottom="15dp"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+            android:layout_marginTop="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+
+
+    </LinearLayout>
+
+</LinearLayout>

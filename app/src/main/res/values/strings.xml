@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">MSafiriDriver</string>
+    <string name="hintemail">Email Address</string>
+    <string name="hintpassword">Password</string>
+    <string name="signuptxt">Enter your Email Address below to reset \n your Password.</string>
+    <string name="terms"> <u> Terms and conditions</u> </string>
+    <string name="privacy"> <u> Privacy policy</u></string>
+    <string name="dummytext">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.\n\nLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</string>
+
+    <string-array name="months_array">
+        <item>one</item>
+        <item>two</item>
+        <item>three</item>
+        <item>four</item>
+        <item>five</item>
+        <item>six</item>
+        <item>seven</item>
+        <item>eight</item>
+        <item>nine</item>
+        <item>ten</item>
+        <item>eleven</item>
+        <item>twelve</item>
+
+
+    </string-array>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <!--<string name="google_maps_key">AIzaSyBfIo6MvwH7KwDr60naJfKhR2XS0osQnNM</string>-->
+    <string name="google_maps_key">AIzaSyD3t0-rMDn9zvQbzXqOEu1EUV9lssGSPjg</string>
+    <string name="complete_profile">Add a profile photo, describe your service, enter your information, add your service location and ask for a review to create an awesome profile.</string>
+    <string name="verify_profile">To offer good quality services to customers, each professional on the platform has to fulfill minimum requirements of experience and skill. Please provide as much information as possible in your profile so we can take a decision.</string>
+    <string name="buy_credits">M-Mafiri is a platform. Once approved, you have to save route to start your ride.</string>
+    <string name="profile_txt">You are few steps away from \ncompleting your profile.</string>
+    <string name="address"><font size="10">2385 McDowell Street Location</font></string>
+    <string name="registerhere">Don\'t have account? <b>Register Here</b></string>
+</resources>

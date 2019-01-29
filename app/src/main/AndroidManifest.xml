@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.eleganzit.msafiridriver">
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.INTERNAL_SYSTEM_WINDOW"/>
+
+    <uses-feature android:name="android.hardware.camera" />
+
+    <application
+        android:name=".utils.MyApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
+        <activity
+            android:name=".SplashActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
+        <receiver android:name=".utils.MyLocationReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:label="RestartServiceWhenStopped"/>
+        <service
+            android:name=".utils.SensorService"
+            android:enabled="true" />
+
+        <activity
+            android:name=".SignInActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ForgotPasswordActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".RegisterationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".WelcomeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ProfileActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ChoosePictureActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".PersonalInfoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".BankAccountActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".DocumentsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.NavHomeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.TripDetail"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.AboutUs"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.HelpActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".VehicleDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".PickupLocation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.SaveRouteActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.DemoScreen"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.PayDetail"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.ViewRating"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.TripDetail2"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".LocationSearch"
+            android:excludeFromRecents="true"
+            android:label=""
+            android:screenOrientation="portrait" />
+        <activity android:name=".activity.PassengerListActivity"
+            android:screenOrientation="portrait" />
+    </application>
+
+</manifest>

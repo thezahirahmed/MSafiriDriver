@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="#fff">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            app:contentInsetRight="0dp"
+            app:contentInsetLeft="0dp"
+            app:contentInsetEnd="0dp"
+            android:contentInsetEnd="0dp"
+            android:contentInsetLeft="0dp"
+            android:contentInsetRight="0dp"
+            app:contentInsetStart="0dp"
+            android:contentInsetStart="0dp"
+            android:layout_alignParentTop="true"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#0192D2">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+                <ImageView
+                    android:id="@+id/back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:src="@mipmap/go_back"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:text="Bank Account"
+                    android:layout_weight="0.5"
+                    android:textColor="#fff"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"/>
+
+                <ImageView
+                    android:id="@+id/save"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:src="@mipmap/save"/>
+
+            </LinearLayout>
+        </android.support.v7.widget.Toolbar>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:background="#fff"
+        android:fillViewport="true"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:orientation="vertical"
+            android:focusableInTouchMode="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <LinearLayout
+            android:id="@+id/first"
+            android:layout_width="match_parent"
+            android:padding="15dp"
+            android:focusableInTouchMode="true"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_bg"
+            android:orientation="vertical">
+
+            <com.eleganzit.msafiridriver.utils.RobotoMediumTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:textStyle="bold"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                android:text="Bank Name"
+                android:textColor="#000"/>
+
+            <LinearLayout
+                android:layout_centerHorizontal="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/edbank_name"
+                    android:layout_gravity="center"
+                    android:background="@drawable/edittxt_bg"
+                    android:padding="10dp"
+                    android:inputType="textCapWords"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Your Bank Name"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/second"
+            android:layout_below="@+id/first"
+            android:layout_width="match_parent"
+            android:padding="15dp"
+            android:layout_marginTop="5dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_bg"
+            android:orientation="vertical">
+
+            <com.eleganzit.msafiridriver.utils.RobotoMediumTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:textStyle="bold"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                android:text="Payee"
+                android:textColor="#000"/>
+
+            <LinearLayout
+                android:layout_centerHorizontal="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/edpayee"
+                    android:layout_gravity="center"
+                    android:background="@drawable/edittxt_bg"
+                    android:padding="10dp"
+                    android:maxLines="1"
+                    android:lines="1"
+                    android:inputType="textCapWords"
+                    android:singleLine="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Your Full Name or LegalCompany Name"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    />
+
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/third"
+            android:layout_below="@+id/second"
+            android:layout_width="match_parent"
+            android:padding="15dp"
+            android:layout_marginTop="5dp"
+
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_bg"
+            android:orientation="vertical">
+
+            <com.eleganzit.msafiridriver.utils.RobotoMediumTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:textStyle="bold"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                android:text="Account Number"
+                android:textColor="#000"/>
+
+            <LinearLayout
+                android:layout_centerHorizontal="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/edaccount_number"
+                    android:layout_gravity="center"
+                    android:background="@drawable/edittxt_bg"
+                    android:padding="10dp"
+                    android:maxLines="1"
+                    android:lines="1"
+                    android:inputType="number"
+                    android:singleLine="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Your Account Number"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/fourth"
+            android:layout_below="@+id/third"
+            android:layout_width="match_parent"
+            android:padding="15dp"
+            android:layout_marginTop="5dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_bg"
+            android:orientation="vertical">
+
+            <com.eleganzit.msafiridriver.utils.RobotoMediumTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:textStyle="bold"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                android:text="IFSC Code"
+                android:textColor="#000"/>
+
+            <LinearLayout
+                android:layout_centerHorizontal="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/edifsc_code"
+                    android:layout_gravity="center"
+                    android:background="@drawable/edittxt_bg"
+                    android:padding="10dp"
+                    android:maxLines="1"
+                    android:lines="1"
+                    android:inputType="textCapCharacters"
+                    android:singleLine="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Bank Code"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    />
+
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/fifth"
+            android:layout_below="@+id/fourth"
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:padding="15dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_bg"
+            android:orientation="vertical">
+
+            <com.eleganzit.msafiridriver.utils.RobotoMediumTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:textStyle="bold"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                android:text="Address"
+                android:textColor="#000"/>
+
+            <LinearLayout
+                android:id="@+id/lin1"
+                android:layout_centerHorizontal="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/edstreet1"
+                    android:layout_gravity="center"
+                    android:background="@drawable/edittxt_bg"
+                    android:padding="10dp"
+                    android:inputType="textCapSentences"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Street 1"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+
+                    />
+                <EditText
+                    android:id="@+id/edstreet2"
+                    android:layout_gravity="center"
+                    android:background="@drawable/edittxt_bg"
+                    android:padding="10dp"
+                    android:inputType="textCapSentences"
+                    android:layout_marginTop="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Street 2"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp" />
+
+                <LinearLayout
+
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:id="@+id/edcity"
+                        android:layout_gravity="center"
+                        android:background="@drawable/edittxt_bg"
+                        android:layout_weight="1"
+                        android:layout_margin="5dp"
+                        android:padding="10dp"
+                        android:inputType="textCapSentences"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="City" />
+                    <EditText
+                        android:id="@+id/edstate"
+                        android:layout_weight="1"
+                        android:layout_margin="5dp"
+                        android:padding="10dp"
+                        android:layout_gravity="center"
+                        android:focusable="false"
+                        android:background="@drawable/edittxt_bg"
+                        android:inputType="textEmailAddress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="State" />
+                </LinearLayout>
+                <LinearLayout
+
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:id="@+id/edpostal"
+                        android:layout_gravity="center"
+                        android:background="@drawable/edittxt_bg"
+                        android:layout_weight="1"
+                        android:layout_margin="5dp"
+                        android:maxLength="6"
+                        android:padding="10dp"
+                        android:inputType="number"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Postal Code"
+                        />
+                    <EditText
+                        android:id="@+id/edcountry"
+                        android:layout_weight="1"
+                        android:layout_margin="5dp"
+                        android:focusable="false"
+                        android:paddingLeft="10dp"
+                        android:paddingTop="6dp"
+                        android:paddingBottom="6dp"
+                        android:layout_gravity="center"
+                        android:cursorVisible="false"
+                        android:drawableRight="@drawable/arrow_down"
+                        android:background="@drawable/edittxt_bg"
+                        android:inputType="textEmailAddress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Country"
+                        />
+                </LinearLayout>
+                <EditText
+                    android:id="@+id/edbirth"
+                    android:layout_gravity="center"
+                    android:cursorVisible="false"
+                    android:focusable="false"
+                    android:background="@drawable/edittxt_bg"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp"
+                    android:drawableRight="@drawable/calender"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Select Birthdate"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+    </ScrollView>
+
+    </RelativeLayout>

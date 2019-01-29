@@ -1,0 +1,30 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowContentTransitions">true</item>
+
+
+    </style>
+    <style name="AlertDialogCustom" parent="@android:style/Animation.Dialog">
+        <item name="android:typeface">sans</item>
+
+
+    </style>
+    <style name="EditTextTintTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/primaryText</item>
+    </style>
+    <style name="error_appearance" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/error</item>
+
+    </style>
+    <style name="RatingBar" parent="Theme.AppCompat">    <item name="colorControlNormal">#dcdcdc</item>    <item name="colorControlActivated">@color/error</item></style>
+
+    <color name="error">#d71e1e</color>
+</resources>
