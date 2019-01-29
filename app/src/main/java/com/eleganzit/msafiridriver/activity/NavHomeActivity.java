@@ -207,7 +207,7 @@ public class NavHomeActivity  extends AppCompatActivity
         headerview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(NavHomeActivity.this,ProfileActivity.class);
+                Intent intent=new Intent(NavHomeActivity.this,ProfileActivity.class).putExtra("from","home");
                 ActivityOptionsCompat options = ActivityOptionsCompat.
                         makeSceneTransitionAnimation(NavHomeActivity.this,
                                     profile_image,
@@ -325,9 +325,109 @@ public class NavHomeActivity  extends AppCompatActivity
                 });
     }
 
+    public void getDriverdata()
+    {
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
+        final MyInterface myInterface = restAdapter.create(MyInterface.class);
+        myInterface.getDriverdata(pref.getString("driver_id",""), new retrofit.Callback<retrofit.client.Response>() {
+            @Override
+            public void success(retrofit.client.Response response, retrofit.client.Response response2) {
+                final StringBuilder stringBuilder = new StringBuilder();
+                try {
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
+
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line);
+                    }
+                    Log.d("dddddddstringBuilder", "" + stringBuilder);
+                    //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
+
+                    if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
+
+                        JSONObject jsonObject = new JSONObject("" + stringBuilder);
+                        String status = jsonObject.getString("status");
+                        JSONArray jsonArray = null;
+                        if(status.equalsIgnoreCase("1"))
+                        {
+                            jsonArray = jsonObject.getJSONArray("data");
+                            for(int i=0;i<jsonArray.length();i++)
+                            {
+                                JSONObject jsonObject1=jsonArray.getJSONObject(i);
+
+                                String fullname = jsonObject1.getString("fullname");
+                                editor.putString("fullname", fullname);
+                                String email = jsonObject1.getString("email");
+                                editor.putString("email", email);
+                                photo = jsonObject1.getString("photo");
+                                editor.putString("photo", photo);
+                                String vehicle_profile = jsonObject1.getString("vehicle_profile");
+                                editor.putString("vehicle_profile", vehicle_profile);
+                                String vehicle_name = jsonObject1.getString("vehicle_name");
+                                editor.putString("vehicle_name", vehicle_name);
+                                String street = jsonObject1.getString("street");
+                                editor.putString("street", street);
+                                String city = jsonObject1.getString("city");
+                                editor.putString("city", city);
+                                String state = jsonObject1.getString("state");
+                                editor.putString("state", state);
+                                String postal_code = jsonObject1.getString("postal_code");
+                                editor.putString("postal_code", postal_code);
+                                String country = jsonObject1.getString("country");
+                                editor.putString("country", country);
+                                String mobile_number = jsonObject1.getString("mobile_number");
+                                editor.putString("mobile_number", mobile_number);
+                                String dob = jsonObject1.getString("dob");
+                                editor.putString("dob", dob);
+                                String gender = jsonObject1.getString("gender");
+                                editor.putString("gender", gender);
+                                editor.commit();
+
+                                Log.d("ddphotooooooo","photo "+photo+"  vvvv photo "+vehicle_profile);
+
+                            }
+                            Glide
+                                    .with(NavHomeActivity.this)
+                                    .load(photo)
+                                    .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop())
+                                    .into(profile_image);
+                        }
+                        else
+                        {
+
+                        }
+
+                        // Toast.makeText(RegistrationActivity.this, "scc "+Token, Toast.LENGTH_SHORT).show();
+
+                    }
+                    else
+                    {
+
+                        Toast.makeText(NavHomeActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                    }
+
+
+                } catch (IOException e) {
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
+                Toast.makeText(NavHomeActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
+        getDriverdata();
         photo=pref.getString("photo","");
         name=pref.getString("fullname","");
 

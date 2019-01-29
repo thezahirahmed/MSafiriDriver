@@ -145,7 +145,7 @@ public class SplashActivity extends AppCompatActivity {
     {
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.getDriverdata(pref.getString("driver_id",""), new retrofit.Callback<retrofit.client.Response>() {
+        myInterface.loginDriver(pref.getString("email",""), pref.getString("password",""), new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                 final StringBuilder stringBuilder = new StringBuilder();
@@ -236,6 +236,30 @@ public class SplashActivity extends AppCompatActivity {
                         }
                         else
                         {
+                            logo.startAnimation(flyout1);
+
+                            flyout1.setAnimationListener(new Animation.AnimationListener() {
+                                @Override
+                                public void onAnimationStart(Animation animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animation animation) {
+
+                                    Intent i = new Intent(SplashActivity.this, SignInActivity.class).putExtra("from","splash");
+
+                                    startActivity(i);
+                                    overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+
+                                    finish();
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animation animation) {
+
+                                }
+                            });
                             Toast.makeText(SplashActivity.this, ""+message, Toast.LENGTH_SHORT).show();
                         }
 

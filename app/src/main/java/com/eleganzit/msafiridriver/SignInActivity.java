@@ -333,14 +333,14 @@ public class SignInActivity extends AppCompatActivity {
                                 editor.putString("status", "loggedin");
                                 String fullname = jsonObject1.getString("fullname");
                                 editor.putString("fullname", fullname);
-                                String vehicle_name = jsonObject1.getString("vehicle_name");
-                                editor.putString("vehicle_name", vehicle_name);
+                                //String vehicle_name = jsonObject1.getString("vehicle_name");
+                                //editor.putString("vehicle_name", vehicle_name);
                                 String email = jsonObject1.getString("email");
                                 editor.putString("email", email);
-                                String photo = jsonObject1.getString("photo");
-                                String vehicle_profile = jsonObject1.getString("vehicle_profile");
-                                editor.putString("photo", photo);
-                                editor.putString("vehicle_profile", vehicle_profile);
+                                //String photo = jsonObject1.getString("photo");
+                                //String vehicle_profile = jsonObject1.getString("vehicle_profile");
+                                //editor.putString("photo", photo);
+                                //editor.putString("vehicle_profile", vehicle_profile);
                                 editor.putString("password", password.getText().toString());
                                 String dstatus = jsonObject1.getString("status");
                                 editor.putString("dstatus", dstatus);
@@ -358,7 +358,7 @@ public class SignInActivity extends AppCompatActivity {
                                 else
                                 {
 
-                                    startActivity(new Intent(SignInActivity.this,ProfileActivity.class));
+                                    startActivity(new Intent(SignInActivity.this,ProfileActivity.class).putExtra("from","signin"));
 
                                     finish();
                                 }

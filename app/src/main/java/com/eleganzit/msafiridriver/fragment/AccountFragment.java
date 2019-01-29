@@ -93,6 +93,8 @@ public class AccountFragment extends Fragment {
         photo=pref.getString("photo","");
         vehicle_profile=pref.getString("vehicle_profile","");
 
+        Log.d("photooossss",photo+ "     "+vehicle_profile);
+
         dname=pref.getString("fullname","");
         vname=pref.getString("vehicle_name","");
 
@@ -176,7 +178,7 @@ public class AccountFragment extends Fragment {
         acsetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), ProfileActivity.class);
+                Intent intent = new Intent(getActivity(), ProfileActivity.class).putExtra("from","account");
 
                 startActivity(intent);
                 Bungee.slideLeft(getActivity());

@@ -171,7 +171,7 @@ public class RatingActivity extends Fragment {
                         }
                         else
                         {
-
+                            no_ratings.setVisibility(View.VISIBLE);
                         }
 
                         // Toast.makeText(RegistrationActivity.this, "scc "+Token, Toast.LENGTH_SHORT).show();

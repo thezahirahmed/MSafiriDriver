@@ -265,7 +265,7 @@ public class RegisterationActivity extends AppCompatActivity {
                                 editor.putString("documentsInfo", "empty");
                                 editor.putString("vehicleInfo", "empty");
                                 editor.putString("bankInfo", "empty");
-                                editor.putString("approvel", "no");
+                                editor.putString("approvel", "0");
                                 editor.commit();
                             }
 

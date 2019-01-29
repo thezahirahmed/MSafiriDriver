@@ -62,6 +62,7 @@ public class ProfileActivity extends AppCompatActivity {
     private String country_id="";
     private String personalInfo,documentsInfo,vehicleInfo,bankInfo,approvel;
     CircularProgressDrawable circularProgressDrawable;
+    String from;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -69,6 +70,9 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_profile);
+
+        from=getIntent().getStringExtra("from");
+
         profileActivity=this;
         profile_pic=findViewById(R.id.profile_pic);
         profile=findViewById(R.id.profile);
@@ -107,36 +111,6 @@ public class ProfileActivity extends AppCompatActivity {
 
                     }
                 });
-
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                new AlertDialog.Builder(ProfileActivity.this).setTitle("Logout").setMessage("Are you sure you want to logout?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                editor.clear();
-                                editor.commit();
-                                editor.apply();
-                                Intent intent = new Intent(ProfileActivity.this, SignInActivity.class).putExtra("from","account");
-                                startActivity(intent);
-                                Bungee.slideLeft(ProfileActivity.this);
-
-                                finish();
-                                Bungee.slideRight(ProfileActivity.this);
-
-
-                            }
-                        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).show();
-
-            }
-        });
 
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -363,7 +337,7 @@ public class ProfileActivity extends AppCompatActivity {
                                 editor.putString("dob", dob);
                                 String gender = jsonObject1.getString("gender");
                                 editor.putString("gender", gender);
-
+                                editor.commit();
                             }
                             Log.d("photooooooo","photo "+photo);
                             Glide
@@ -420,23 +394,34 @@ public class ProfileActivity extends AppCompatActivity {
 
         if(documentsInfo.equalsIgnoreCase("changed"))
         {
+            Log.d("whereis","docs");
             txtsubmit.setText("Submit for Approval");
         }
         else if(vehicleInfo.equalsIgnoreCase("changed"))
         {
+            Log.d("whereis","vehc");
             txtsubmit.setText("Submit for Approval");
         }
         else if(bankInfo.equalsIgnoreCase("changed"))
         {
-            txtsubmit.setText("Submit for Approval");
-        }
-        else if(approvel.equalsIgnoreCase("no"))
-        {
+            Log.d("whereis","bank");
             txtsubmit.setText("Submit for Approval");
         }
         else
         {
+            Log.d("whereis","elseee");
             txtsubmit.setText("Go to Home");
+        }
+
+        if(approvel.equalsIgnoreCase("0"))
+        {
+            Log.d("whereis","appr no");
+            txtsubmit.setText("Submit for Approval");
+        }
+        else if(approvel.equalsIgnoreCase("no"))
+        {
+            Log.d("whereis","appr no");
+
         }
 
         name.setText(pref.getString("fullname",""));
@@ -446,7 +431,38 @@ public class ProfileActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        Bungee.slideRight(this);
+
+        if(from.equalsIgnoreCase("splash") || from.equalsIgnoreCase("signin"))
+        {
+
+             new AlertDialog.Builder(ProfileActivity.this).setTitle("Logout").setMessage("You will be logged out!")
+                 .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                     @Override
+                     public void onClick(DialogInterface dialog, int which) {
+                         editor.clear();
+                         editor.commit();
+                         editor.apply();
+                         Intent intent = new Intent(ProfileActivity.this, SignInActivity.class).putExtra("from","account");
+                         startActivity(intent);
+                         Bungee.slideLeft(ProfileActivity.this);
+
+                         finish();
+                         Bungee.slideRight(ProfileActivity.this);
+
+
+                     }
+                 }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                     @Override
+                     public void onClick(DialogInterface dialog, int which) {
+                         dialog.dismiss();
+                     }
+                 }).show();
+
+        }
+        else
+        {
+            super.onBackPressed();
+            Bungee.slideRight(this);
+        }
     }
 }

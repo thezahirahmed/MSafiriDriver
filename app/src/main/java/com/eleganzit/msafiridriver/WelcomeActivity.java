@@ -37,7 +37,7 @@ public class WelcomeActivity extends AppCompatActivity {
         create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(WelcomeActivity.this,ProfileActivity.class));
+                startActivity(new Intent(WelcomeActivity.this,ProfileActivity.class).putExtra("from","welcome"));
             }
         });
 
