@@ -1,4 +1,4 @@
 package com.eleganzit.msafiridriver.utils;
 
-public class Dummy {
+public class Dummyy {
 }
