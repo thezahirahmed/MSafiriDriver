@@ -14,6 +14,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -52,6 +53,7 @@ import com.eleganzit.msafiridriver.model.TripData;
 import com.eleganzit.msafiridriver.utils.DirectionsJSONParser;
 import com.eleganzit.msafiridriver.utils.MyInterface;
 import com.eleganzit.msafiridriver.utils.RobotoMediumTextView;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -59,6 +61,7 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -69,6 +72,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -96,6 +101,7 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
 
     private String lat,lng,lat2,lng2,trip_status;
     private String photo;
+    private String photoPath;
 
     public TripFragment() {
         // Required empty public constructor
@@ -151,7 +157,8 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onResume() {
         super.onResume();
-        getUpcomingTrip();
+
+
     }
 
     @Override
@@ -160,7 +167,7 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
         progressDialog.setCancelable(false);
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.setMessage("Please wait...");
-
+        progressDialog.show();
         BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.location_green);
         Bitmap b = bitmapdraw.getBitmap();
         Bitmap smallMarker = Bitmap.createScaledBitmap(b, 60, 60, false);
@@ -195,8 +202,8 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
                 p_editor.putString("trip_lng2",lng2+"");
                 p_editor.putString("trip_status",trip_status+"");
                 p_editor.commit();
-                getActivity().startActivity(new Intent(getActivity(),PassengerListActivity.class).putExtra("from","trip"));
-                Bungee.slideLeft(getActivity());
+                CaptureMapScreen();
+
 
 /*
                 dialog.getWindow().requestFeature(FEATURE_NO_TITLE);
@@ -256,11 +263,90 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
         map.moveCamera(CameraUpdateFactory.newLatLng(loc2));
 
         map.animateCamera(CameraUpdateFactory.zoomTo(13.0f));
+        map.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+            @Override
+            public void onMapLoaded() {
+                getUpcomingTrip();
+            }
+        });
+
         /*for(int i = 0 ; i < markersArray.size() ; i++) {
 
             createMarker(markersArray.get(i).getLatitude(), markersArray.get(i).getLongitude(), markersArray.get(i).getTitle(), markersArray.get(i).getSnippet(), markersArray.get(i).getIconResID());
         }*/
     }
+
+    public void CaptureMapScreen()
+    {
+        GoogleMap.SnapshotReadyCallback callback = new GoogleMap.SnapshotReadyCallback() {
+            Bitmap bitmap;
+
+            @Override
+            public void onSnapshotReady(Bitmap snapshot) {
+                // TODO Auto-generated method stub
+                bitmap = snapshot;
+                try {
+
+                    print2(bitmap);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+
+        Log.d("Exceptiondataaao","done");
+
+        map.snapshot(callback);
+
+
+    }
+
+    private void print2(Bitmap bitmapp){
+        ProgressDialog dialog = new ProgressDialog(getActivity());
+
+        dialog.setMessage("Saving...");
+        dialog.show();
+
+        //bitmapp = getBitmapFromView(native_resit,native_resit.getChildAt(0).getHeight(),native_resit.getChildAt(0).getWidth());
+        try {
+            File defaultFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/MSafiriData");
+            if (!defaultFile.exists()){
+                defaultFile.mkdirs();
+
+            }
+
+            String filename = pref.getString("driver_id","")+""+ System.currentTimeMillis()+".png";
+            File file = new File(defaultFile,filename);
+            if (file.exists()) {
+                file.delete();
+                file = new File(defaultFile,filename);
+            }
+
+            FileOutputStream output = new FileOutputStream(file);
+            bitmapp.compress(Bitmap.CompressFormat.PNG, 100, output);
+
+            output.flush();
+            output.close();
+            // String photoPath = Environment.getExternalStorageDirectory() + "/SoberSense/" + myfile;//<---
+
+            photoPath=""+file;
+
+            Log.d("photoPath",photoPath);
+
+            dialog.dismiss();
+            getActivity().startActivity(new Intent(getActivity(),PassengerListActivity.class).putExtra("from","trip"));
+            Bungee.slideLeft(getActivity());
+            //confirmTrip(id);
+            Toast.makeText(getActivity(), "Saved!!", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            dialog.dismiss();
+            Toast.makeText(getActivity(), "Failed!!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     protected Marker createMarker(double latitude, double longitude, String title, String snippet, Bitmap iconResID) {
 
         return map.addMarker(new MarkerOptions()
@@ -273,9 +359,10 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
 
     public void getUpcomingTrip()
     {
-        main_content.setVisibility(View.GONE);
-        content.setVisibility(View.GONE);
-        progress_bar.setVisibility(View.VISIBLE);
+        //main_content.setVisibility(View.GONE);
+
+        //progress_bar.setVisibility(View.VISIBLE);
+
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
         myInterface.getDriverTrips(pref.getString("driver_id",""), "upcoming", new retrofit.Callback<retrofit.client.Response>() {
@@ -302,14 +389,14 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
                         JSONArray jsonArray = null;
                         if(status.equalsIgnoreCase("1"))
                         {
-                            progress_bar.setVisibility(View.GONE);
+
                             main_content.setVisibility(View.VISIBLE);
                             content.setVisibility(View.VISIBLE);
-                            YoYo.with(Techniques.SlideInUp)
+                           /* YoYo.with(Techniques.SlideInUp)
                                     .duration(700)
                                     .repeat(0)
                                     .playOn(content);
-
+*/
                             jsonArray = jsonObject.getJSONArray("data");
                             for(int i=0;i<jsonArray.length();i++)
                             {
@@ -334,7 +421,9 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
                                 trip_status=statuss;
                                 pickup.setText(from_address);
                                 destination.setText(to_address);
-                                LatLng loc=new LatLng(Double.parseDouble(from_lat),Double.parseDouble(from_lng));
+
+                                drawRoute(Double.parseDouble(lat),Double.parseDouble(lng),Double.parseDouble(lat2),Double.parseDouble(lng2));
+                                /*LatLng loc=new LatLng(Double.parseDouble(from_lat),Double.parseDouble(from_lng));
                                 BitmapDrawable bitmapdraw=(BitmapDrawable)getActivity().getResources().getDrawable(R.drawable.location_green);
                                 Bitmap b=bitmapdraw.getBitmap();
                                 Bitmap smallMarker = Bitmap.createScaledBitmap(b, 70, 70, false);
@@ -353,18 +442,19 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
                                 map.addMarker(new MarkerOptions().position(loc2).icon(BitmapDescriptorFactory.fromBitmap(smallMarker2)).title("Destination Location"));
 
                                 String url = getDirectionsUrl(loc, loc2);
-                                /*Polyline linee = googleMap.addPolyline(new PolylineOptions()
+                                *//*Polyline linee = googleMap.addPolyline(new PolylineOptions()
                                     .add(new LatLng(Double.parseDouble(lat),Double.parseDouble(lng)), new LatLng(Double.parseDouble(lat2),Double.parseDouble(lng2)))
                                     .width(5)
-                                    .color(Color.RED));*/
+                                    .color(Color.RED));*//*
                                 DownloadTask downloadTask = new DownloadTask();
                                 // Start downloading json data from Google Directions API
-                                downloadTask.execute(url);
+                                downloadTask.execute(url);*/
                             }
                             no_trip.setVisibility(View.GONE);
                         }
                         else
                         {
+                            progress_bar.setVisibility(View.GONE);
                             main_content.setVisibility(View.GONE);
                             no_trip.setVisibility(View.VISIBLE);
                         }
@@ -399,6 +489,50 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
             }
         });
     }
+
+    private void drawRoute(double from_lat, double from_lng, double to_lat, double to_lng) {
+
+        LatLng origin = new LatLng(from_lat, from_lng);
+        LatLng destination = new LatLng(to_lat, to_lng);
+        ArrayList<Marker> mMarkerArray = new ArrayList<Marker>();
+        MarkerOptions options = new MarkerOptions();
+        // Setting the position of the marker
+        options.position(origin);
+
+        BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.location_green);
+        Bitmap b=bitmapdraw.getBitmap();
+        Bitmap firstMarker = Bitmap.createScaledBitmap(b, 70   , 70, false);
+
+        Marker amarker1=    map.addMarker(options.icon(BitmapDescriptorFactory.fromBitmap(firstMarker)));
+        MarkerOptions options2 = new MarkerOptions();
+        BitmapDrawable bitmapdraw2=(BitmapDrawable)getResources().getDrawable(R.drawable.location_red);
+        Bitmap b2=bitmapdraw2.getBitmap();
+        Bitmap firstMarker2 = Bitmap.createScaledBitmap(b2, 70   , 70, false);
+
+        // Setting the position of the marker
+        options2.position(destination);
+        Marker amarker2=    map.addMarker(options2.icon(BitmapDescriptorFactory.fromBitmap(firstMarker2)));
+
+        mMarkerArray.add(amarker1);
+        mMarkerArray.add(amarker2);
+
+
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (Marker marker : mMarkerArray) {
+            builder.include(marker.getPosition());
+        }
+        LatLngBounds bounds = builder.build();
+        int padding = 80; // offset from edges of the map in pixels
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+        map.moveCamera(cu);
+        map.animateCamera(cu);
+        String url = getDirectionsUrl(origin, destination);
+        DownloadTask downloadTask = new DownloadTask();
+
+        // Start downloading json data from Google Directions API
+        downloadTask.execute(url);
+    }
+
     private class DownloadTask extends AsyncTask<String, Void, String> {
 
         @Override
@@ -479,6 +613,7 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
 
 // Drawing polyline in the Google Map for the i-th route
             map.addPolyline(lineOptions);
+            progressDialog.dismiss();
         }
     }
 

@@ -116,6 +116,9 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+
+                Log.d("apprdataaaa",""+personalInfo+"    "+documentsInfo+"    "+vehicleInfo+"   "+bankInfo);
+
                 if(txtsubmit.getText().toString().equalsIgnoreCase("Submit for Approval"))
                 {
                     if(photo.equalsIgnoreCase("") || photo.equalsIgnoreCase("http://itechgaints.com/M-safiri-API/user_uploads/no_profile.png"))
@@ -235,7 +238,7 @@ public class ProfileActivity extends AppCompatActivity {
                                     {
                                         JSONObject jsonObject1=jsonArray.getJSONObject(i);
 
-                                        String approvel=jsonObject1.getString("approvel");
+                                        approvel=jsonObject1.getString("approvel");
                                         editor.putString("approvel", approvel);
                                         editor.commit();
 
@@ -244,6 +247,10 @@ public class ProfileActivity extends AppCompatActivity {
                                             startActivity(new Intent(ProfileActivity.this, NavHomeActivity.class));
                                             overridePendingTransition(android.R.anim.slide_in_left,android.R.anim.slide_in_left);
                                             finish();
+                                        }
+                                        else
+                                        {
+                                            Toast.makeText(ProfileActivity.this, "Profile has been submitted for approval", Toast.LENGTH_SHORT).show();
                                         }
                                     }
 
@@ -281,12 +288,12 @@ public class ProfileActivity extends AppCompatActivity {
                 });
     }
 
-    public void getDriverdata()
+    public void getPersonalInfo()
     {
         progressDialog.show();
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.getDriverdata(pref.getString("driver_id",""), new retrofit.Callback<retrofit.client.Response>() {
+        myInterface.getPersonalInfo(pref.getString("driver_id",""), new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                 progressDialog.dismiss();
@@ -313,10 +320,10 @@ public class ProfileActivity extends AppCompatActivity {
                             {
                                 JSONObject jsonObject1=jsonArray.getJSONObject(i);
 
-                                String fullname = jsonObject1.getString("fullname");
+                                /*String fullname = jsonObject1.getString("fullname");
                                 editor.putString("fullname", fullname);
                                 String email = jsonObject1.getString("email");
-                                editor.putString("email", email);
+                                editor.putString("email", email);*/
                                 photo = jsonObject1.getString("photo");
                                 editor.putString("photo", photo);
                                 String street = jsonObject1.getString("street");
@@ -329,8 +336,6 @@ public class ProfileActivity extends AppCompatActivity {
                                 editor.putString("postal_code", postal_code);
                                 String country = jsonObject1.getString("country");
                                 editor.putString("country", country);
-                                country_id = jsonObject1.getString("country_id");
-                                editor.putString("country_id", country_id);
                                 String mobile_number = jsonObject1.getString("mobile_number");
                                 editor.putString("mobile_number", mobile_number);
                                 String dob = jsonObject1.getString("dob");
@@ -378,51 +383,138 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    public void getApprovalStatus()
+    {
+        progressDialog.show();
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
+        final MyInterface myInterface = restAdapter.create(MyInterface.class);
+        myInterface.getApprovalStatus(pref.getString("email",""), new retrofit.Callback<retrofit.client.Response>() {
+            @Override
+            public void success(retrofit.client.Response response, retrofit.client.Response response2) {
+                progressDialog.dismiss();
+                final StringBuilder stringBuilder = new StringBuilder();
+                try {
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
+
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line);
+                    }
+                    Log.d("dddddddstringBuilder", "" + stringBuilder);
+                    //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
+
+                    if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
+
+                        JSONObject jsonObject = new JSONObject("" + stringBuilder);
+                        String status = jsonObject.getString("status");
+                        JSONArray jsonArray = null;
+                        if(status.equalsIgnoreCase("1"))
+                        {
+                            getPersonalInfo();
+                            jsonArray = jsonObject.getJSONArray("data");
+                            for(int i=0;i<jsonArray.length();i++)
+                            {
+                                JSONObject jsonObject1=jsonArray.getJSONObject(i);
+
+                                String fullname = jsonObject1.getString("fullname");
+                                editor.putString("fullname", fullname);
+                                String email = jsonObject1.getString("email");
+                                editor.putString("email", email);
+                                approvel = jsonObject1.getString("approvel");
+                                editor.putString("approvel", approvel);
+
+                                editor.commit();
+                            }
+                            Log.d("photooooooo","photo "+photo);
+                            personalInfo=pref.getString("personalInfo","");
+                            documentsInfo=pref.getString("documentsInfo","");
+                            vehicleInfo=pref.getString("vehicleInfo","");
+                            bankInfo=pref.getString("bankInfo","");
+                            approvel=pref.getString("approvel","");
+
+
+                            if(approvel.equalsIgnoreCase("0"))
+                            {
+                                Log.d("whereis","appr no");
+
+                                txtsubmit.setText("Submit for Approval");
+                            }
+                            else if(approvel.equalsIgnoreCase("no"))
+                            {
+                                Log.d("whereis","appr no");
+                                if(documentsInfo.equalsIgnoreCase("changed") || vehicleInfo.equalsIgnoreCase("changed") || bankInfo.equalsIgnoreCase("changed"))
+                                {
+                                    Log.d("whereis","docs");
+                                    txtsubmit.setText("Submit for Approval");
+                                }
+                                else if(personalInfo.equalsIgnoreCase("filled") && documentsInfo.equalsIgnoreCase("filled") && vehicleInfo.equalsIgnoreCase("filled") && bankInfo.equalsIgnoreCase("filled"))
+                                {
+                                    Log.d("whereis","docs");
+                                    txtsubmit.setText("Waiting for Approval");
+                                }
+                                /*else
+                                {
+                                    Log.d("whereis","elseee");
+                                    txtsubmit.setText("Go to Home");
+                                }*/
+
+                            }
+                            else
+                            {
+                                Log.d("whereis","appr no");
+                                if(documentsInfo.equalsIgnoreCase("changed") || vehicleInfo.equalsIgnoreCase("changed") || bankInfo.equalsIgnoreCase("changed"))
+                                {
+                                    Log.d("whereis","docs");
+                                    txtsubmit.setText("Submit for Approval");
+                                }
+                                else if(personalInfo.equalsIgnoreCase("filled") && documentsInfo.equalsIgnoreCase("filled") && vehicleInfo.equalsIgnoreCase("filled") && bankInfo.equalsIgnoreCase("filled"))
+                                {
+                                    Log.d("whereis","docs");
+                                    txtsubmit.setText("Go to Home");
+                                }
+                            }
+                        }
+                        else
+                        {
+
+                        }
+
+                        // Toast.makeText(RegistrationActivity.this, "scc "+Token, Toast.LENGTH_SHORT).show();
+
+                    }
+                    else
+                    {
+
+                        Toast.makeText(ProfileActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                    }
+
+
+                } catch (IOException e) {
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                progressDialog.dismiss();
+                //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ProfileActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         pref = getSharedPreferences("mysession", MODE_PRIVATE);
         editor=pref.edit();
 
-        getDriverdata();
+        getApprovalStatus();
 
-        personalInfo=pref.getString("personalInfo","");
-        documentsInfo=pref.getString("documentsInfo","");
-        vehicleInfo=pref.getString("vehicleInfo","");
-        bankInfo=pref.getString("bankInfo","");
-        approvel=pref.getString("approvel","");
-
-        if(documentsInfo.equalsIgnoreCase("changed"))
-        {
-            Log.d("whereis","docs");
-            txtsubmit.setText("Submit for Approval");
-        }
-        else if(vehicleInfo.equalsIgnoreCase("changed"))
-        {
-            Log.d("whereis","vehc");
-            txtsubmit.setText("Submit for Approval");
-        }
-        else if(bankInfo.equalsIgnoreCase("changed"))
-        {
-            Log.d("whereis","bank");
-            txtsubmit.setText("Submit for Approval");
-        }
-        else
-        {
-            Log.d("whereis","elseee");
-            txtsubmit.setText("Go to Home");
-        }
-
-        if(approvel.equalsIgnoreCase("0"))
-        {
-            Log.d("whereis","appr no");
-            txtsubmit.setText("Submit for Approval");
-        }
-        else if(approvel.equalsIgnoreCase("no"))
-        {
-            Log.d("whereis","appr no");
-
-        }
 
         name.setText(pref.getString("fullname",""));
 

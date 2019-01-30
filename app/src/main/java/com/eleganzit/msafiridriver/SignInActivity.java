@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
@@ -31,6 +32,7 @@ import com.eleganzit.msafiridriver.activity.Home;
 import com.eleganzit.msafiridriver.activity.NavHomeActivity;
 import com.eleganzit.msafiridriver.utils.MyInterface;
 import com.github.gfranks.minimal.notification.GFMinimalNotification;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -103,6 +105,40 @@ public class SignInActivity extends AppCompatActivity {
             mCurrentNotification.setHelperImage(R.drawable.group_40);
             mCurrentNotification.show();
         }
+
+        Thread t=new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String Token= FirebaseInstanceId.getInstance().getToken();
+                if (Token!=null)
+                {
+                    Log.d("Rrrrrmytokenn", Token);
+
+                    String devicetoken=Token;
+                    StrictMode.ThreadPolicy threadPolicy = new StrictMode.ThreadPolicy.Builder().build();
+                    StrictMode.setThreadPolicy(threadPolicy);
+                    try {
+                        JSONObject jsonObject=new JSONObject(Token);
+                        Log.d("mytoken", jsonObject.getString("token"));
+                        //devicetoken=jsonObject.getString("token");
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    //getLoginBoth(Token);
+
+                }
+                else
+                {
+                    Toast.makeText(SignInActivity.this, "No token", Toast.LENGTH_SHORT).show();
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });t.start();
 
         signbtn.setOnClickListener(new View.OnClickListener() {
             @Override

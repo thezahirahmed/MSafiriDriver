@@ -700,8 +700,16 @@ public class DocumentsActivity extends AppCompatActivity {
                 progressDialog.dismiss();
                 if(message.equalsIgnoreCase("success"))
                 {
-                    editor.putString("documentsInfo", "filled");
-                    editor.commit();
+                    if(hasDocs.equalsIgnoreCase("yes"))
+                    {
+                        editor.putString("documentsInfo", "changed");
+                        editor.commit();
+                    }
+                    else
+                    {
+                        editor.putString("documentsInfo", "filled");
+                        editor.commit();
+                    }
                     Toast.makeText(DocumentsActivity.this, "successfully uploaded", Toast.LENGTH_SHORT).show();
                 }
                 finish();

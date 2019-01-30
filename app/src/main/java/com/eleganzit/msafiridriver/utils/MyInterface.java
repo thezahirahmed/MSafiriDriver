@@ -45,6 +45,18 @@ public interface MyInterface
     );
 
     @retrofit.http.FormUrlEncoded
+    @retrofit.http.POST("/driverProfile")
+    public void getPersonalInfo(@retrofit.http.Field("driver_id") String driver_id,
+                              Callback<Response> callback
+    );
+
+    @retrofit.http.FormUrlEncoded
+    @retrofit.http.POST("/driverApprovel")
+    public void getApprovalStatus(@retrofit.http.Field("email") String email,
+                                Callback<Response> callback
+    );
+
+    @retrofit.http.FormUrlEncoded
     @retrofit.http.POST("/getBankdetails")
     public void getBankdetails(@retrofit.http.Field("driver_id") String driver_id,
                                Callback<Response> callback
