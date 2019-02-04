@@ -235,6 +235,14 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                     seats.requestFocus();
                     seats.setError("Please select Number of seats");
                 }
+                else if(str_vehicle_array.size()==0)
+                {
+                    Toast.makeText(VehicleDetailsActivity.this, "Please upload vehicle images", Toast.LENGTH_SHORT).show();
+                }
+                else if(str_num_plate_array.size()==0)
+                {
+                    Toast.makeText(VehicleDetailsActivity.this, "Please upload number plate images", Toast.LENGTH_SHORT).show();
+                }
                 else
                 {
                     if(data.equalsIgnoreCase("0"))

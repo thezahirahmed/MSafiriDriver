@@ -248,6 +248,7 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
                 dialog.show();*/
             }
         });
+        getUpcomingTrip();
 
     }
 
@@ -263,12 +264,6 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
         map.moveCamera(CameraUpdateFactory.newLatLng(loc2));
 
         map.animateCamera(CameraUpdateFactory.zoomTo(13.0f));
-        map.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-            @Override
-            public void onMapLoaded() {
-                getUpcomingTrip();
-            }
-        });
 
         /*for(int i = 0 ; i < markersArray.size() ; i++) {
 
@@ -422,7 +417,14 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
                                 pickup.setText(from_address);
                                 destination.setText(to_address);
 
-                                drawRoute(Double.parseDouble(lat),Double.parseDouble(lng),Double.parseDouble(lat2),Double.parseDouble(lng2));
+                                map.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                                    @Override
+                                    public void onMapLoaded() {
+                                        drawRoute(Double.parseDouble(lat),Double.parseDouble(lng),Double.parseDouble(lat2),Double.parseDouble(lng2));
+                                        progressDialog.dismiss();
+                                    }
+                                });
+
                                 /*LatLng loc=new LatLng(Double.parseDouble(from_lat),Double.parseDouble(from_lng));
                                 BitmapDrawable bitmapdraw=(BitmapDrawable)getActivity().getResources().getDrawable(R.drawable.location_green);
                                 Bitmap b=bitmapdraw.getBitmap();
@@ -457,6 +459,7 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
                             progress_bar.setVisibility(View.GONE);
                             main_content.setVisibility(View.GONE);
                             no_trip.setVisibility(View.VISIBLE);
+                            progressDialog.dismiss();
                         }
 
                         // Toast.makeText(RegistrationActivity.this, "scc "+Token, Toast.LENGTH_SHORT).show();
@@ -464,10 +467,8 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
                     }
                     else
                     {
-
                         Toast.makeText(getActivity(), ""+stringBuilder, Toast.LENGTH_SHORT).show();
                     }
-
 
                 } catch (IOException e) {
 
@@ -613,7 +614,7 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
 
 // Drawing polyline in the Google Map for the i-th route
             map.addPolyline(lineOptions);
-            progressDialog.dismiss();
+
         }
     }
 

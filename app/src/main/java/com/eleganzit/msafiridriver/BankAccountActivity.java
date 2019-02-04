@@ -17,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.Toast;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.eleganzit.msafiridriver.model.CountryData;
 import com.eleganzit.msafiridriver.model.StateData;
 import com.eleganzit.msafiridriver.utils.MyInterface;
@@ -142,13 +144,116 @@ public class BankAccountActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if(data.equalsIgnoreCase("0"))
+                if(edbank_name.getText().toString().trim().isEmpty())
                 {
-                    addBankdetails();
+                    YoYo.with(Techniques.Shake)
+                            .duration(700)
+                            .repeat(0)
+                            .playOn(edbank_name);
+                    edbank_name.setError("Bank name cannot be empty");
+                    edbank_name.requestFocus();
+                }
+                else if(edpayee.getText().toString().trim().isEmpty())
+                {
+                    YoYo.with(Techniques.Shake)
+                            .duration(700)
+                            .repeat(0)
+                            .playOn(edpayee);
+                    edpayee.setError("Payee cannot be empty");
+                    edpayee.requestFocus();
+                }
+                else if(edaccount_number.getText().toString().trim().isEmpty())
+                {
+                    YoYo.with(Techniques.Shake)
+                            .duration(700)
+                            .repeat(0)
+                            .playOn(edaccount_number);
+                    edaccount_number.setError("Account number cannot be empty");
+                    edaccount_number.requestFocus();
+                }
+                else if(edifsc_code.getText().toString().trim().isEmpty())
+                {
+                    YoYo.with(Techniques.Shake)
+                            .duration(700)
+                            .repeat(0)
+                            .playOn(edifsc_code);
+                    edifsc_code.setError("IFSC code cannot be empty");
+                    edifsc_code.requestFocus();
+                }
+                else if(edstreet1.getText().toString().trim().isEmpty())
+                {
+                    YoYo.with(Techniques.Shake)
+                            .duration(700)
+                            .repeat(0)
+                            .playOn(edstreet1);
+                    edstreet1.setError("Street cannot be empty");
+                    edstreet1.requestFocus();
+                }
+                else if(edstreet2.getText().toString().trim().isEmpty())
+                {
+                    YoYo.with(Techniques.Shake)
+                            .duration(700)
+                            .repeat(0)
+                            .playOn(edstreet2);
+                    edstreet2.setError("Street cannot be empty");
+                    edstreet2.requestFocus();
+                }
+                else if(edcity.getText().toString().trim().isEmpty())
+                {
+                    YoYo.with(Techniques.Shake)
+                            .duration(700)
+                            .repeat(0)
+                            .playOn(edcity);
+                    edcity.setError("City cannot be empty");
+                    edcity.requestFocus();
+                }
+                else if(edstate.getText().toString().trim().isEmpty())
+                {
+                    YoYo.with(Techniques.Shake)
+                            .duration(700)
+                            .repeat(0)
+                            .playOn(edstate);
+                    edstate.setError("State cannot be empty");
+                    edstate.requestFocus();
+                }
+                else if(edpostal.getText().toString().trim().isEmpty())
+                {
+                    YoYo.with(Techniques.Shake)
+                            .duration(700)
+                            .repeat(0)
+                            .playOn(edpostal);
+                    edpayee.setError("Postal code cannot be empty");
+                    edpayee.requestFocus();
+                }
+                else if(edcountry.getText().toString().trim().isEmpty())
+                {
+                    YoYo.with(Techniques.Shake)
+                            .duration(700)
+                            .repeat(0)
+                            .playOn(edcountry);
+                    edcountry.setError("Country cannot be empty");
+                    edcountry.requestFocus();
+                }
+                else if(edbirth.getText().toString().trim().isEmpty())
+                {
+                    YoYo.with(Techniques.Shake)
+                            .duration(700)
+                            .repeat(0)
+                            .playOn(edbirth);
+                    edbirth.setError("Birth date cannot be empty");
+                    edbirth.requestFocus();
                 }
                 else
                 {
-                    updateBankdetails();
+                    if(data.equalsIgnoreCase("0"))
+                    {
+                        addBankdetails();
+                    }
+                    else
+                    {
+                        updateBankdetails();
+                    }
+
                 }
 
             }
@@ -344,7 +449,6 @@ public class BankAccountActivity extends AppCompatActivity {
 
                                 Toast.makeText(BankAccountActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
                             }
-
 
                         } catch (IOException e) {
 

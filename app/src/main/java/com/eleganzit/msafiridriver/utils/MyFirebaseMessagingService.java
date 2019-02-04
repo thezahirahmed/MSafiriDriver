@@ -55,6 +55,7 @@ public class MyFirebaseMessagingService extends com.google.firebase.messaging.Fi
                     .setContentTitle(title)
                     .setSmallIcon(getNotificationIcon())
                     .setContentText(text)
+
                     .setContentTitle("MSafiri Driver")
                     .setSound(uri)
                     .setVibrate(new long[]{1000,500})

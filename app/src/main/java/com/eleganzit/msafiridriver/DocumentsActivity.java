@@ -166,7 +166,18 @@ public class DocumentsActivity extends AppCompatActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uploadDocument();
+                if(str_licence_array.size()==0)
+                {
+                    Toast.makeText(DocumentsActivity.this, "Please upload driving licence", Toast.LENGTH_SHORT).show();
+                }
+                else if(str_proof_array.size()==0)
+                {
+                    Toast.makeText(DocumentsActivity.this, "Please upload address proof", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    uploadDocument();
+                }
             }
         });
 

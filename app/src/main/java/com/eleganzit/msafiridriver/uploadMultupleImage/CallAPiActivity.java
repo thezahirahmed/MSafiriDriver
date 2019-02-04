@@ -52,7 +52,6 @@ public class CallAPiActivity extends AppCompatActivity {
                         @Override
                         public void run() {
 
-
                             try {
                                 if (finalResult.getString("status").equalsIgnoreCase("true")) {
                                     getApiResult.onSuccesResult(finalResult);
@@ -75,7 +74,6 @@ public class CallAPiActivity extends AppCompatActivity {
             }).start();
 
     }
-
 
    public void doPostWithFiles(final Activity activity, final HashMap<String, String> map,final String url, final ArrayList<String> mFiles, final String fileParamName, final ArrayList<String> mFiles2, final String fileParamName2, final GetResponse getApiResult) {
 
