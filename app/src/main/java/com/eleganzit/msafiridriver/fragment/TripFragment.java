@@ -102,6 +102,8 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
     private String lat,lng,lat2,lng2,trip_status;
     private String photo;
     private String photoPath;
+    SharedPreferences p_pref;
+    SharedPreferences.Editor p_editor;
 
     public TripFragment() {
         // Required empty public constructor
@@ -131,6 +133,8 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
         NavHomeActivity.fab.setVisibility(View.GONE);
         pref = getActivity().getSharedPreferences("mysession", MODE_PRIVATE);
         editor=pref.edit();
+        p_pref=getActivity().getSharedPreferences("passenger_pref",Context.MODE_PRIVATE);
+        p_editor=p_pref.edit();
         photo=pref.getString("photo","");
         vehicle_name=pref.getString("vehicle_name","");
         mapView= v.findViewById(R.id.map);
@@ -168,6 +172,7 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.setMessage("Please wait...");
         progressDialog.show();
+
         BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.location_green);
         Bitmap b = bitmapdraw.getBitmap();
         Bitmap smallMarker = Bitmap.createScaledBitmap(b, 60, 60, false);
@@ -191,18 +196,27 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
             public void onClick(View view) {
                 //final Dialog dialog=new Dialog(getActivity());
 
-                SharedPreferences p_pref;
-                SharedPreferences.Editor p_editor;
-                p_pref=getActivity().getSharedPreferences("passenger_pref",Context.MODE_PRIVATE);
-                p_editor=p_pref.edit();
                 p_editor.putString("trip_id",id+"");
                 p_editor.putString("trip_lat",lat+"");
                 p_editor.putString("trip_lng",lng+"");
                 p_editor.putString("trip_lat2",lat2+"");
                 p_editor.putString("trip_lng2",lng2+"");
                 p_editor.putString("trip_status",trip_status+"");
+
+                if(p_pref.getBoolean("firstTime",false))
+                {
+                    //Toast.makeText(getActivity(), p_pref.getBoolean("firstTime",false)+" already captured", Toast.LENGTH_SHORT).show();
+                    getActivity().startActivity(new Intent(getActivity(),PassengerListActivity.class).putExtra("from","trip"));
+                    Bungee.slideLeft(getActivity());
+                }
+                else
+                {
+                    //Toast.makeText(getActivity(), p_pref.getBoolean("firstTime",false)+" captured now", Toast.LENGTH_SHORT).show();
+                    p_editor.putBoolean("firstTime",true);
+
+                    CaptureMapScreen();
+                }
                 p_editor.commit();
-                CaptureMapScreen();
 
 
 /*
@@ -312,7 +326,7 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
 
             }
 
-            String filename = pref.getString("driver_id","")+""+ System.currentTimeMillis()+".png";
+            String filename = "snap"+pref.getString("driver_id","")+""+ System.currentTimeMillis()+".png";
             File file = new File(defaultFile,filename);
             if (file.exists()) {
                 file.delete();
@@ -331,14 +345,19 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
             Log.d("photoPath",photoPath);
 
             dialog.dismiss();
-            getActivity().startActivity(new Intent(getActivity(),PassengerListActivity.class).putExtra("from","trip"));
+            getActivity().startActivity(new Intent(getActivity(),PassengerListActivity.class).putExtra("from","trip").putExtra("photoPath",photoPath+""));
+
+            p_editor.putString("photoPath",""+photoPath);
+            p_editor.commit();
+
             Bungee.slideLeft(getActivity());
             //confirmTrip(id);
-            Toast.makeText(getActivity(), "Saved!!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getActivity(), "Saved!!", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             e.printStackTrace();
+            Log.d("eeeeeeeeeeeeeeeeee",e.getMessage()+"");
             dialog.dismiss();
-            Toast.makeText(getActivity(), "Failed!!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getActivity(), e.getMessage()+"   Failed!!", Toast.LENGTH_SHORT).show();
         }
     }
 

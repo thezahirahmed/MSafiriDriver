@@ -2,11 +2,14 @@ package com.eleganzit.msafiridriver;
 
 import android.animation.Animator;
 
+import com.eleganzit.msafiridriver.model.CountryData;
+import com.eleganzit.msafiridriver.model.SampleSearchModel;
 import com.eleganzit.msafiridriver.utils.CustomDateTimePicker;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -94,6 +97,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import ir.mirrajabi.searchdialog.SimpleSearchDialogCompat;
+import ir.mirrajabi.searchdialog.core.BaseSearchDialogCompat;
+import ir.mirrajabi.searchdialog.core.SearchResultListener;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import spencerstudios.com.bungeelib.Bungee;
@@ -109,7 +115,7 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
     SharedPreferences pref;
     SharedPreferences.Editor editor;
     Button pickupcontinue,pickupcontinue1,pickupcontinue2;
-    //RecyclerView tenants;
+    ProgressDialog progressDialog;
     ImageView timeline;
     LinearLayout lin1,lin2,lin4;
     NestedScrollView lin3;
@@ -140,10 +146,7 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
     private String date_is;
     public static final String inputFormat = "HH:mm";
     CustomDateTimePicker custom;
-    private Date date;
-    private Date dateCompareOne;
-    private Date dateCompareTwo;
-
+    ArrayList<SampleSearchModel> arrayList=new ArrayList<>();
     private String compareStringOne;
 
     SimpleDateFormat inputParser = new SimpleDateFormat(inputFormat, Locale.US);
@@ -256,6 +259,11 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
         editorr=sharedPreferences.edit();
         pref = getSharedPreferences("mysession", MODE_PRIVATE);
         editor=pref.edit();
+
+        progressDialog=new ProgressDialog(this);
+        progressDialog.setMessage("Please wait...");
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
         layoutBottom= findViewById(R.id.layoutBottom);
         /*YoYo.with(Techniques.SlideInRight)
                 .duration(1000)
@@ -303,6 +311,9 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
         lin1=findViewById(R.id.lin1);
         lin2=findViewById(R.id.lin2);
         lin3=findViewById(R.id.lin3);
+
+        getLocations();
+
         pickupcontinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -390,9 +401,53 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
         pickup_location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                pickup_location.setEnabled(false);
+                //pickup_location.setEnabled(false);
+
+                new SimpleSearchDialogCompat(PickupLocation.this, "Search",
+                        "Search for pickup", null, arrayList,
+                        new SearchResultListener<SampleSearchModel>() {
+                            @Override
+                            public void onSelected(BaseSearchDialogCompat dialog,
+                                                   SampleSearchModel item, int position) {
+                                pickup_location.setText(item.getTitle());
+                                lat=""+item.getLat();
+                                lng=""+item.getLng();
+
+                                Log.d("latttt",""+lat);
+                                Log.d("latttt",""+lng);
+
+                                googleMap.getUiSettings().setAllGesturesEnabled(false);
+                                googleMap.getUiSettings().setZoomGesturesEnabled(true);
+                                googleMap.getUiSettings().setAllGesturesEnabled(true);
+                                googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(PickupLocation.this,R.raw.style_json));
+
+                                LatLng loc2=new LatLng(Double.parseDouble(lat),Double.parseDouble(lng));
+                                googleMap.moveCamera(CameraUpdateFactory.newLatLng(loc2));
+
+                                BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.location_green);
+                                Bitmap b=bitmapdraw.getBitmap();
+                                Bitmap smallMarker = Bitmap.createScaledBitmap(b, 70, 70, false);
+
+                                googleMap.animateCamera(CameraUpdateFactory.zoomTo(13.0f));
+                                a = new MarkerOptions().position(loc2).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)).title("Pickup Location");
+                                if(getIntent().getStringExtra("from").equalsIgnoreCase("update"))
+                                {
+
+                                }
+                                else
+                                {
+                                    m1 =googleMap.addMarker(a);
+                                }
+                                m1.setPosition(loc2);
+                                //DrawMarker.getInstance(this).draw(googleMap, loc2, BitmapDescriptorFactory.fromBitmap(smallMarker), "Pickup Location");
+
+                                from_title=item.getTitle();
+                                from_address=item.getTitle();
+                                dialog.dismiss();
+                            }
+                        }).show();
                 //startActivityForResult(new Intent(PickupLocation.this,LocationSearch.class).putExtra("from","pickup_lin1"),1);
-                Intent intent = null;
+                /*Intent intent = null;
                 try {
                     intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN)
                             .build(PickupLocation.this);
@@ -401,7 +456,7 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
                 } catch (GooglePlayServicesNotAvailableException e) {
                     e.printStackTrace();
                 }
-                startActivityForResult(intent, 1);
+                startActivityForResult(intent, 1);*/
             }
         });
 
@@ -488,7 +543,8 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
                             }
                             Log.d("timeessss",""+new Date().getTime() +"     "+ strDate.getTime());
                             if (new Date().getTime() > strDate.getTime()) {
-                                your_date_is_outdated = "invalid";
+                                your_date_is_outdated = "Please select the future hours";
+                                Toast.makeText(PickupLocation.this, " "+your_date_is_outdated, Toast.LENGTH_SHORT).show();
                             }
                             else{
                                 your_date_is_outdated = "valid";
@@ -503,7 +559,7 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
 
                                 }
                             }
-                            Toast.makeText(PickupLocation.this, " "+your_date_is_outdated, Toast.LENGTH_SHORT).show();
+
 
 
                         pick_final_date=pick_mydate+" "+pick_mytime;
@@ -517,9 +573,40 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
         destination_location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                destination_location.setEnabled(false);
+                //destination_location.setEnabled(false);
+
+                new SimpleSearchDialogCompat(PickupLocation.this, "Search",
+                        "Search for destination", null, arrayList,
+                        new SearchResultListener<SampleSearchModel>() {
+                            @Override
+                            public void onSelected(BaseSearchDialogCompat dialog,
+                                                   SampleSearchModel item, int position) {
+                                destination_location.setText(item.getTitle());
+                                lin1.setVisibility(View.GONE);
+                                pickupcontinue.setVisibility(View.GONE);
+                                pickupcontinue1.setVisibility(View.VISIBLE);
+                                lin2.setVisibility(View.VISIBLE);
+                                timeline.setImageResource(R.drawable.wizard2);
+
+                                lat2=""+item.getLat();
+                                lng2=""+item.getLng();
+
+                                Log.d("latttt",""+lat2);
+                                Log.d("latttt",""+lng2);
+
+                                googleMap.getUiSettings().setAllGesturesEnabled(false);
+                                googleMap.getUiSettings().setZoomGesturesEnabled(true);
+                                googleMap.getUiSettings().setAllGesturesEnabled(true);
+                                googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(PickupLocation.this,R.raw.style_json));
+
+                                to_title=item.getTitle();
+                                to_address=item.getTitle();
+                                dialog.dismiss();
+                            }
+                        }).show();
+
                 //startActivityForResult(new Intent(PickupLocation.this,LocationSearch.class).putExtra("from","pickup_lin1"),2);
-                Intent intent = null;
+                /*Intent intent = null;
                 try {
                     intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN)
                             .build(PickupLocation.this);
@@ -528,7 +615,7 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
                 } catch (GooglePlayServicesNotAvailableException e) {
                     e.printStackTrace();
                 }
-                startActivityForResult(intent, 2);
+                startActivityForResult(intent, 2);*/
             }
         });
 
@@ -644,7 +731,7 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
                         }
                         else {
                             date_is="greater";
-                            Toast.makeText(PickupLocation.this, "Valid", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(PickupLocation.this, "Valid", Toast.LENGTH_SHORT).show();
                             if(selectedMinute<10)
                             {
                                 destination_time.setText(strHrsToShow+":0"+datetime.get(Calendar.MINUTE)+" "+am_pm);
@@ -708,6 +795,84 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
             }
 
     }
+
+    public void getLocations()
+    {
+        progressDialog.show();
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
+        final MyInterface myInterface = restAdapter.create(MyInterface.class);
+        myInterface.Triplocations("",new retrofit.Callback<retrofit.client.Response>() {
+            @Override
+            public void success(retrofit.client.Response response, retrofit.client.Response response2) {
+                progressDialog.dismiss();
+
+                final StringBuilder stringBuilder = new StringBuilder();
+                try {
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
+
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line);
+                    }
+                    Log.d("docsstringBuilder", "" + stringBuilder);
+                    //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
+
+                    if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
+
+                        JSONObject jsonObject = new JSONObject("" + stringBuilder);
+                        String status = jsonObject.getString("status");
+                        JSONArray jsonArray = null;
+                        if(status.equalsIgnoreCase("1"))
+                        {
+
+                            jsonArray = jsonObject.getJSONArray("data");
+                            for(int i=0;i<jsonArray.length();i++)
+                            {
+                                JSONObject jsonObject1=jsonArray.getJSONObject(i);
+
+                                String loc_id = jsonObject1.getString("id");
+                                String address = jsonObject1.getString("address");
+                                String latitude = jsonObject1.getString("latitude");
+                                String longitude = jsonObject1.getString("longitude");
+
+                                SampleSearchModel sampleSearchModel=new SampleSearchModel(address,latitude,longitude);
+
+                                arrayList.add(sampleSearchModel);
+                            }
+
+                        }
+                        else
+                        {
+
+                        }
+
+                    }
+                    else
+                    {
+
+                        Toast.makeText(PickupLocation.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                    }
+
+
+                } catch (IOException e) {
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                progressDialog.dismiss();
+
+                //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PickupLocation.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+    }
+
 
     public void getTrip()
     {

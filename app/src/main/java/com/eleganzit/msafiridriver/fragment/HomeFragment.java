@@ -83,10 +83,19 @@ public class HomeFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_home, container, false);
         NavHomeActivity.home_title.setText("Home");
         NavHomeActivity.active.setVisibility(View.VISIBLE);
-        NavHomeActivity.fab.setVisibility(View.VISIBLE);
+
+
         shimmerFrameLayout = v.findViewById(R.id.shimmerLayout);
         pref = getActivity().getSharedPreferences("mysession", MODE_PRIVATE);
         editor=pref.edit();
+        if(pref.getString("type","").equalsIgnoreCase("individual"))
+        {
+            NavHomeActivity.fab.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            NavHomeActivity.fab.setVisibility(View.GONE);
+        }
         trip_title = v.findViewById(R.id.trip_title);
         card = v.findViewById(R.id.card);
         upcoming_card = v.findViewById(R.id.upcoming_card);
@@ -321,7 +330,7 @@ public class HomeFragment extends Fragment {
                                 TripData tripData=new TripData(trip_type,id,from_title,from_lat,from_lng,from_address,to_title,to_lat,to_lng,to_address,pickup_time,destination_time,statuss,trip_price);
                                 arrayList.add(tripData);
                             }
-                            upcoming.setAdapter(new UpcomingTripAdapter(arrayList, getActivity()));
+                            upcoming.setAdapter(new UpcomingTripAdapter(pref.getString("type",""),arrayList, getActivity()));
                         }
                         else
                         {

@@ -1,8 +1,10 @@
 package com.eleganzit.msafiridriver;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -34,6 +36,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+import com.eleganzit.msafiridriver.activity.NavHomeActivity;
 import com.eleganzit.msafiridriver.adapter.UpcomingTripAdapter;
 import com.eleganzit.msafiridriver.adapter.VehicleImagesAdapter;
 import com.eleganzit.msafiridriver.model.TripData;
@@ -83,6 +86,8 @@ public class VehicleDetailsActivity extends AppCompatActivity {
     EditText vehicle_name,vehicle_type,vehicle_number,seats;
     ProgressDialog progressDialog;
     RecyclerView rc_vehicle_images,rc_number_images;
+    private String approvel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -215,27 +220,7 @@ public class VehicleDetailsActivity extends AppCompatActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(vehicle_type.getText().toString().isEmpty())
-                {
-                    vehicle_type.requestFocus();
-                    vehicle_type.setError("Please enter Vehicle Type");
-                }
-                else if(vehicle_name.getText().toString().isEmpty())
-                {
-                    vehicle_name.requestFocus();
-                    vehicle_name.setError("Please enter Vehicle Name");
-                }
-                else if(vehicle_number.getText().toString().isEmpty())
-                {
-                    vehicle_number.requestFocus();
-                    vehicle_number.setError("Please enter Number Plate");
-                }
-                else if(seats.getText().toString().isEmpty())
-                {
-                    seats.requestFocus();
-                    seats.setError("Please select Number of seats");
-                }
-                else if(str_vehicle_array.size()==0)
+                if(str_vehicle_array.size()==0)
                 {
                     Toast.makeText(VehicleDetailsActivity.this, "Please upload vehicle images", Toast.LENGTH_SHORT).show();
                 }
@@ -243,19 +228,67 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                 {
                     Toast.makeText(VehicleDetailsActivity.this, "Please upload number plate images", Toast.LENGTH_SHORT).show();
                 }
+                else if(vehicle_name.getText().toString().isEmpty())
+                {
+                    YoYo.with(Techniques.Shake)
+                            .duration(700)
+                            .repeat(0)
+                            .playOn(vehicle_name);
+                    vehicle_name.setError("Please enter vehicle name");
+                    vehicle_name.requestFocus();
+
+                }
+                else if(vehicle_type.getText().toString().isEmpty())
+                {
+                    YoYo.with(Techniques.Shake)
+                            .duration(700)
+                            .repeat(0)
+                            .playOn(vehicle_type);
+                    vehicle_type.requestFocus();
+                    vehicle_type.setError("Please enter vehicle type");
+                }
+                else if(vehicle_number.getText().toString().isEmpty())
+                {
+                    YoYo.with(Techniques.Shake)
+                            .duration(700)
+                            .repeat(0)
+                            .playOn(vehicle_number);
+                    vehicle_number.requestFocus();
+                    vehicle_number.setError("Please enter number plate");
+                }
+                else if(seats.getText().toString().isEmpty())
+                {
+                    YoYo.with(Techniques.Shake)
+                            .duration(700)
+                            .repeat(0)
+                            .playOn(seats);
+                    seats.requestFocus();
+                    seats.setError("Please select number of seats");
+                }
                 else
                 {
-                    if(data.equalsIgnoreCase("0"))
+                    /*if(data.equalsIgnoreCase("0"))
                     {
                         Log.d("whereeeeee","iffff   vehicle"+str_vehicle_array+"  numuberr "+str_num_plate_array);
                         uploadVehicle();
                     }
                     else
-                    {
+                    {*/
                         Log.d("whereeeeee","else   vehicle"+str_vehicle_array+"  numuberr "+str_num_plate_array);
+                    new AlertDialog.Builder(VehicleDetailsActivity.this).setMessage("Are you sure you want to save the changes?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    updateVehicle();
+                                }
+                            }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            onBackPressed();
+                        }
+                    }).show();
 
-                        updateVehicle();
-                    }
+                    //}
 
                 }
             }
@@ -401,13 +434,21 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     String url=vehicleData.getPhoto();
 
-                    if(Patterns.WEB_URL.matcher(url).matches())
+
+                    if(arrayList.size()==1)
                     {
-                        removePhoto(vehicleData.getPhotoId(),position);
+                        Toast.makeText(context, "Minimum 1 photo is required", Toast.LENGTH_SHORT).show();
                     }
                     else
                     {
-                        removeAt(position);
+                        if(Patterns.WEB_URL.matcher(url).matches())
+                        {
+                            removePhoto(vehicleData.getPhotoId(),position);
+                        }
+                        else
+                        {
+                            removeAt(position);
+                        }
                     }
 
                 }
@@ -553,15 +594,17 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     String url=vehicleData.getPhoto();
-
-                    if(Patterns.WEB_URL.matcher(url).matches())
+                    if(arrayList.size()==1)
                     {
-                        removePhoto(vehicleData.getPhotoId(),position);
-
+                        Toast.makeText(context, "Minimum 1 photo is required", Toast.LENGTH_SHORT).show();
                     }
-                    else
-                    {
-                        removeAt(position);
+                    else {
+                        if (Patterns.WEB_URL.matcher(url).matches()) {
+                            removePhoto(vehicleData.getPhotoId(), position);
+
+                        } else {
+                            removeAt(position);
+                        }
                     }
 
                 }
@@ -730,14 +773,19 @@ public class VehicleDetailsActivity extends AppCompatActivity {
             public void onSuccesResult(JSONObject result) throws JSONException {
 
                 String status = result.getString("status");
-                if(status.equalsIgnoreCase("success"))
+                if(status.equalsIgnoreCase("1"))
                 {
-                    editor.putString("vehicleInfo", "changed");
+                    updateApprovalStatus();
+
                     editor.putString("vehicle_name",vehicle_name.getText().toString());
                     editor.commit();
-                    Toast.makeText(VehicleDetailsActivity.this, "successfully uploaded", Toast.LENGTH_SHORT).show();
+
                 }
-                finish();
+                else
+                {
+                    Toast.makeText(VehicleDetailsActivity.this, ""+result.getString("message"), Toast.LENGTH_SHORT).show();
+                }
+
                 Log.d("messageeeeeeeeeee","succccccccessss"+status);
             }
 
@@ -746,18 +794,98 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                 progressDialog.dismiss();
                 if(message.equalsIgnoreCase("success"))
                 {
-                    editor.putString("vehicleInfo", "changed");
+                    //updateApprovalStatus();
+
                     editor.putString("vehicle_name",vehicle_name.getText().toString());
                     editor.commit();
                     Toast.makeText(VehicleDetailsActivity.this, "successfully uploaded", Toast.LENGTH_SHORT).show();
                 }
-                finish();
+                else
+                {
+                    Toast.makeText(VehicleDetailsActivity.this, ""+message, Toast.LENGTH_SHORT).show();
+                }
                 Log.d("messageeeeeeeeeee",message);
 
             }
         });
 
 
+    }
+
+    public void updateApprovalStatus()
+    {
+        progressDialog.show();
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
+        final MyInterface myInterface = restAdapter.create(MyInterface.class);
+        myInterface.updateApprovalStatus(pref.getString("driver_id",""), "0",
+                new retrofit.Callback<retrofit.client.Response>() {
+                    @Override
+                    public void success(retrofit.client.Response response, retrofit.client.Response response2) {
+                        progressDialog.dismiss();
+                        final StringBuilder stringBuilder = new StringBuilder();
+                        try {
+                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
+
+                            String line;
+                            while ((line = bufferedReader.readLine()) != null) {
+                                stringBuilder.append(line);
+                            }
+                            Log.d("stringBuilder", "" + stringBuilder);
+                            //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
+
+                            if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
+
+                                JSONObject jsonObject = new JSONObject("" + stringBuilder);
+                                String status = jsonObject.getString("status");
+                                JSONArray jsonArray = null;
+                                if(status.equalsIgnoreCase("1"))
+                                {
+
+                                    jsonArray = jsonObject.getJSONArray("data");
+                                    for(int i=0;i<jsonArray.length();i++)
+                                    {
+                                        JSONObject jsonObject1=jsonArray.getJSONObject(i);
+
+                                        approvel=jsonObject1.getString("approvel");
+                                        editor.putString("approvel", approvel);
+                                        editor.commit();
+
+
+                                        Toast.makeText(VehicleDetailsActivity.this, "Please submit your profile for approval", Toast.LENGTH_LONG).show();
+                                        finish();
+                                    }
+
+                                }
+                                else
+                                {
+                                    Toast.makeText(VehicleDetailsActivity.this, ""+jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+                                }
+
+                                // Toast.makeText(RegistrationActivity.this, "scc "+Token, Toast.LENGTH_SHORT).show();
+
+                            }
+                            else
+                            {
+                                Toast.makeText(VehicleDetailsActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                            }
+
+
+                        } catch (IOException e) {
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        progressDialog.dismiss();
+                        //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(VehicleDetailsActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+
+                    }
+                });
     }
 
     public void getVehicledata()
@@ -814,7 +942,11 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                                 seatss = jsonObject1.getString("seats");
 
                                 VehicleData vehicleData=new VehicleData(photo_id,photo_type,photo);
-                                if(photo_type.equalsIgnoreCase("photo"))
+                                if(photo_type.equalsIgnoreCase(""))
+                                {
+
+                                }
+                                else if(photo_type.equalsIgnoreCase("photo"))
                                 {
                                     arrayList.add(vehicleData);
                                     sarrayList.add(photo);

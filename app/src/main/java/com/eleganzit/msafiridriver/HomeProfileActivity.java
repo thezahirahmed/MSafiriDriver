@@ -7,14 +7,11 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.RequiresApi;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.widget.CircularProgressDrawable;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
@@ -28,7 +25,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.eleganzit.msafiridriver.activity.NavHomeActivity;
 import com.eleganzit.msafiridriver.utils.MyInterface;
 import com.hzn.lib.EasyTransition;
@@ -46,7 +42,7 @@ import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import spencerstudios.com.bungeelib.Bungee;
 
-public class ProfileActivity extends AppCompatActivity {
+public class HomeProfileActivity extends AppCompatActivity {
 
     SharedPreferences pref;
     SharedPreferences.Editor editor;
@@ -56,14 +52,13 @@ public class ProfileActivity extends AppCompatActivity {
     LinearLayout submit;
     TableRow personal_info,bank,docs,vehicle_detail;
     private String photo="";
-    public static ProfileActivity profileActivity;
+    public static HomeProfileActivity profileActivity;
     RelativeLayout profile;
     ProgressDialog progressDialog;
     private String country_id="";
     private String profile_status,docs_status,vechicle_status,bank_status,approvel;
     CircularProgressDrawable circularProgressDrawable;
     String from;
-    ImageView personal_info_status,docs_info_status,vehicle_info_status,bank_info_status;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -83,17 +78,9 @@ public class ProfileActivity extends AppCompatActivity {
         submit=findViewById(R.id.submit);
         txtsubmit=findViewById(R.id.txtsubmit);
         personal_info=findViewById(R.id.personal_info);
-        personal_info_status=findViewById(R.id.personal_info_status);
-        personal_info_status.setVisibility(View.VISIBLE);
         bank=findViewById(R.id.bank);
-        bank_info_status=findViewById(R.id.bank_info_status);
-        bank_info_status.setVisibility(View.VISIBLE);
         docs=findViewById(R.id.docs);
-        docs_info_status=findViewById(R.id.docs_info_status);
-        docs_info_status.setVisibility(View.VISIBLE);
         vehicle_detail=findViewById(R.id.vehicle_detail);
-        vehicle_info_status=findViewById(R.id.vehicle_info_status);
-        vehicle_info_status.setVisibility(View.VISIBLE);
         progressDialog=new ProgressDialog(this);
         progressDialog.setMessage("Please wait...");
         progressDialog.setCancelable(false);
@@ -107,7 +94,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         final EasyTransitionOptions options =
                 EasyTransitionOptions.makeTransitionOptions(
-                        ProfileActivity.this,
+                        HomeProfileActivity.this,
                         profile);
         long transitionDuration = 600;
         EasyTransition.enter(
@@ -133,33 +120,28 @@ public class ProfileActivity extends AppCompatActivity {
                 {
                     if(photo.equalsIgnoreCase("") || photo.equalsIgnoreCase("http://itechgaints.com/M-safiri-API/user_uploads/no_profile.png"))
                     {
-                        Toast.makeText(ProfileActivity.this, "Please select profile picture", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(HomeProfileActivity.this, "Please select profile picture", Toast.LENGTH_SHORT).show();
                     }
                     else if(profile_status.equalsIgnoreCase("0"))
                     {
-                        Toast.makeText(ProfileActivity.this, "Please fill up personal information", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(HomeProfileActivity.this, "Please fill up personal information", Toast.LENGTH_SHORT).show();
                     }
                     else if(docs_status.equalsIgnoreCase("0"))
                     {
-                        Toast.makeText(ProfileActivity.this, "Please upload documents", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(HomeProfileActivity.this, "Please upload documents", Toast.LENGTH_SHORT).show();
                     }
                     else if(pref.getString("type","").equalsIgnoreCase("individual"))
                     {
                         if(vechicle_status.equalsIgnoreCase("0"))
                         {
-                            Toast.makeText(ProfileActivity.this, "Please fill up vehicle details", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(HomeProfileActivity.this, "Please fill up vehicle details", Toast.LENGTH_SHORT).show();
                         }
                         else if(bank_status.equalsIgnoreCase("0"))
                         {
-                            Toast.makeText(ProfileActivity.this, "Please fill up bank details", Toast.LENGTH_SHORT).show();
-                        }
-                        else if (profile_status.equalsIgnoreCase("1") && docs_status.equalsIgnoreCase("1") && bank_status.equalsIgnoreCase("1") && vechicle_status.equalsIgnoreCase("1"))
-                        {
-                            //call api
-                            updateApprovalStatus();
+                            Toast.makeText(HomeProfileActivity.this, "Please fill up bank details", Toast.LENGTH_SHORT).show();
                         }
                     }
-                    else if (profile_status.equalsIgnoreCase("1") && docs_status.equalsIgnoreCase("1"))
+                    else if (profile_status.equalsIgnoreCase("1") && docs_status.equalsIgnoreCase("1") && bank_status.equalsIgnoreCase("1") && vechicle_status.equalsIgnoreCase("1"))
                     {
                         //call api
                         updateApprovalStatus();
@@ -171,9 +153,7 @@ public class ProfileActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    startActivity(new Intent(ProfileActivity.this, NavHomeActivity.class));
-                    overridePendingTransition(android.R.anim.slide_in_left,android.R.anim.slide_in_left);
-                    finish();
+                    onBackPressed();
                 }
 
             }
@@ -181,24 +161,24 @@ public class ProfileActivity extends AppCompatActivity {
         personal_info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ProfileActivity.this,PersonalInfoActivity.class));
-                Bungee.slideLeft(ProfileActivity.this);
+                startActivity(new Intent(HomeProfileActivity.this,PersonalInfoActivity.class));
+                Bungee.slideLeft(HomeProfileActivity.this);
 
             }
         });
         bank.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ProfileActivity.this,BankAccountActivity.class));
-                Bungee.slideLeft(ProfileActivity.this);
+                startActivity(new Intent(HomeProfileActivity.this,BankAccountActivity.class));
+                Bungee.slideLeft(HomeProfileActivity.this);
 
             }
         });
         docs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ProfileActivity.this,DocumentsActivity.class));
-                Bungee.slideLeft(ProfileActivity.this);
+                startActivity(new Intent(HomeProfileActivity.this,DocumentsActivity.class));
+                Bungee.slideLeft(HomeProfileActivity.this);
 
 
 
@@ -207,8 +187,8 @@ public class ProfileActivity extends AppCompatActivity {
         vehicle_detail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ProfileActivity.this,VehicleDetailsActivity.class));
-                Bungee.slideLeft(ProfileActivity.this);
+                startActivity(new Intent(HomeProfileActivity.this,VehicleDetailsActivity.class));
+                Bungee.slideLeft(HomeProfileActivity.this);
 
             }
         });
@@ -216,7 +196,7 @@ public class ProfileActivity extends AppCompatActivity {
         profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EasyTransition.startActivity(new Intent(ProfileActivity.this,ChoosePictureActivity.class), options);
+                EasyTransition.startActivity(new Intent(HomeProfileActivity.this,ChoosePictureActivity.class), options);
                 //startActivity(new Intent(ProfileActivity.this,ChoosePictureActivity.class),options.toBundle());
                 //overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
             }
@@ -265,21 +245,20 @@ public class ProfileActivity extends AppCompatActivity {
 
                                         if(approvel.equalsIgnoreCase("yes"))
                                         {
-                                            startActivity(new Intent(ProfileActivity.this, NavHomeActivity.class));
+                                            startActivity(new Intent(HomeProfileActivity.this, NavHomeActivity.class));
                                             overridePendingTransition(android.R.anim.slide_in_left,android.R.anim.slide_in_left);
                                             finish();
                                         }
                                         else
                                         {
-                                            txtsubmit.setText("Waiting for Approval");
-                                            Toast.makeText(ProfileActivity.this, "Profile has been submitted for approval", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(HomeProfileActivity.this, "Profile has been submitted for approval", Toast.LENGTH_SHORT).show();
                                         }
                                     }
 
                                 }
                                 else
                                 {
-                                    Toast.makeText(ProfileActivity.this, ""+jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+
                                 }
 
                                 // Toast.makeText(RegistrationActivity.this, "scc "+Token, Toast.LENGTH_SHORT).show();
@@ -288,7 +267,7 @@ public class ProfileActivity extends AppCompatActivity {
                             else
                             {
 
-                                Toast.makeText(ProfileActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(HomeProfileActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
                             }
 
 
@@ -304,7 +283,7 @@ public class ProfileActivity extends AppCompatActivity {
                     public void failure(RetrofitError error) {
                         progressDialog.dismiss();
                         //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                        Toast.makeText(ProfileActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(HomeProfileActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
 
                     }
                 });
@@ -368,7 +347,7 @@ public class ProfileActivity extends AppCompatActivity {
                             }
                             Log.d("photooooooo","photo "+photo);
                             Glide
-                                    .with(ProfileActivity.this)
+                                    .with(HomeProfileActivity.this)
                                     .load(photo)
                                     .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop()).into(profile_pic);
                         }
@@ -383,7 +362,7 @@ public class ProfileActivity extends AppCompatActivity {
                     else
                     {
 
-                        Toast.makeText(ProfileActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(HomeProfileActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
                     }
 
 
@@ -399,7 +378,7 @@ public class ProfileActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(ProfileActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(HomeProfileActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -472,13 +451,13 @@ public class ProfileActivity extends AppCompatActivity {
                             else
                             {
                                     Log.d("whereis","docs");
-                                    txtsubmit.setText("Go to Home");
+                                    txtsubmit.setText("Go back");
                             }
 
                         }
                         else
                         {
-                            Toast.makeText(ProfileActivity.this, ""+message, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(HomeProfileActivity.this, ""+message, Toast.LENGTH_SHORT).show();
                             submit.setEnabled(false);
                             submit.setClickable(false);
                         }
@@ -489,7 +468,7 @@ public class ProfileActivity extends AppCompatActivity {
                     else
                     {
 
-                        Toast.makeText(ProfileActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(HomeProfileActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
                     }
 
 
@@ -505,125 +484,12 @@ public class ProfileActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(ProfileActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(HomeProfileActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
 
             }
         });
     }
 
-    public void getEmptyFields()
-    {
-        progressDialog.show();
-        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
-        final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.getEmptyFields(pref.getString("driver_id",""), new retrofit.Callback<retrofit.client.Response>() {
-            @Override
-            public void success(retrofit.client.Response response, retrofit.client.Response response2) {
-                progressDialog.dismiss();
-                getApprovalStatus();
-                final StringBuilder stringBuilder = new StringBuilder();
-                try {
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
-
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        stringBuilder.append(line);
-                    }
-                    Log.d("dddddddstringBuilder", "" + stringBuilder);
-                    //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
-
-                    if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
-
-                        JSONObject jsonObject = new JSONObject("" + stringBuilder);
-                        String status = jsonObject.getString("status");
-                        String message = jsonObject.getString("message");
-                        JSONArray jsonArray = null;
-                        if(status.equalsIgnoreCase("1"))
-                        {
-                            jsonArray = jsonObject.getJSONArray("data");
-                            for(int i=0;i<jsonArray.length();i++)
-                            {
-                                JSONObject jsonObject1=jsonArray.getJSONObject(i);
-
-                                profile_status = jsonObject1.getString("profile_status");
-                                editor.putString("profile_status", profile_status);
-                                bank_status = jsonObject1.getString("bank_status");
-                                editor.putString("bank_status", bank_status);
-                                vechicle_status = jsonObject1.getString("vechicle_status");
-                                editor.putString("vechicle_status", vechicle_status);
-                                docs_status = jsonObject1.getString("docs_status");
-                                editor.putString("docs_status", docs_status);
-
-                                editor.commit();
-                            }
-                            Log.d("photooooooo","photo "+photo);
-
-                            if(profile_status.equalsIgnoreCase("0"))
-                            {
-                                personal_info_status.setImageResource(R.mipmap.red_alert);
-                            }
-                            else
-                            {
-                                personal_info_status.setImageResource(R.mipmap.green_check);
-                            }
-                            if(docs_status.equalsIgnoreCase("0"))
-                            {
-                                docs_info_status.setImageResource(R.mipmap.red_alert);
-                            }
-                            else
-                            {
-                                docs_info_status.setImageResource(R.mipmap.green_check);
-                            }
-                            if(vechicle_status.equalsIgnoreCase("0"))
-                            {
-                                vehicle_info_status.setImageResource(R.mipmap.red_alert);
-                            }
-                            else
-                            {
-                                vehicle_info_status.setImageResource(R.mipmap.green_check);
-                            }
-                            if(bank_status.equalsIgnoreCase("0"))
-                            {
-                                bank_info_status.setImageResource(R.mipmap.red_alert);
-                            }
-                            else
-                            {
-                                bank_info_status.setImageResource(R.mipmap.green_check);
-                            }
-
-                        }
-                        else
-                        {
-                            Toast.makeText(ProfileActivity.this, ""+message, Toast.LENGTH_SHORT).show();
-                        }
-
-                        // Toast.makeText(RegistrationActivity.this, "scc "+Token, Toast.LENGTH_SHORT).show();
-
-                    }
-                    else
-                    {
-
-                        Toast.makeText(ProfileActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
-                    }
-
-
-                } catch (IOException e) {
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                progressDialog.dismiss();
-                //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(ProfileActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
-
-            }
-        });
-    }
 
     @Override
     protected void onResume() {
@@ -631,18 +497,19 @@ public class ProfileActivity extends AppCompatActivity {
         pref = getSharedPreferences("mysession", MODE_PRIVATE);
         editor=pref.edit();
 
-        if(pref.getString("type","").equalsIgnoreCase("company"))
-        {
-            vehicle_detail.setVisibility(View.GONE);
-            bank.setVisibility(View.GONE);
-        }
-        else
+        if(pref.getString("type","").equalsIgnoreCase("individual"))
         {
             vehicle_detail.setVisibility(View.VISIBLE);
             bank.setVisibility(View.VISIBLE);
         }
+        else
+        {
+            vehicle_detail.setVisibility(View.GONE);
+            bank.setVisibility(View.GONE);
+        }
 
-        getEmptyFields();
+        getApprovalStatus();
+
 
         name.setText(pref.getString("fullname",""));
 
@@ -651,22 +518,20 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
-        if(from.equalsIgnoreCase("splash") || from.equalsIgnoreCase("signin") || from.equalsIgnoreCase("welcome"))
-        {
-
-                new AlertDialog.Builder(ProfileActivity.this).setTitle("Logout").setMessage("You will be logged out!")
+            if(approvel.equalsIgnoreCase("0") || approvel.equalsIgnoreCase("no")) {
+                new AlertDialog.Builder(HomeProfileActivity.this).setTitle("Logout").setMessage("You will be logged out!")
                         .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 editor.clear();
                                 editor.commit();
                                 editor.apply();
-                                Intent intent = new Intent(ProfileActivity.this, SignInActivity.class).putExtra("from","account");
+                                Intent intent = new Intent(HomeProfileActivity.this, SignInActivity.class).putExtra("from", "account");
                                 startActivity(intent);
-                                Bungee.slideLeft(ProfileActivity.this);
+                                Bungee.slideLeft(HomeProfileActivity.this);
 
                                 finish();
-                                Bungee.slideRight(ProfileActivity.this);
+                                Bungee.slideRight(HomeProfileActivity.this);
 
 
                             }
@@ -676,10 +541,8 @@ public class ProfileActivity extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 }).show();
-
-
-        }
-        else
+            }
+            else
         {
             super.onBackPressed();
             Bungee.slideRight(this);

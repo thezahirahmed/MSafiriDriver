@@ -80,7 +80,9 @@ public class PersonalInfoActivity extends AppCompatActivity {
             }
         });
         edfullname=findViewById(R.id.edfullname);
+        edfullname.setText(pref.getString("fullname",""));
         edemail=findViewById(R.id.edemail);
+        edemail.setText(pref.getString("email",""));
         edphone=findViewById(R.id.edphone);
         edpassword=findViewById(R.id.edpassword);
         edpassword.setText(pref.getString("password",""));
@@ -247,7 +249,7 @@ public class PersonalInfoActivity extends AppCompatActivity {
                     edfullname.setError("Please enter full name");
                     edfullname.requestFocus();
                 }
-                else if(edemail.getText().toString().isEmpty())
+                /*else if(edemail.getText().toString().isEmpty())
                 {
                     YoYo.with(Techniques.Shake)
                             .duration(700)
@@ -255,7 +257,7 @@ public class PersonalInfoActivity extends AppCompatActivity {
                             .playOn(edemail);
                     edemail.setError("Email cannot be empty");
                     edemail.requestFocus();
-                }
+                }*/
                 else if(edphone.getText().toString().isEmpty())
                 {
                     YoYo.with(Techniques.Shake)
@@ -356,7 +358,7 @@ public class PersonalInfoActivity extends AppCompatActivity {
         progressDialog.show();
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.getDriverdata(pref.getString("driver_id",""), new retrofit.Callback<retrofit.client.Response>() {
+        myInterface.getPersonalInfo(pref.getString("driver_id",""), new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                 progressDialog.dismiss();
@@ -383,10 +385,8 @@ public class PersonalInfoActivity extends AppCompatActivity {
                             {
                                 JSONObject jsonObject1=jsonArray.getJSONObject(i);
 
-                                String fullname = jsonObject1.getString("fullname");
-                                editor.putString("fullname", fullname);
-                                String email = jsonObject1.getString("email");
-                                editor.putString("email", email);
+                                String photo = jsonObject1.getString("photo");
+                                editor.putString("photo", photo);
                                 String street = jsonObject1.getString("street");
                                 editor.putString("street", street);
                                 String city = jsonObject1.getString("city");
@@ -414,9 +414,7 @@ public class PersonalInfoActivity extends AppCompatActivity {
                                     female.setChecked(true);
                                 }
                                 editor.commit();
-                                Log.d("dataa",fullname+" "+email);
-                                edfullname.setText(fullname);
-                                edemail.setText(pref.getString("email",""));
+
                                 edphone.setText(mobile_number);
                                 edbirth.setText(dob);
                                 edstreet.setText(street);

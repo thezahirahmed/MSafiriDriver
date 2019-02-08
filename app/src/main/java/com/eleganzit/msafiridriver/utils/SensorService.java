@@ -233,7 +233,12 @@ public class SensorService extends Service implements GoogleApiClient.Connection
     @Override
     public void onDestroy() {
         super.onDestroy();
+        intent_action=pref.getString("action","");
         Log.i("wherreeeeeee", "sensor service ondestroy!  "+intent_action);
+        /*if(intent_action.equalsIgnoreCase("stop"))
+        {
+            mWindowManager.removeViewImmediate(mChatHeadView);
+        }*/
         Intent broadcastIntent = new Intent(this, MyLocationReceiver.class);
         sendBroadcast(broadcastIntent);
         stoptimertask();
@@ -291,7 +296,7 @@ public class SensorService extends Service implements GoogleApiClient.Connection
                         MyLocation myLocation = new MyLocation();
                         myLocation.getLocation(SensorService.this, locationResult);
 
-                        Toast.makeText(SensorService.this, "location update", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(SensorService.this, "location update", Toast.LENGTH_SHORT).show();
                     }
                 },10000);
             }

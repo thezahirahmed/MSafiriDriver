@@ -1,6 +1,7 @@
 package com.eleganzit.msafiridriver.fragment;
 
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -14,6 +15,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -32,6 +34,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.eleganzit.msafiridriver.ChoosePictureActivity;
+import com.eleganzit.msafiridriver.HomeProfileActivity;
 import com.eleganzit.msafiridriver.ProfileActivity;
 import com.eleganzit.msafiridriver.R;
 import com.eleganzit.msafiridriver.SignInActivity;
@@ -43,6 +46,13 @@ import com.eleganzit.msafiridriver.activity.Utility;
 import com.eleganzit.msafiridriver.uploadImage.CallAPiActivity;
 import com.eleganzit.msafiridriver.uploadImage.GetResponse;
 import com.hzn.lib.EasyTransitionOptions;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.DexterError;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.PermissionRequestErrorListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,6 +64,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import spencerstudios.com.bungeelib.Bungee;
@@ -178,7 +189,7 @@ public class AccountFragment extends Fragment {
         acsetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), ProfileActivity.class).putExtra("from","account");
+                Intent intent = new Intent(getActivity(), HomeProfileActivity.class).putExtra("from","account");
 
                 startActivity(intent);
                 Bungee.slideLeft(getActivity());
@@ -246,7 +257,41 @@ public class AccountFragment extends Fragment {
             public void onClick(View view) {
                 i = 0;
                 //selectImage();
-                openImageChooser();
+                Dexter.withActivity(getActivity())
+                        .withPermissions(
+                                Manifest.permission.READ_EXTERNAL_STORAGE,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                Manifest.permission.CAMERA)
+                        .withListener(new MultiplePermissionsListener() {
+                            @Override
+                            public void onPermissionsChecked(MultiplePermissionsReport report) {
+                                // check if all permissions are granted
+                                if (report.areAllPermissionsGranted()) {
+
+                                    openImageChooser();
+
+                                }
+
+                                // check for permanent denial of any permission
+                                if (report.isAnyPermissionPermanentlyDenied()) {
+                                    // show alert dialog navigating to Settings
+                                    showSettingsDialog();
+                                }
+                            }
+
+                            @Override
+                            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                                token.continuePermissionRequest();
+                            }
+                        }).
+                        withErrorListener(new PermissionRequestErrorListener() {
+                            @Override
+                            public void onError(DexterError error) {
+                                Toast.makeText(getActivity(), "Error occurred! ", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .onSameThread()
+                        .check();
 
             }
         });
@@ -256,9 +301,71 @@ public class AccountFragment extends Fragment {
             public void onClick(View view)
             {
                 i = 1;
-                openImageChooser2();
+                Dexter.withActivity(getActivity())
+                        .withPermissions(
+                                Manifest.permission.READ_EXTERNAL_STORAGE,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                Manifest.permission.CAMERA)
+                        .withListener(new MultiplePermissionsListener() {
+                            @Override
+                            public void onPermissionsChecked(MultiplePermissionsReport report) {
+                                // check if all permissions are granted
+                                if (report.areAllPermissionsGranted()) {
+
+                                    openImageChooser2();
+
+                                }
+
+                                // check for permanent denial of any permission
+                                if (report.isAnyPermissionPermanentlyDenied()) {
+                                    // show alert dialog navigating to Settings
+                                    showSettingsDialog();
+                                }
+                            }
+
+                            @Override
+                            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                                token.continuePermissionRequest();
+                            }
+                        }).
+                        withErrorListener(new PermissionRequestErrorListener() {
+                            @Override
+                            public void onError(DexterError error) {
+                                Toast.makeText(getActivity(), "Error occurred! ", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .onSameThread()
+                        .check();
+
             }
         });
+    }
+
+    private void showSettingsDialog() {
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+        builder.setTitle("Need Permissions");
+        builder.setMessage("This app needs permission to use this feature. You can grant them in app settings.");
+        builder.setPositiveButton("GOTO SETTINGS", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                openSettings();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+
+    }
+    private void openSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
+        intent.setData(uri);
+        startActivityForResult(intent, 101);
     }
 
     void openImageChooser() {

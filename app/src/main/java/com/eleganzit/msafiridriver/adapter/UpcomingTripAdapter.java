@@ -337,9 +337,11 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
     ArrayList<TripData> arrayList;
     Context context;
     ProgressDialog progressDialog;
-    public UpcomingTripAdapter(ArrayList<TripData> arrayList, Context context) {
+    String type;
+    public UpcomingTripAdapter(String type,ArrayList<TripData> arrayList, Context context) {
         this.arrayList = arrayList;
         this.context = context;
+        this.type = type;
         if(context!=null)
         {
             progressDialog=new ProgressDialog(context);
@@ -364,9 +366,10 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
 
+        final TripData tripData=arrayList.get(position);
 
-            final TripData tripData=arrayList.get(position);
-        if(tripData.getTrip_type().equalsIgnoreCase("past")) {
+        if(tripData.getTrip_type().equalsIgnoreCase("past") || type.equalsIgnoreCase("company"))
+        {
             holder.more.setVisibility(View.GONE);
         }
         else
@@ -405,6 +408,17 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
 
                     Intent intent = new Intent(context, TripDetail.class).putExtra("id",tripData.getId()+"");
                     context.startActivity(intent);
+                    Bungee.slideLeft(context);
+                }
+                else if(type.equalsIgnoreCase("company"))
+                {
+                    SharedPreferences p_pref;
+                    SharedPreferences.Editor p_editor;
+                    p_pref=context.getSharedPreferences("passenger_pref",Context.MODE_PRIVATE);
+                    p_editor=p_pref.edit();
+                    p_editor.putString("trip_id",tripData.getId()+"");
+                    p_editor.commit();
+                    context.startActivity(new Intent(context,PassengerListActivity.class).putExtra("from","home"));
                     Bungee.slideLeft(context);
                 }
                 else

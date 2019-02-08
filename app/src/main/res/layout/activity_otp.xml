@@ -30,25 +30,39 @@
         <com.eleganzit.msafiridriver.utils.RobotoMediumTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/signuptxt"
-            android:gravity="center"
-            android:textStyle="bold"
-            android:textSize="12sp"
-            android:textColor="#0D3A61"
             android:layout_gravity="center"
-            />
+            android:gravity="center"
+            android:text="Enter the otp that you received \nthrough email"
+            android:textColor="#0D3A61"
+            android:textSize="12sp"
+            android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/fp_email"
-            android:layout_width="match_parent"
+        <com.chaos.view.PinView
+            android:id="@+id/firstPinView"
+            style="@style/PinWidget.PinView"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:cursorVisible="true"
             android:layout_marginTop="25dp"
-            android:background="@drawable/edittext_shadow"
-            android:drawableLeft="@mipmap/envelope"
-            android:drawablePadding="2dp"
-            android:ems="10"
-            android:hint="@string/hintemail"
-            android:textColorHint="#3B3B3B" />
+            android:hint="0000"
+            android:layout_gravity="center_horizontal"
+            android:inputType="number"
+            android:itemBackground="#ffffff"
+            android:padding="5dp"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:cursorColor="@color/colorButton"
+            app:cursorWidth="2dp"
+            app:hideLineWhenFilled="true"
+            app:itemCount="4"
+            app:itemHeight="48dp"
+            app:itemRadius="4dp"
+            app:itemSpacing="4dp"
+            app:itemWidth="48dp"
+            app:lineColor="@color/colorButton"
+            app:lineWidth="2dp"
+            app:viewType="rectangle" />
 
 
         <LinearLayout
@@ -63,6 +77,7 @@
             android:textColor="@android:color/white" >
 
             <com.eleganzit.msafiridriver.utils.RobotoMediumTextView
+                android:id="@+id/submit"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="Submit"
@@ -79,6 +94,7 @@
             android:layout_width="match_parent"
             android:orientation="horizontal"
             android:layout_gravity="center"
+            android:visibility="gone"
             android:gravity="center"
             android:layout_height="wrap_content">
             <com.eleganzit.msafiridriver.utils.RobotoMediumTextView
@@ -102,8 +118,6 @@
                 android:textColor="#0D3A61"
                 android:layout_gravity="center"
                 />
-
-
 
         </LinearLayout>
     </LinearLayout>

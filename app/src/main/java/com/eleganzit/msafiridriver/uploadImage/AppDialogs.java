@@ -26,7 +26,7 @@ public class AppDialogs {
             if (pDialog == null) {
                 pDialog = new ProgressDialog(mContext);
             }
-            pDialog.setMessage("Uploading...");
+            pDialog.setMessage("Please wait...");
             pDialog.setCancelable(false);
             pDialog.show();
         }
@@ -66,9 +66,5 @@ public class AppDialogs {
             alertDialog.show();
         }
     }
-
-
-
-
 
 }

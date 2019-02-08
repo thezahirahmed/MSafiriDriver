@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -58,6 +59,8 @@ public class SignInActivity extends AppCompatActivity {
     LinearLayout progressBar;
     SharedPreferences pref;
     SharedPreferences.Editor editor;
+    String devicetoken;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,7 +117,7 @@ public class SignInActivity extends AppCompatActivity {
                 {
                     Log.d("Rrrrrmytokenn", Token);
 
-                    String devicetoken=Token;
+                    devicetoken=Token;
                     StrictMode.ThreadPolicy threadPolicy = new StrictMode.ThreadPolicy.Builder().build();
                     StrictMode.setThreadPolicy(threadPolicy);
                     try {
@@ -130,7 +133,9 @@ public class SignInActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    Toast.makeText(SignInActivity.this, "No token", Toast.LENGTH_SHORT).show();
+                    Looper.prepare();
+                    Log.d("No token","No token");
+                    //Toast.makeText(SignInActivity.this, "No token", Toast.LENGTH_SHORT).show();
                 }
                 try {
                     Thread.sleep(1000);
@@ -332,9 +337,10 @@ public class SignInActivity extends AppCompatActivity {
     public void loginDriver()
     {
 
+        Log.d("devicetoken",devicetoken);
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.loginDriver(email.getText().toString(), password.getText().toString(), new retrofit.Callback<retrofit.client.Response>() {
+        myInterface.loginDriver(email.getText().toString(), password.getText().toString(),devicetoken, new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                 logo.startAnimation(flyout1);
@@ -373,6 +379,8 @@ public class SignInActivity extends AppCompatActivity {
                                 //editor.putString("vehicle_name", vehicle_name);
                                 String email = jsonObject1.getString("email");
                                 editor.putString("email", email);
+                                String type = jsonObject1.getString("type");
+                                editor.putString("type", type);
                                 //String photo = jsonObject1.getString("photo");
                                 //String vehicle_profile = jsonObject1.getString("vehicle_profile");
                                 //editor.putString("photo", photo);

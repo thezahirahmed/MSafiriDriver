@@ -1,7 +1,9 @@
 package com.eleganzit.msafiridriver;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -24,6 +26,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.eleganzit.msafiridriver.activity.NavHomeActivity;
 import com.eleganzit.msafiridriver.adapter.VehicleImagesAdapter;
 import com.eleganzit.msafiridriver.model.VehicleData;
 import com.eleganzit.msafiridriver.utils.MyInterface;
@@ -67,6 +70,7 @@ public class DocumentsActivity extends AppCompatActivity {
 
     private String id;
     private String hasDocs="no";
+    private String approvel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,7 +180,19 @@ public class DocumentsActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    uploadDocument();
+                    new AlertDialog.Builder(DocumentsActivity.this).setMessage("Are you sure you want to save the changes?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    uploadDocument();
+                                }
+                            }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            onBackPressed();
+                        }
+                    }).show();
+
                 }
             }
         });
@@ -294,7 +310,11 @@ public class DocumentsActivity extends AppCompatActivity {
                                 photo_id = jsonObject1.getString("id");
 
                                 VehicleData vehicleData=new VehicleData(photo_id,photo_type,photo);
-                                if(photo_type.equalsIgnoreCase("licence"))
+                                if(photo_type.equalsIgnoreCase(""))
+                                {
+
+                                }
+                                else if(photo_type.equalsIgnoreCase("licence"))
                                 {
                                     arrayList.add(vehicleData);
                                     sarrayList.add(photo);
@@ -372,23 +392,35 @@ public class DocumentsActivity extends AppCompatActivity {
 
             final VehicleData vehicleData=arrayList.get(position);
 
-            Glide
-                    .with(context)
-                    .load(arrayList2.get(position))
-                    .apply(new RequestOptions().centerCrop().placeholder(circularProgressDrawable)).into(holder.image);
+            Toast.makeText(context, ""+arrayList.get(position).getPhoto_type(), Toast.LENGTH_SHORT).show();
+
+            if(arrayList.get(position).getPhoto_type().equalsIgnoreCase(""))
+            {
+
+            }
+            else
+            {
+                Glide
+                        .with(context)
+                        .load(arrayList2.get(position))
+                        .apply(new RequestOptions().centerCrop().placeholder(circularProgressDrawable)).into(holder.image);
+            }
 
             holder.remove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     String url=vehicleData.getPhoto();
 
-                    if(Patterns.WEB_URL.matcher(url).matches())
-                    {
-                        removePhoto(vehicleData.getPhotoId(),position);
+                    if(arrayList.size()==1) {
+                        Toast.makeText(context, "Minimum 1 document is required", Toast.LENGTH_SHORT).show();
                     }
                     else
                     {
-                        removeAt(position);
+                        if (Patterns.WEB_URL.matcher(url).matches()) {
+                            removePhoto(vehicleData.getPhotoId(), position);
+                        } else {
+                            removeAt(position);
+                        }
                     }
 
                 }
@@ -520,27 +552,40 @@ public class DocumentsActivity extends AppCompatActivity {
         public void onBindViewHolder(MyViewHolder holder, final int position) {
 
             final VehicleData vehicleData=arrayList.get(position);
+
             Log.d("removeeeeeed","pele "+model_proof_array.size()+"   "+arrayList.size());
 
             Log.d("ssimageeeeee","eeeee "+vehicleData.getPhoto());
-            Glide
-                    .with(context)
-                    .load(arrayList2.get(position))
-                    .apply(new RequestOptions().centerCrop().placeholder(circularProgressDrawable)).into(holder.image);
 
+            if(arrayList.get(position).getPhoto_type().equalsIgnoreCase(""))
+            {
+                //Toast.makeText(context, "if  prooof "+arrayList.get(position).getPhoto_type(), Toast.LENGTH_SHORT).show();
+            }
+            else
+                {
+                  //  Toast.makeText(context, "else  prooof "+arrayList.get(position).getPhoto_type(), Toast.LENGTH_SHORT).show();
+                Glide
+                        .with(context)
+                        .load(arrayList2.get(position))
+                        .apply(new RequestOptions().centerCrop().placeholder(circularProgressDrawable)).into(holder.image);
+            }
             holder.remove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     String url=vehicleData.getPhoto();
 
-                    if(Patterns.WEB_URL.matcher(url).matches())
-                    {
-                        removePhoto(vehicleData.getPhotoId(),position);
+                    if(arrayList.size()==1) {
+                        Toast.makeText(context, "Minimum 1 document is required", Toast.LENGTH_SHORT).show();
 
                     }
                     else
                     {
-                        removeAt(position);
+                        if (Patterns.WEB_URL.matcher(url).matches()) {
+                            removePhoto(vehicleData.getPhotoId(), position);
+
+                        } else {
+                            removeAt(position);
+                        }
                     }
 
                 }
@@ -685,24 +730,29 @@ public class DocumentsActivity extends AppCompatActivity {
 
             @Override
             public void onSuccesResult(JSONObject result) throws JSONException {
-
+                progressDialog.dismiss();
                 String status = result.getString("status");
-                if(status.equalsIgnoreCase("success"))
+                if(status.equalsIgnoreCase("1"))
                 {
-                    if(hasDocs.equalsIgnoreCase("yes"))
-                    {
-                        editor.putString("documentsInfo", "changed");
-                        editor.commit();
-                    }
+
+                    /*if(hasDocs.equalsIgnoreCase("yes"))
+                    {*/
+                        /*editor.putString("documentsInfo", "changed");
+                        editor.commit();*/
+                        updateApprovalStatus();
+                    /*}
                     else
                     {
-                        editor.putString("documentsInfo", "filled");
-                        editor.commit();
+                        *//*editor.putString("documentsInfo", "filled");
+                        editor.commit();*//*
                     }
-
-                    Toast.makeText(DocumentsActivity.this, "successfully uploaded", Toast.LENGTH_SHORT).show();
+*/
                 }
-                finish();
+                else
+                {
+                    Toast.makeText(DocumentsActivity.this, ""+result.getString("message"), Toast.LENGTH_SHORT).show();
+                }
+
                 Log.d("messageeeeeeeeeee","succccccccessss"+status);
             }
 
@@ -711,19 +761,12 @@ public class DocumentsActivity extends AppCompatActivity {
                 progressDialog.dismiss();
                 if(message.equalsIgnoreCase("success"))
                 {
-                    if(hasDocs.equalsIgnoreCase("yes"))
-                    {
-                        editor.putString("documentsInfo", "changed");
-                        editor.commit();
-                    }
-                    else
-                    {
-                        editor.putString("documentsInfo", "filled");
-                        editor.commit();
-                    }
-                    Toast.makeText(DocumentsActivity.this, "successfully uploaded", Toast.LENGTH_SHORT).show();
+                    updateApprovalStatus();
                 }
-                finish();
+                else
+                {
+                    Toast.makeText(DocumentsActivity.this, ""+message, Toast.LENGTH_SHORT).show();
+                }
                 Log.d("messageeeeeeeeeee",message);
 
             }
@@ -732,64 +775,79 @@ public class DocumentsActivity extends AppCompatActivity {
 
     }
 
-    private void updateDocument() {
-
+    public void updateApprovalStatus()
+    {
         progressDialog.show();
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
+        final MyInterface myInterface = restAdapter.create(MyInterface.class);
+        myInterface.updateApprovalStatus(pref.getString("driver_id",""), "0",
+                new retrofit.Callback<retrofit.client.Response>() {
+                    @Override
+                    public void success(retrofit.client.Response response, retrofit.client.Response response2) {
+                        progressDialog.dismiss();
+                        final StringBuilder stringBuilder = new StringBuilder();
+                        try {
+                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
 
-        Iterator<String> iterator = str_licence_array.iterator();
-        while(iterator.hasNext())
-        {
-            String value = iterator.next();
-            if (value.contains("http"))
-            {
-                iterator.remove();
-                // break;
-            }
-        }
+                            String line;
+                            while ((line = bufferedReader.readLine()) != null) {
+                                stringBuilder.append(line);
+                            }
+                            Log.d("stringBuilder", "" + stringBuilder);
+                            //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
 
-        Iterator<String> iterator2 = str_proof_array.iterator();
-        while(iterator2.hasNext())
-        {
-            String value = iterator2.next();
-            if (value.contains("http"))
-            {
-                iterator2.remove();
-                // break;
-            }
-        }
+                            if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
 
-        HashMap<String, String> map = new HashMap<>();
-        Log.d("iddddd",pref.getString("driver_id", ""));
-        map.put("driver_id", pref.getString("driver_id", ""));
+                                JSONObject jsonObject = new JSONObject("" + stringBuilder);
+                                String status = jsonObject.getString("status");
+                                JSONArray jsonArray = null;
+                                if(status.equalsIgnoreCase("1"))
+                                {
 
-        callAPiActivity.doPostWithFiles(DocumentsActivity.this, map, URLUPDATEUSER2, str_licence_array, "driving_livence[]", str_proof_array, "address_proof[]", new com.eleganzit.msafiridriver.uploadMultupleImage.GetResponse() {
+                                    jsonArray = jsonObject.getJSONArray("data");
+                                    for(int i=0;i<jsonArray.length();i++)
+                                    {
+                                        JSONObject jsonObject1=jsonArray.getJSONObject(i);
 
-            @Override
-            public void onSuccesResult(JSONObject result) throws JSONException {
+                                        approvel=jsonObject1.getString("approvel");
+                                        editor.putString("approvel", approvel);
+                                        editor.commit();
 
-                String status = result.getString("status");
-                if(status.equalsIgnoreCase("success"))
-                {
-                    Toast.makeText(DocumentsActivity.this, "successfully uploaded", Toast.LENGTH_SHORT).show();
-                }
-                finish();
-                Log.d("messageeeeeeeeeee","succccccccessss"+status);
-            }
+                                        Toast.makeText(DocumentsActivity.this, "Please submit your profile for approval", Toast.LENGTH_LONG).show();
+                                        finish();
+                                    }
 
-            @Override
-            public void onFailureResult(String message) {
-                progressDialog.dismiss();
-                if(message.equalsIgnoreCase("success"))
-                {
-                    Toast.makeText(DocumentsActivity.this, "successfully uploaded", Toast.LENGTH_SHORT).show();
-                }
-                finish();
-                Log.d("messageeeeeeeeeee",message);
+                                }
+                                else
+                                {
+                                    Toast.makeText(DocumentsActivity.this, ""+jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+                                }
 
-            }
-        });
+                                // Toast.makeText(RegistrationActivity.this, "scc "+Token, Toast.LENGTH_SHORT).show();
+
+                            }
+                            else
+                            {
+                                Toast.makeText(DocumentsActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                            }
 
 
+                        } catch (IOException e) {
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        progressDialog.dismiss();
+                        //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DocumentsActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+
+                    }
+                });
     }
 
     private void onSelectFromGalleryResult(Intent data,ImageView profile_pic) {

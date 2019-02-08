@@ -88,7 +88,7 @@ public class CallAPiActivity extends AppCompatActivity {
                         Log.e("Result Do Get", result.toString() + "");
 
                         try {
-                            if (result.getString("status").equalsIgnoreCase("true")) {
+                            if (result.getString("status").equalsIgnoreCase("1")) {
                                 getApiResult.onSuccesResult(result);
                             } else {
 
@@ -123,7 +123,7 @@ public void doPost(final Activity activity, final HashMap<String, String> map,fi
 
 
                         try {
-                            if (result.getString("status").equalsIgnoreCase("true")) {
+                            if (result.getString("status").equalsIgnoreCase("1")) {
                                 getApiResult.onSuccesResult(result);
                             } else {
 

@@ -154,10 +154,11 @@
 
                 <TableRow
                     android:id="@+id/personal_info"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
+                    android:minHeight="50dp"
                     android:background="?android:selectableItemBackground"
                     android:layout_height="wrap_content"
-                    android:padding="15dp"
+                    android:paddingLeft="15dp"
                     >
                     <TextView
                         android:layout_width="1dp"
@@ -174,7 +175,17 @@
                         android:layout_marginLeft="18dp"
                         android:text="Personal Information"
                         android:textColor="#000"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content" />
+
+                    <ImageView
+                        android:id="@+id/personal_info_status"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:visibility="gone"
+                        android:layout_gravity="right"
+                        android:src="@mipmap/red_alert"/>
+
                 </TableRow>
                <!-- <View
                     android:layout_width="match_parent"
@@ -183,9 +194,10 @@
                 <TableRow
                     android:id="@+id/docs"
                     android:background="?android:selectableItemBackground"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
+                    android:minHeight="50dp"
                     android:layout_height="wrap_content"
-                    android:padding="15dp"
+                    android:paddingLeft="15dp"
                     ><TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -201,7 +213,15 @@
                         android:layout_marginLeft="18dp"
                         android:text="Documents"
                         android:textColor="#000"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content" />
+
+                    <ImageView
+                        android:id="@+id/docs_info_status"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:layout_width="wrap_content"
+                        android:src="@mipmap/red_alert"/>
                 </TableRow>
                <!-- <View
                     android:layout_width="match_parent"
@@ -209,10 +229,11 @@
                     android:background="#ececec"></View>-->
                 <TableRow
                     android:id="@+id/vehicle_detail"
+                    android:minHeight="50dp"
                     android:background="?android:selectableItemBackground"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="15dp"
+                    android:paddingLeft="15dp"
                     ><TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -225,10 +246,18 @@
                         android:layout_width="match_parent"
                         android:layout_gravity="left|center"
                         android:textSize="16sp"
-                        android:layout_marginLeft="20dp"
+                        android:layout_weight="1"
+                        android:layout_marginLeft="18dp"
                         android:text="Vehicle Details"
                         android:textColor="#000"
                         android:layout_height="wrap_content" />
+
+                    <ImageView
+                        android:id="@+id/vehicle_info_status"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:visibility="gone"
+                        android:src="@mipmap/red_alert"/>
                 </TableRow>
                <!-- <View
                     android:layout_width="match_parent"
@@ -237,10 +266,12 @@
                 <TableRow
                     android:id="@+id/bank"
                     android:background="?android:selectableItemBackground"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
+                    android:minHeight="50dp"
                     android:layout_height="wrap_content"
-                    android:padding="15dp"
-                    ><TextView
+                    android:paddingLeft="15dp">
+
+                    <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="4"
@@ -252,10 +283,18 @@
                         android:layout_width="match_parent"
                         android:layout_gravity="left|center"
                         android:textSize="16sp"
-                        android:layout_marginLeft="20dp"
+                        android:layout_marginLeft="18dp"
                         android:text="Bank Account"
+                        android:layout_weight="1"
                         android:textColor="#000"
                         android:layout_height="wrap_content" />
+
+                    <ImageView
+                        android:id="@+id/bank_info_status"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:layout_width="wrap_content"
+                        android:src="@mipmap/red_alert"/>
                 </TableRow>
                <!-- <View
                     android:layout_width="match_parent"
@@ -279,7 +318,6 @@
                     android:id="@+id/txtsubmit"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="Submit for Approval"
                     android:padding="12dp"
                     android:textStyle="bold"
                     android:layout_gravity="center"

@@ -261,10 +261,12 @@ public class RegisterationActivity extends AppCompatActivity {
                                 String email = jsonObject1.getString("email");
                                 editor.putString("email", email);
                                 editor.putString("password", password.getText().toString());
-                                editor.putString("personalInfo", "empty");
+                                String type = jsonObject1.getString("type");
+                                editor.putString("type", type);
+                               /* editor.putString("personalInfo", "empty");
                                 editor.putString("documentsInfo", "empty");
                                 editor.putString("vehicleInfo", "empty");
-                                editor.putString("bankInfo", "empty");
+                                editor.putString("bankInfo", "empty");*/
                                 editor.putString("approvel", "0");
                                 editor.commit();
                             }

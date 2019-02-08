@@ -1,16 +1,21 @@
 package com.eleganzit.msafiridriver.activity;
 
+import android.Manifest;
 import android.animation.Animator;
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
@@ -25,6 +30,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
@@ -46,10 +52,12 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.eleganzit.msafiridriver.HomeProfileActivity;
 import com.eleganzit.msafiridriver.PersonalInfoActivity;
 import com.eleganzit.msafiridriver.PickupLocation;
 import com.eleganzit.msafiridriver.ProfileActivity;
 import com.eleganzit.msafiridriver.R;
+import com.eleganzit.msafiridriver.SplashActivity;
 import com.eleganzit.msafiridriver.fragment.AccountFragment;
 import com.eleganzit.msafiridriver.fragment.HistoryFragment;
 import com.eleganzit.msafiridriver.fragment.HomeFragment;
@@ -59,6 +67,13 @@ import com.eleganzit.msafiridriver.utils.MovableFloatingActionButton;
 import com.eleganzit.msafiridriver.utils.MyInterface;
 import com.eleganzit.msafiridriver.utils.SensorService;
 import com.infideap.drawerbehavior.AdvanceDrawerLayout;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.DexterError;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.PermissionRequestErrorListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -68,6 +83,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit.RestAdapter;
@@ -97,7 +113,8 @@ public class NavHomeActivity  extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityCompat.requestPermissions(NavHomeActivity.this,new String[]{android.Manifest.permission.CAMERA},1);
+        ActivityCompat.requestPermissions(NavHomeActivity.this,new String[]{android.Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
+
         setContentView(R.layout.activity_main2);
 
         home_title=findViewById(R.id.home_title);
@@ -126,6 +143,7 @@ public class NavHomeActivity  extends AppCompatActivity
             }
         });
         fab=findViewById(R.id.fab);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar_progress=findViewById(R.id.toolbar_progress);
@@ -207,7 +225,7 @@ public class NavHomeActivity  extends AppCompatActivity
         headerview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(NavHomeActivity.this,ProfileActivity.class).putExtra("from","home");
+                Intent intent=new Intent(NavHomeActivity.this,HomeProfileActivity.class).putExtra("from","home");
                 ActivityOptionsCompat options = ActivityOptionsCompat.
                         makeSceneTransitionAnimation(NavHomeActivity.this,
                                     profile_image,
@@ -387,7 +405,7 @@ public class NavHomeActivity  extends AppCompatActivity
 
                             }
                             Glide
-                                    .with(NavHomeActivity.this)
+                                    .with(getApplicationContext())
                                     .load(photo)
                                     .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop())
                                     .into(profile_image);
@@ -472,11 +490,49 @@ public class NavHomeActivity  extends AppCompatActivity
                     .replace(R.id.container, homeFrag,"TAG")
                     .commit();
         } else if (id == R.id.nav_trip) {
-            TripFragment tripFrag= new TripFragment();
-            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
-                    .replace(R.id.container, tripFrag,"TAG")
-                    .addToBackStack(null)
-                    .commit();
+
+            Dexter.withActivity(this)
+                    .withPermissions(
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.CAMERA,
+                            Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.ACCESS_FINE_LOCATION)
+                    .withListener(new MultiplePermissionsListener() {
+                        @Override
+                        public void onPermissionsChecked(MultiplePermissionsReport report) {
+                            // check if all permissions are granted
+                            if (report.areAllPermissionsGranted()) {
+
+                                TripFragment tripFrag= new TripFragment();
+                                getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
+                                        .replace(R.id.container, tripFrag,"TAG")
+                                        .addToBackStack(null)
+                                        .commit();
+
+                            }
+
+                            // check for permanent denial of any permission
+                            if (report.isAnyPermissionPermanentlyDenied()) {
+                                // show alert dialog navigating to Settings
+                                showSettingsDialog();
+                            }
+                        }
+
+                        @Override
+                        public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                            token.continuePermissionRequest();
+                        }
+                    }).
+                    withErrorListener(new PermissionRequestErrorListener() {
+                        @Override
+                        public void onError(DexterError error) {
+                            Toast.makeText(NavHomeActivity.this, "Error occurred! ", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .onSameThread()
+                    .check();
+
 
         } else if (id == R.id.nav_history) {
             HistoryFragment historyFrag= new HistoryFragment();
@@ -496,6 +552,33 @@ public class NavHomeActivity  extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
 
         return true;
+    }
+
+    private void showSettingsDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Need Permissions");
+        builder.setMessage("This app needs permission to use this feature. You can grant them in app settings.");
+        builder.setPositiveButton("GOTO SETTINGS", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                openSettings();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+
+    }
+    private void openSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getPackageName(), null);
+        intent.setData(uri);
+        startActivityForResult(intent, 101);
     }
 }
 

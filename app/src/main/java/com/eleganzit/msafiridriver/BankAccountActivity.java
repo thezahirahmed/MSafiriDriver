@@ -50,6 +50,7 @@ public class BankAccountActivity extends AppCompatActivity {
     SharedPreferences pref;
     SharedPreferences.Editor editor;
     private String data="0";
+    private String approvel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -245,20 +246,109 @@ public class BankAccountActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    if(data.equalsIgnoreCase("0"))
+                    /*if(data.equalsIgnoreCase("0"))
                     {
                         addBankdetails();
                     }
                     else
-                    {
-                        updateBankdetails();
-                    }
+                    {*/
+                    new AlertDialog.Builder(BankAccountActivity.this).setMessage("Are you sure you want to save the changes?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    updateBankdetails();
+                                }
+                            }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            onBackPressed();
+                        }
+                    }).show();
+
+
+                    //}
 
                 }
 
             }
         });
 
+    }
+
+    public void updateApprovalStatus()
+    {
+        progressDialog.show();
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
+        final MyInterface myInterface = restAdapter.create(MyInterface.class);
+        myInterface.updateApprovalStatus(pref.getString("driver_id",""), "0",
+                new retrofit.Callback<retrofit.client.Response>() {
+                    @Override
+                    public void success(retrofit.client.Response response, retrofit.client.Response response2) {
+                        progressDialog.dismiss();
+                        final StringBuilder stringBuilder = new StringBuilder();
+                        try {
+                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
+
+                            String line;
+                            while ((line = bufferedReader.readLine()) != null) {
+                                stringBuilder.append(line);
+                            }
+                            Log.d("stringBuilder", "" + stringBuilder);
+                            //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
+
+                            if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
+
+                                JSONObject jsonObject = new JSONObject("" + stringBuilder);
+                                String status = jsonObject.getString("status");
+                                JSONArray jsonArray = null;
+                                if(status.equalsIgnoreCase("1"))
+                                {
+
+                                    jsonArray = jsonObject.getJSONArray("data");
+                                    for(int i=0;i<jsonArray.length();i++)
+                                    {
+                                        JSONObject jsonObject1=jsonArray.getJSONObject(i);
+
+                                        approvel=jsonObject1.getString("approvel");
+                                        editor.putString("approvel", approvel);
+                                        editor.commit();
+
+
+                                        Toast.makeText(BankAccountActivity.this, "Please submit your profile for approval", Toast.LENGTH_LONG).show();
+                                        finish();
+                                    }
+
+                                }
+                                else
+                                {
+                                    Toast.makeText(BankAccountActivity.this, ""+jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+                                }
+
+                                // Toast.makeText(RegistrationActivity.this, "scc "+Token, Toast.LENGTH_SHORT).show();
+
+                            }
+                            else
+                            {
+                                Toast.makeText(BankAccountActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                            }
+
+
+                        } catch (IOException e) {
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        progressDialog.dismiss();
+                        //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(BankAccountActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+
+                    }
+                });
     }
 
     public void getBankdetails()
@@ -524,11 +614,9 @@ public class BankAccountActivity extends AppCompatActivity {
                                         String gender = jsonObject1.getString("gender");
                                         editor.putString("gender", gender);
                                         editor.commit();*/
-                                        editor.putString("bankInfo","changed");
-                                        editor.commit();
+                                        updateApprovalStatus();
                                     }
-                                    Toast.makeText(BankAccountActivity.this, "Successfully updated!", Toast.LENGTH_SHORT).show();
-                                    finish();
+
                                 }
                                 else
                                 {

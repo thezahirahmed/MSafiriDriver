@@ -28,6 +28,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,6 +68,7 @@ import spencerstudios.com.bungeelib.Bungee;
 public class PassengerListActivity extends AppCompatActivity {
 
 
+    RelativeLayout top;
     RecyclerView passengers;
     ProgressBar progress;
     TextView no_passenger;
@@ -85,6 +87,8 @@ public class PassengerListActivity extends AppCompatActivity {
     private static final int CODE_DRAW_OVER_OTHER_APP_PERMISSION = 2084;
     ArrayList<String> userslist=new ArrayList<>();
     private String from;
+    private String photoPath;
+    CheckBox select_allcheck;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,11 +114,16 @@ public class PassengerListActivity extends AppCompatActivity {
             }
         });
 
+        photoPath=p_pref.getString("photoPath","");
+        Log.d("photoPathPP",""+photoPath);
+
+        top=findViewById(R.id.top);
         passengers=findViewById(R.id.passengers);
         trip_text=findViewById(R.id.trip_text);
         start=findViewById(R.id.start);
         progress=findViewById(R.id.progress);
         no_passenger=findViewById(R.id.no_passenger);
+        select_allcheck=findViewById(R.id.select_allcheck);
 
         progressDialog=new ProgressDialog(this);
         progressDialog.setCancelable(false);
@@ -155,6 +164,11 @@ public class PassengerListActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        if(select_allcheck.isChecked())
+        {
+            select_allcheck.setChecked(false);
+        }
+
         trip_id=p_pref.getString("trip_id","");
         trip_lat=p_pref.getString("trip_lat","");
         trip_lng=p_pref.getString("trip_lng","");
@@ -163,16 +177,19 @@ public class PassengerListActivity extends AppCompatActivity {
         trip_status=p_pref.getString("trip_status","");
         if(trip_status.equalsIgnoreCase("ongoing"))
         {
+            //Toast.makeText(PassengerListActivity.this, ""+trip_status, Toast.LENGTH_SHORT).show();
             trip_text.setText("End Trip");
             passengers.setVisibility(View.GONE);
+            top.setVisibility(View.GONE);
         }
         else
         {
+            top.setVisibility(View.VISIBLE);
+            //Toast.makeText(PassengerListActivity.this, ""+trip_status, Toast.LENGTH_SHORT).show();
             trip_text.setText("Start Trip");
         }
 
         from=getIntent().getStringExtra("from");
-
         getPassengers();
     }
 
@@ -224,7 +241,7 @@ public class PassengerListActivity extends AppCompatActivity {
                         JSONArray jsonArray = null;
                         if(status.equalsIgnoreCase("1"))
                         {
-                            updateTripStatus(tstatus,holder);
+                            updateActiveStatus(tstatus,holder);
                             jsonArray = jsonObject.getJSONArray("data");
                             for(int i=0;i<jsonArray.length();i++)
                             {
@@ -261,7 +278,7 @@ public class PassengerListActivity extends AppCompatActivity {
         });
     }
 
-    public void updateTripStatus(String tstatus, final PassengerAdapter.MyViewHolder holder)
+    public void updateActiveStatus(String tstatus, final PassengerAdapter.MyViewHolder holder)
     {
         if(tstatus.equalsIgnoreCase("active"))
         {
@@ -273,7 +290,7 @@ public class PassengerListActivity extends AppCompatActivity {
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
 
-        myInterface.updateTripStatus(trip_id, tstatus, new retrofit.Callback<retrofit.client.Response>() {
+        myInterface.updateTripStatus(trip_id, tstatus, photoPath,new retrofit.Callback<retrofit.client.Response>() {
                     @Override
                     public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                         progressDialog.dismiss();
@@ -367,7 +384,7 @@ public class PassengerListActivity extends AppCompatActivity {
                                 }
                                 else
                                 {
-                                    Toast.makeText(PassengerListActivity.this, "Trip already exist", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(PassengerListActivity.this, ""+message, Toast.LENGTH_SHORT).show();
                                 }
 
                             }
@@ -393,7 +410,249 @@ public class PassengerListActivity extends AppCompatActivity {
                 });
     }
 
+    public void updateDeactiveStatus(String tstatus, final PassengerAdapter.MyViewHolder holder)
+    {
+        if(tstatus.equalsIgnoreCase("active"))
+        {
+            tstatus="ongoing";
+        }
+        final String finalTstatus = tstatus;
+
+        progressDialog.show();
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
+        final MyInterface myInterface = restAdapter.create(MyInterface.class);
+
+        myInterface.updateTripStatus(trip_id, tstatus,new retrofit.Callback<retrofit.client.Response>() {
+            @Override
+            public void success(retrofit.client.Response response, retrofit.client.Response response2) {
+                progressDialog.dismiss();
+                final StringBuilder stringBuilder = new StringBuilder();
+                try {
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
+
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line);
+                    }
+                    Log.d("trrrrstringBuilder", "" + stringBuilder);
+                    //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
+
+                    if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
+
+                        JSONObject jsonObject = new JSONObject("" + stringBuilder);
+                        String status = jsonObject.getString("status");
+                        String message = jsonObject.getString("message");
+                        JSONArray jsonArray = null;
+                        if(status.equalsIgnoreCase("1"))
+                        {
+                            if(finalTstatus.equalsIgnoreCase("ongoing"))
+                            {
+                                holder.select_radioButton.setVisibility(View.GONE);
+                                trip_text.setText("End Trip");
+                                p_editor.putString("trip_status","ongoing");
+                                p_editor.commit();
+
+                                if (!isMyServiceRunning(mSensorService.getClass())) {
+                                    editor.putString("action","start");
+                                    editor.putString("dest_lat",trip_lat2);
+                                    editor.putString("dest_lng",trip_lng2);
+                                    editor.commit();
+                                    mServiceIntent = new Intent(PassengerListActivity.this, mSensorService.getClass()).putExtra("click","first");
+                                    //Check if the application has draw over other apps permission or not?
+                                    //This permission is by default available for API<23. But for API > 23
+                                    //you have to ask for the permission in runtime.
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(PassengerListActivity.this)) {
+
+                                        //If the draw over permission is not available open the settings screen
+                                        //to grant the permission.
+                                        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                                Uri.parse("package:" + getPackageName()));
+                                        startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION);
+                                    } else {
+                                        startService(mServiceIntent);
+
+                                    }
+
+
+                                }
+
+                                if(!isGoogleMapsInstalled())
+                                {
+                                    //Toast.makeText(PassengerListActivity.this, "not installed or is disabled", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                                            Uri.parse("http://maps.google.com/maps/dir/"+trip_lat+","+trip_lng+"/"+trip_lat2+","+trip_lng2));//Uri.parse("http://maps.google.com/maps?saddr="+trip_lat+","+trip_lng+"&daddr="+trip_lat2+","+trip_lng2)
+                                    startActivity(intent);
+                                    finish();
+                                }
+                                else
+                                {
+                                    //Toast.makeText(PassengerListActivity.this, "installed", Toast.LENGTH_SHORT).show();
+
+                                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                                            Uri.parse("google.navigation:q="+trip_lat2+","+trip_lng2));//Uri.parse("http://maps.google.com/maps?saddr="+trip_lat+","+trip_lng+"&daddr="+trip_lat2+","+trip_lng2)
+                                    startActivity(intent);
+                                    finish();
+                                }
+
+                            }
+                            else
+                            {
+                                if (isMyServiceRunning(mSensorService.getClass())) {
+                                    editor.putString("action","stop");
+                                    editor.commit();
+                                    mServiceIntent = new Intent(PassengerListActivity.this, mSensorService.getClass()).putExtra("click","second");
+                                    stopService(mServiceIntent);
+                                }
+                                Intent intent=new Intent(PassengerListActivity.this,NavHomeActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                                //finish();
+                            }
+
+                            jsonArray = jsonObject.getJSONArray("data");
+                            for(int i=0;i<jsonArray.length();i++)
+                            {
+                                JSONObject jsonObject1=jsonArray.getJSONObject(i);
+                                //String sfrom_date=jsonObject1.getString("datetime");
+                            }
+
+                        }
+                        else
+                        {
+                            Toast.makeText(PassengerListActivity.this, "Trip already exist", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                    else
+                    {
+                        Toast.makeText(PassengerListActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                    }
+
+                } catch (IOException e) {
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                progressDialog.dismiss();
+                //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PassengerListActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     public void getPassengers()
+    {
+        progress.setVisibility(View.VISIBLE);
+        top.setVisibility(View.GONE);
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
+        final MyInterface myInterface = restAdapter.create(MyInterface.class);
+        myInterface.getPassengers(trip_id, new retrofit.Callback<retrofit.client.Response>() {
+            @Override
+            public void success(retrofit.client.Response response, retrofit.client.Response response2) {
+                ArrayList<PassengerData> arrayList = new ArrayList<>();
+                progress.setVisibility(View.GONE);
+
+                final StringBuilder stringBuilder = new StringBuilder();
+                try {
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
+
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line);
+                    }
+                    Log.d("ppppppppstringBuilder", "" + stringBuilder);
+                    //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
+
+                    if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
+
+                        JSONObject jsonObject = new JSONObject("" + stringBuilder);
+                        String status = jsonObject.getString("status");
+                        JSONArray jsonArray = null;
+                        if(status.equalsIgnoreCase("1"))
+                        {
+                            if(trip_status.equalsIgnoreCase("ongoing"))
+                            {
+                                top.setVisibility(View.GONE);
+                            }
+                            else
+                            {
+                                top.setVisibility(View.VISIBLE);
+                            }
+
+                            passengers.setVisibility(View.VISIBLE);
+                            if(from.equalsIgnoreCase("home"))
+                            {
+                                start.setVisibility(View.GONE);
+                            }
+                            else
+                            {
+                                start.setVisibility(View.VISIBLE);
+                            }
+
+                            jsonArray = jsonObject.getJSONArray("data");
+                            for(int i=0;i<jsonArray.length();i++)
+                            {
+                                JSONObject jsonObject1=jsonArray.getJSONObject(i);
+
+                                String id = jsonObject1.getString("id");
+                                String user_id = jsonObject1.getString("user_id");
+                                String rating = jsonObject1.getString("rating");
+                                String rstatus = jsonObject1.getString("status");
+                                String fname = jsonObject1.getString("fname");
+                                String lname = jsonObject1.getString("lname");
+                                String photo = jsonObject1.getString("photo");
+
+                                PassengerData passengerData=new PassengerData(id,user_id,rating,rstatus,fname,lname,photo);
+                                arrayList.add(passengerData);
+                            }
+                            passengers.setAdapter(new PassengerAdapter(arrayList,PassengerListActivity.this));
+                        }
+                        else
+                        {
+
+                            no_passenger.setVisibility(View.VISIBLE);
+
+                            passengers.setVisibility(View.GONE);
+                            start.setVisibility(View.GONE);
+
+                        }
+
+                        // Toast.makeText(RegistrationActivity.this, "scc "+Token, Toast.LENGTH_SHORT).show();
+
+                    }
+                    else
+                    {
+
+                        Toast.makeText(PassengerListActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                    }
+
+
+                } catch (IOException e) {
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                progress.setVisibility(View.GONE);
+
+                //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PassengerListActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.d("errorrrr",""+error.getMessage());
+
+            }
+        });
+    }
+
+    public void getOnBoardPassengers()
     {
         progress.setVisibility(View.VISIBLE);
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
@@ -412,7 +671,7 @@ public class PassengerListActivity extends AppCompatActivity {
                     while ((line = bufferedReader.readLine()) != null) {
                         stringBuilder.append(line);
                     }
-                    Log.d("stringBuilder", "" + stringBuilder);
+                    Log.d("ppppppppstringBuilder", "" + stringBuilder);
                     //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
 
                     if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
@@ -494,6 +753,7 @@ public class PassengerListActivity extends AppCompatActivity {
     {
         ArrayList<PassengerData> arrayList;
         Context context;
+        boolean isSelectedAll;
 
         public PassengerAdapter(ArrayList<PassengerData> arrayList, Context context)
         {
@@ -521,10 +781,28 @@ public class PassengerListActivity extends AppCompatActivity {
 
             holder.p_name.setText(passengerData.getFname()+" "+passengerData.getLname());
 
-            if(trip_status.equalsIgnoreCase("ongoing"))
+            select_allcheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                    if(isChecked)
+                    {
+                        selectAll(true);
+                    }
+                    else
+                    {
+                        selectAll(false);
+                    }
+                }
+            });
+            if (!isSelectedAll) holder.select_radioButton.setChecked(false);
+            else holder.select_radioButton.setChecked(true);
+
+            if(trip_status.equalsIgnoreCase("ongoing") || from.equalsIgnoreCase("update") || from.equalsIgnoreCase("home"))
             {
                 holder.select_radioButton.setVisibility(View.GONE);
             }
+
+            int total_passengers=Integer.parseInt(passengerData.getId());
 
             holder.select_radioButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -532,10 +810,12 @@ public class PassengerListActivity extends AppCompatActivity {
                     if(isChecked)
                     {
                         userslist.add(passengerData.getUser_id());
+                        //Toast.makeText(context, "added "+passengerData.getFname()+" "+passengerData.getLname()+" passengers", Toast.LENGTH_SHORT).show();
                     }
                     else
                     {
-                        userslist.remove(position);
+                        userslist.remove(passengerData.getUser_id());
+                        //Toast.makeText(context, "removed "+passengerData.getFname()+" "+passengerData.getLname()+" passengers", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -571,13 +851,21 @@ public class PassengerListActivity extends AppCompatActivity {
 
                     if(trip_text.getText().toString().equalsIgnoreCase("end trip"))
                     {
-                        updateTripStatus("deactive",null);
+                        updateDeactiveStatus("deactive",null);
+                        p_editor.putBoolean("firstTime",false);
+                        p_editor.commit();
                     }
 
 
                 }
             });
 
+        }
+
+        public void selectAll(boolean status){
+            Log.e("onClickSelectAll","yes");
+            isSelectedAll=status;
+            notifyDataSetChanged();
         }
 
         @Override
@@ -626,10 +914,10 @@ public class PassengerListActivity extends AppCompatActivity {
                 Toast.makeText(PassengerListActivity.this, "Permission granted", Toast.LENGTH_SHORT).show();
             } else { //Permission is not available
                 Toast.makeText(this,
-                        "Draw over other app permission not available. Closing the application",
-                        Toast.LENGTH_SHORT).show();
+                        "Please allow the Draw over other app permission.",
+                        Toast.LENGTH_LONG).show();
 
-                finish();
+                //finish();
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

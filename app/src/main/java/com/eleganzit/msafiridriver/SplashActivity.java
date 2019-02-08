@@ -38,7 +38,6 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bungee.slideLeft(this);
-        ActivityCompat.requestPermissions(SplashActivity.this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},1);
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -145,7 +144,7 @@ public class SplashActivity extends AppCompatActivity {
     {
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.loginDriver(pref.getString("email",""), pref.getString("password",""), new retrofit.Callback<retrofit.client.Response>() {
+        myInterface.loginDriver(pref.getString("email",""), pref.getString("password",""),"" ,new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                 final StringBuilder stringBuilder = new StringBuilder();

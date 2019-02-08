@@ -9,9 +9,9 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-    <uses-permission android:name="android.permission.INTERNAL_SYSTEM_WINDOW"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.INTERNAL_SYSTEM_WINDOW" />
 
     <uses-feature android:name="android.hardware.camera" />
 
@@ -27,6 +27,7 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
+
         <service android:name=".utils.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -37,6 +38,7 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
+
         <activity
             android:name=".SplashActivity"
             android:screenOrientation="portrait">
@@ -45,12 +47,14 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-        <receiver android:name=".utils.MyLocationReceiver"
+
+        <receiver
+            android:name=".utils.MyLocationReceiver"
             android:enabled="true"
             android:exported="true"
-            android:label="RestartServiceWhenStopped"/>
+            android:label="RestartServiceWhenStopped" />
+
         <service
             android:name=".utils.SensorService"
             android:enabled="true" />
@@ -122,7 +126,16 @@
             android:excludeFromRecents="true"
             android:label=""
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.PassengerListActivity"
+        <activity
+            android:name=".activity.PassengerListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".HomeProfileActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".OTPActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ResetPasswordActivity"
             android:screenOrientation="portrait" />
     </application>
 

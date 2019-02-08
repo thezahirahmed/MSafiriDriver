@@ -35,7 +35,22 @@ public interface MyInterface
     @retrofit.http.POST("/driverLogin")
     public void loginDriver(@retrofit.http.Field("email") String email,
                             @retrofit.http.Field("password") String password,
+                            @retrofit.http.Field("device_token") String device_token,
                             Callback<Response> callback
+    );
+
+    @retrofit.http.FormUrlEncoded
+    @retrofit.http.POST("/driverSentcode")
+    public void driverSentcode(@retrofit.http.Field("email") String email ,
+                               @retrofit.http.Field("sentcode") String sentcode,
+                               Callback<Response> callback
+    );
+
+    @retrofit.http.FormUrlEncoded
+    @retrofit.http.POST("/driverResetpassword")
+    public void driverResetpassword(@retrofit.http.Field("driver_id") String driver_id,
+                               @retrofit.http.Field("password") String password,
+                               Callback<Response> callback
     );
 
     @retrofit.http.FormUrlEncoded
@@ -54,6 +69,12 @@ public interface MyInterface
     @retrofit.http.POST("/driverApprovel")
     public void getApprovalStatus(@retrofit.http.Field("email") String email,
                                 Callback<Response> callback
+    );
+
+    @retrofit.http.FormUrlEncoded
+    @retrofit.http.POST("/allApprovelStatus")
+    public void getEmptyFields(@retrofit.http.Field("driver_id") String driver_id,
+                                  Callback<Response> callback
     );
 
     @retrofit.http.FormUrlEncoded
@@ -175,6 +196,14 @@ public interface MyInterface
     );
 
     @retrofit.http.FormUrlEncoded
+    @retrofit.http.POST("/updateDrivertrip")
+    public void updateTripStatus(@retrofit.http.Field("id") String id,
+                                 @retrofit.http.Field("status") String status,
+                                 @retrofit.http.Field("trip_map_screenshot") String trip_map_screenshot,
+                                 Callback<Response> callback
+    );
+
+    @retrofit.http.FormUrlEncoded
     @retrofit.http.POST("/onboardUserlist")
     public void onboardUserlist(@retrofit.http.Field("trip_id") String trip_id,
                                 @retrofit.http.Field("user_id[]") ArrayList<String> user_id,
@@ -249,6 +278,10 @@ public interface MyInterface
     public void getCountry(@retrofit.http.Field("") String dummy,
                            Callback<Response> callback);
 
+    @retrofit.http.FormUrlEncoded
+    @retrofit.http.POST("/Triplocations")
+    public void Triplocations(@retrofit.http.Field("") String dummy,
+                           Callback<Response> callback);
 
     @retrofit.http.FormUrlEncoded
     @retrofit.http.POST("/getState")
