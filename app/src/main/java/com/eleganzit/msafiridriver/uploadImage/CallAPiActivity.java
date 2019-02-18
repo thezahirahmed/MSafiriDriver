@@ -49,7 +49,7 @@ public class CallAPiActivity extends AppCompatActivity {
                                 appDialogs.hideProgressDialog();
                                 getApiResult.onSuccessResult(result);
 
-                                if (result.getString("status").equalsIgnoreCase("true")) {
+                                if (result.getString("status").equalsIgnoreCase("1")) {
                                     getApiResult.onSuccessResult(result);
                                 } else {
 

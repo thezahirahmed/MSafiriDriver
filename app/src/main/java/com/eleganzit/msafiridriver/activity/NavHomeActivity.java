@@ -347,7 +347,7 @@ public class NavHomeActivity  extends AppCompatActivity
     {
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.getDriverdata(pref.getString("driver_id",""), new retrofit.Callback<retrofit.client.Response>() {
+        myInterface.getPersonalInfo(pref.getString("driver_id",""), new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                 final StringBuilder stringBuilder = new StringBuilder();
@@ -373,15 +373,17 @@ public class NavHomeActivity  extends AppCompatActivity
                             {
                                 JSONObject jsonObject1=jsonArray.getJSONObject(i);
 
-                                String fullname = jsonObject1.getString("fullname");
+                                /*String fullname = jsonObject1.getString("fullname");
                                 editor.putString("fullname", fullname);
                                 String email = jsonObject1.getString("email");
-                                editor.putString("email", email);
+                                editor.putString("email", email);*/
+                                String driver_id = jsonObject1.getString("driver_id");
+                                editor.putString("driver_id", driver_id);
                                 photo = jsonObject1.getString("photo");
                                 editor.putString("photo", photo);
                                 String vehicle_profile = jsonObject1.getString("vehicle_profile");
                                 editor.putString("vehicle_profile", vehicle_profile);
-                                String vehicle_name = jsonObject1.getString("vehicle_name");
+                                /*String vehicle_name = jsonObject1.getString("vehicle_name");
                                 editor.putString("vehicle_name", vehicle_name);
                                 String street = jsonObject1.getString("street");
                                 editor.putString("street", street);
@@ -398,10 +400,8 @@ public class NavHomeActivity  extends AppCompatActivity
                                 String dob = jsonObject1.getString("dob");
                                 editor.putString("dob", dob);
                                 String gender = jsonObject1.getString("gender");
-                                editor.putString("gender", gender);
+                                editor.putString("gender", gender);*/
                                 editor.commit();
-
-                                Log.d("ddphotooooooo","photo "+photo+"  vvvv photo "+vehicle_profile);
 
                             }
                             Glide
@@ -451,20 +451,10 @@ public class NavHomeActivity  extends AppCompatActivity
 
         user_name.setText(""+name);
 
-        if(photo.equalsIgnoreCase("http://itechgaints.com/M-safiri-API/user_uploads/no_profile.png"))
-        {
-            Glide
-                    .with(this)
-                    .load(R.drawable.pr).apply(new RequestOptions().placeholder(R.drawable.pr))
-                    .into(profile_image);
-        }
-        else
-        {
             Glide
                     .with(this)
                     .load(photo).apply(new RequestOptions().placeholder(R.drawable.pr))
                     .into(profile_image);
-        }
 
     }
 

@@ -534,6 +534,7 @@ public class AccountFragment extends Fragment {
 
             HashMap<String, String> map = new HashMap<>();
             map.put("driver_id", pref.getString("driver_id", ""));
+            Log.d("mediapathtttttt",mediapath+"");
             callAPiActivity.doPostWithFiles(getActivity(), map, URLUPDATEVEHICLE, mediapath, "vehicle_profile", new GetResponse() {
                 @Override
                 public void onSuccessResult(JSONObject result) throws JSONException {

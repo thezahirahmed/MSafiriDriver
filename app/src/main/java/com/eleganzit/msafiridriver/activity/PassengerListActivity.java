@@ -175,22 +175,24 @@ public class PassengerListActivity extends AppCompatActivity {
         trip_lat2=p_pref.getString("trip_lat2","");
         trip_lng2=p_pref.getString("trip_lng2","");
         trip_status=p_pref.getString("trip_status","");
+        Log.d("trip_status",trip_status+"");
         if(trip_status.equalsIgnoreCase("ongoing"))
         {
+            getOnBoardPassengers();
             //Toast.makeText(PassengerListActivity.this, ""+trip_status, Toast.LENGTH_SHORT).show();
             trip_text.setText("End Trip");
             passengers.setVisibility(View.GONE);
             top.setVisibility(View.GONE);
         }
-        else
-        {
+        else {
+            getPassengers();
             top.setVisibility(View.VISIBLE);
             //Toast.makeText(PassengerListActivity.this, ""+trip_status, Toast.LENGTH_SHORT).show();
             trip_text.setText("Start Trip");
         }
 
         from=getIntent().getStringExtra("from");
-        getPassengers();
+
     }
 
     public boolean isGoogleMapsInstalled()
@@ -218,7 +220,23 @@ public class PassengerListActivity extends AppCompatActivity {
         progressDialog.show();
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.onboardUserlist(trip_id, userslist, new retrofit.Callback<retrofit.client.Response>() {
+        Log.d("uuuuuuuuuuu",userslist+"");
+        StringBuilder sb = new StringBuilder();
+        for(int i=0;i<userslist.size();i++)
+        {
+            Log.d("productsssssssss",userslist.get(i)+"");
+            if (i==userslist.size()-1)
+            {
+                sb.append(userslist.get(i)).append("");
+            }
+            else {
+                sb.append(userslist.get(i)).append(",");
+
+            }
+        }
+
+        Log.d("productsssssssss",sb+"");
+        myInterface.onboardUserlist(trip_id, sb.toString(), new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                 progressDialog.dismiss();
@@ -313,6 +331,8 @@ public class PassengerListActivity extends AppCompatActivity {
                                 JSONArray jsonArray = null;
                                 if(status.equalsIgnoreCase("1"))
                                 {
+
+                                    Log.d("finalTstatus",finalTstatus+" <<<<");
                                     if(finalTstatus.equalsIgnoreCase("ongoing"))
                                     {
                                         holder.select_radioButton.setVisibility(View.GONE);
@@ -657,7 +677,7 @@ public class PassengerListActivity extends AppCompatActivity {
         progress.setVisibility(View.VISIBLE);
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.getPassengers(trip_id, new retrofit.Callback<retrofit.client.Response>() {
+        myInterface.getOnBoardPassengers(trip_id, new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                 ArrayList<PassengerData> arrayList = new ArrayList<>();

@@ -88,7 +88,7 @@ public class BankAccountActivity extends AppCompatActivity {
         edstate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(country_id.equalsIgnoreCase(""))
+                if(edcountry.getText().toString().equalsIgnoreCase("")|| country_id.equalsIgnoreCase("") || country_id.equalsIgnoreCase("0"))
                 {
                     Toast.makeText(BankAccountActivity.this, "Please select country first", Toast.LENGTH_SHORT).show();
                 }

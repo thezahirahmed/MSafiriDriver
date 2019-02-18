@@ -107,7 +107,7 @@ public class PersonalInfoActivity extends AppCompatActivity {
         edstate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(country_id.equalsIgnoreCase("") || country_id.equalsIgnoreCase("0"))
+                if(edcountry.getText().toString().equalsIgnoreCase("")|| country_id.equalsIgnoreCase("") || country_id.equalsIgnoreCase("0"))
                 {
                     Toast.makeText(PersonalInfoActivity.this, "Please select country first", Toast.LENGTH_SHORT).show();
                 }

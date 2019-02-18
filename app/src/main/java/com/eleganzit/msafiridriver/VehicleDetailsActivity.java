@@ -584,11 +584,11 @@ public class VehicleDetailsActivity extends AppCompatActivity {
             final VehicleData vehicleData=arrayList.get(position);
             Log.d("removeeeeeed","pele "+model_num_plate_array.size()+"   "+arrayList.size());
 
-            Log.d("ssimageeeeee","eeeee "+vehicleData.getPhoto());
+            Log.d("ssimageeeeee","eeeee "+vehicleData.getPhoto()+"     "+arrayList2.get(position));
             Glide
                     .with(context)
                     .load(arrayList2.get(position))
-                    .apply(new RequestOptions().centerCrop().placeholder(circularProgressDrawable)).into(holder.image);
+                    .apply(new RequestOptions().centerCrop()).into(holder.image);
 
             holder.remove.setOnClickListener(new View.OnClickListener() {
                 @Override

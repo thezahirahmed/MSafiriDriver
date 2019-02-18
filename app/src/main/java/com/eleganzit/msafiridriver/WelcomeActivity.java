@@ -108,7 +108,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 @Override
                 public void onFailureResult(String message) {
                     //progressDialog.dismiss();
-                    Toast.makeText(WelcomeActivity.this, "thisssss "+message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(WelcomeActivity.this, ""+message, Toast.LENGTH_SHORT).show();
                     Log.d("messageeeeeeeeeee",message);
 
                 }

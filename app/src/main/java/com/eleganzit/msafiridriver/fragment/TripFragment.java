@@ -162,6 +162,7 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
     public void onResume() {
         super.onResume();
 
+        getUpcomingTrip();
 
     }
 
@@ -262,7 +263,6 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
                 dialog.show();*/
             }
         });
-        getUpcomingTrip();
 
     }
 

@@ -3,7 +3,7 @@
     <string name="hintemail">Email Address</string>
     <string name="hintpassword">Password</string>
     <string name="signuptxt">Enter your Email Address below to reset \n your Password.</string>
-    <string name="terms"> <u> Terms and conditions</u> </string>
+    <string name="terms"> By signing up, you agree to M-Safiri <u><a href="#">Terms and conditions</a> </u> and  <u> <a href="#">Privacy policy</a> </u></string>
     <string name="privacy"> <u> Privacy policy</u></string>
     <string name="dummytext">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.\n\nLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</string>
 
@@ -20,7 +20,6 @@
         <item>ten</item>
         <item>eleven</item>
         <item>twelve</item>
-
 
     </string-array>
     <string name="navigation_drawer_open">Open navigation drawer</string>

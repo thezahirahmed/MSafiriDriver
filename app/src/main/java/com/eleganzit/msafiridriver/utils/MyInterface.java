@@ -206,7 +206,7 @@ public interface MyInterface
     @retrofit.http.FormUrlEncoded
     @retrofit.http.POST("/onboardUserlist")
     public void onboardUserlist(@retrofit.http.Field("trip_id") String trip_id,
-                                @retrofit.http.Field("user_id[]") ArrayList<String> user_id,
+                                @retrofit.http.Field("user_id") String user_id,
                                 Callback<Response> callback
     );
 
@@ -220,6 +220,12 @@ public interface MyInterface
     @retrofit.http.FormUrlEncoded
     @retrofit.http.POST("/tripUserlist")
     public void getPassengers(@retrofit.http.Field("trip_id") String trip_id,
+                              Callback<Response> callback
+    );
+
+    @retrofit.http.FormUrlEncoded
+    @retrofit.http.POST("/getOnboardlist")
+    public void getOnBoardPassengers(@retrofit.http.Field("trip_id") String trip_id,
                               Callback<Response> callback
     );
 

@@ -84,16 +84,16 @@ public class ProfileActivity extends AppCompatActivity {
         txtsubmit=findViewById(R.id.txtsubmit);
         personal_info=findViewById(R.id.personal_info);
         personal_info_status=findViewById(R.id.personal_info_status);
-        personal_info_status.setVisibility(View.VISIBLE);
+
         bank=findViewById(R.id.bank);
         bank_info_status=findViewById(R.id.bank_info_status);
-        bank_info_status.setVisibility(View.VISIBLE);
+
         docs=findViewById(R.id.docs);
         docs_info_status=findViewById(R.id.docs_info_status);
-        docs_info_status.setVisibility(View.VISIBLE);
+
         vehicle_detail=findViewById(R.id.vehicle_detail);
         vehicle_info_status=findViewById(R.id.vehicle_info_status);
-        vehicle_info_status.setVisibility(View.VISIBLE);
+
         progressDialog=new ProgressDialog(this);
         progressDialog.setMessage("Please wait...");
         progressDialog.setCancelable(false);
@@ -519,6 +519,10 @@ public class ProfileActivity extends AppCompatActivity {
         myInterface.getEmptyFields(pref.getString("driver_id",""), new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
+                personal_info_status.setVisibility(View.VISIBLE);
+                bank_info_status.setVisibility(View.VISIBLE);
+                docs_info_status.setVisibility(View.VISIBLE);
+                vehicle_info_status.setVisibility(View.VISIBLE);
                 progressDialog.dismiss();
                 getApprovalStatus();
                 final StringBuilder stringBuilder = new StringBuilder();

@@ -186,17 +186,13 @@
                     android:textColorHint="#878787" />
             </android.support.design.widget.TextInputLayout>
 
-            <LinearLayout
+            <com.google.android.flexbox.FlexboxLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
                 android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:orientation="horizontal">
+<!--
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -204,22 +200,17 @@
                         android:text="By signing up, you agree to M-Safiri "
                         android:textColor="#000"
                         android:textSize="12sp" />
+-->
 
                     <TextView
                         android:id="@+id/terms"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/terms"
-                        android:textColor="#0192D2"
+                        android:textColor="#000000"
                         android:textSize="12sp" />
 
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+<!--
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -235,8 +226,9 @@
                         android:text="@string/privacy"
                         android:textColor="#0192D2"
                         android:textSize="12sp" />
-                </LinearLayout>
-            </LinearLayout>
+-->
+
+            </com.google.android.flexbox.FlexboxLayout>
 
             <LinearLayout
                 android:id="@+id/newaccount"

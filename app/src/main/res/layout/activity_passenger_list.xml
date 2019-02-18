@@ -48,8 +48,7 @@
         android:layout_below="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_above="@+id/start"
-        android:layout_height="match_parent"
-        android:gravity="center">
+        android:layout_height="match_parent">
 
         <TextView
             android:id="@+id/no_passenger"
@@ -69,7 +68,7 @@
         <RelativeLayout
             android:id="@+id/top"
             android:layout_width="match_parent"
-            android:visibility="gone"
+            android:visibility="visible"
             android:layout_height="wrap_content">
 
             <TextView
@@ -107,6 +106,7 @@
             android:id="@+id/passengers"
             android:layout_below="@+id/top"
             android:overScrollMode="never"
+            android:visibility="visible"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
