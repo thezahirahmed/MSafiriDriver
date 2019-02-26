@@ -347,7 +347,7 @@ public class NavHomeActivity  extends AppCompatActivity
     {
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.getPersonalInfo(pref.getString("driver_id",""), new retrofit.Callback<retrofit.client.Response>() {
+        myInterface.getDriverdata(pref.getString("driver_id",""), new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                 final StringBuilder stringBuilder = new StringBuilder();
@@ -373,19 +373,19 @@ public class NavHomeActivity  extends AppCompatActivity
                             {
                                 JSONObject jsonObject1=jsonArray.getJSONObject(i);
 
-                                /*String fullname = jsonObject1.getString("fullname");
+                                String fullname = jsonObject1.getString("fullname");
                                 editor.putString("fullname", fullname);
                                 String email = jsonObject1.getString("email");
-                                editor.putString("email", email);*/
+                                editor.putString("email", email);
                                 String driver_id = jsonObject1.getString("driver_id");
                                 editor.putString("driver_id", driver_id);
                                 photo = jsonObject1.getString("photo");
                                 editor.putString("photo", photo);
                                 String vehicle_profile = jsonObject1.getString("vehicle_profile");
                                 editor.putString("vehicle_profile", vehicle_profile);
-                                /*String vehicle_name = jsonObject1.getString("vehicle_name");
+                                String vehicle_name = jsonObject1.getString("vehicle_name");
                                 editor.putString("vehicle_name", vehicle_name);
-                                String street = jsonObject1.getString("street");
+                                /*String street = jsonObject1.getString("street");
                                 editor.putString("street", street);
                                 String city = jsonObject1.getString("city");
                                 editor.putString("city", city);

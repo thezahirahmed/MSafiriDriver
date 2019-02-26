@@ -364,10 +364,6 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
                     destination_time.requestFocus();
                     destination_time.setError("Please select time");
                 }
-                else if(date_is.equalsIgnoreCase("lesser"))
-                {
-                    Toast.makeText(PickupLocation.this, "Please select the future hours", Toast.LENGTH_SHORT).show();
-                }
                 else
                     {
                         pickupcontinue1.setEnabled(false);
@@ -377,7 +373,14 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
                         }
                         else
                         {
-                            setDrivertrip(googleMap);
+                            if(date_is.equalsIgnoreCase("lesser"))
+                            {
+                                Toast.makeText(PickupLocation.this, "Please select the future hours", Toast.LENGTH_SHORT).show();
+                            }
+                            else
+                            {
+                                setDrivertrip(googleMap);
+                            }
                         }
 
                 }
