@@ -442,7 +442,7 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
                         @Override
                         public void onClick(View view) {
                             dialog.dismiss();
-                            new AlertDialog.Builder(context).setMessage("Delete this trip?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            new AlertDialog.Builder(context).setMessage("Cancel this trip?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     removeDrivertrip(tripData.getId(),holder.getAdapterPosition());

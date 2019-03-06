@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -66,10 +67,13 @@ public class HomeFragment extends Fragment {
     SharedPreferences pref;
     SharedPreferences.Editor editor;
     TextView no_trips;
+    ImageView reload;
     ArrayList<TripData> arrayList;
     LinearLayout lcontent;
     TextView trip_title;
     CardView card,upcoming_card,past_card;
+    String trip_type="current";
+
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -103,6 +107,7 @@ public class HomeFragment extends Fragment {
         upcoming = v.findViewById(R.id.upcoming);
         lcontent = v.findViewById(R.id.lcontent);
         no_trips = v.findViewById(R.id.no_trips);
+        reload = v.findViewById(R.id.reload);
         current = v.findViewById(R.id.current);
         active = v.findViewById(R.id.active);
         past = v.findViewById(R.id.past);
@@ -216,6 +221,7 @@ public class HomeFragment extends Fragment {
                 trip_title.setText("Upcoming Trips");
                 shimmerFrameLayout.startShimmer();
                 getDriverTrips("current");
+                trip_type="current";
 
             }
         });
@@ -238,6 +244,7 @@ public class HomeFragment extends Fragment {
                 trip_title.setText("Past Trips");
                 shimmerFrameLayout.startShimmer();
                 getDriverTrips("past");
+                trip_type="past";
             }
         });
 
@@ -257,11 +264,20 @@ public class HomeFragment extends Fragment {
             }
 
         });
+
+        reload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getDriverTrips(trip_type);
+            }
+        });
+
     }
 
     public void getDriverTrips(final String trip_type)
     {
 
+        reload.setVisibility(View.GONE);
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
         myInterface.getDriverTrips(pref.getString("driver_id",""), trip_type, new retrofit.Callback<retrofit.client.Response>() {
@@ -369,7 +385,7 @@ public class HomeFragment extends Fragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
+                reload.setVisibility(View.GONE);
             }
 
             @Override
@@ -379,6 +395,7 @@ public class HomeFragment extends Fragment {
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
                 //Toast.makeText(getActivity(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.d("errorrrr",""+error.getMessage());
+                reload.setVisibility(View.VISIBLE);
 
             }
         });

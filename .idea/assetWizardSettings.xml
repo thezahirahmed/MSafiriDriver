@@ -41,25 +41,14 @@
                                           </PersistentState>
                                         </value>
                                       </entry>
-                                      <entry key="image">
-                                        <value>
-                                          <PersistentState>
-                                            <option name="values">
-                                              <map>
-                                                <entry key="paddingPercent" value="45" />
-                                              </map>
-                                            </option>
-                                          </PersistentState>
-                                        </value>
-                                      </entry>
                                     </map>
                                   </option>
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
                                       <entry key="iconShape" value="NONE" />
-                                      <entry key="imageAsset" value="C:\Users\EleganzIT\Downloads\check_box_empty.png" />
-                                      <entry key="outputName" value="uncheck_bg" />
+                                      <entry key="imageAsset" value="C:\Users\EleganzIT\Downloads\refresh(2).png" />
+                                      <entry key="outputName" value="reload_icon" />
                                     </map>
                                   </option>
                                 </PersistentState>

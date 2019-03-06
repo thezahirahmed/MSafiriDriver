@@ -54,7 +54,7 @@
             android:layout_marginLeft="15dp"
             android:textColor="#333333"
             android:layout_marginRight="15dp"
-            android:text="Delete Trip"
+            android:text="Cancel Trip"
             android:background="?android:selectableItemBackground"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
             android:layout_marginTop="15dp"

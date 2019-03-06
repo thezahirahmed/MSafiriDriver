@@ -70,7 +70,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#9a9a9a"
+        android:background="#d4d4d4"
         android:layout_marginBottom="2dp"></View>
 
 </LinearLayout>
