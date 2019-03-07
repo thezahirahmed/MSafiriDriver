@@ -27,9 +27,7 @@
             <enum name="disabled" value="1"/>
         </attr>
 
-
     </declare-styleable>
-
 
     <declare-styleable name="CircleImageView">
         <attr name="civ_border_width" format="dimension" />

@@ -5,6 +5,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -33,6 +34,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.eleganzit.msafiridriver.ChoosePictureActivity;
 import com.eleganzit.msafiridriver.HomeProfileActivity;
 import com.eleganzit.msafiridriver.ProfileActivity;
@@ -43,8 +46,11 @@ import com.eleganzit.msafiridriver.activity.HelpActivity;
 import com.eleganzit.msafiridriver.activity.NavHomeActivity;
 import com.eleganzit.msafiridriver.activity.RatingActivity;
 import com.eleganzit.msafiridriver.activity.Utility;
+import com.eleganzit.msafiridriver.adapter.UpcomingTripAdapter;
+import com.eleganzit.msafiridriver.model.TripData;
 import com.eleganzit.msafiridriver.uploadImage.CallAPiActivity;
 import com.eleganzit.msafiridriver.uploadImage.GetResponse;
+import com.eleganzit.msafiridriver.utils.MyInterface;
 import com.hzn.lib.EasyTransitionOptions;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -58,15 +64,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
 import spencerstudios.com.bungeelib.Bungee;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -91,6 +102,9 @@ public class AccountFragment extends Fragment {
     RelativeLayout profile;
     TextView driver_name,vehicle_name;
     private String dname,vname;
+    boolean upcomingTripsAreDone=false;
+    boolean currentTripIsDone=false;
+    ProgressDialog progressDialog;
 
     public AccountFragment() {
         // Required empty public constructor
@@ -169,9 +183,155 @@ public class AccountFragment extends Fragment {
         URLUPDATEUSER = "http://itechgaints.com/M-safiri-API/driverPhoto";
         URLUPDATEVEHICLE= "http://itechgaints.com/M-safiri-API/drivervehiclePhoto";
         callAPiActivity = new CallAPiActivity(getActivity());
+        progressDialog =new ProgressDialog(getActivity());
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setMessage("Please wait...");
 
         return  v;
     }
+
+
+    public void getUpcomingTrips()
+    {
+        progressDialog.show();
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
+        final MyInterface myInterface = restAdapter.create(MyInterface.class);
+        myInterface.getDriverTrips(pref.getString("driver_id",""), "current", new retrofit.Callback<retrofit.client.Response>() {
+            @Override
+            public void success(retrofit.client.Response response, retrofit.client.Response response2) {
+
+                final StringBuilder stringBuilder = new StringBuilder();
+                try {
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
+
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line);
+                    }
+                    Log.d("stringBuilder", "" + stringBuilder);
+                    //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
+
+                    if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
+
+                        JSONObject jsonObject = new JSONObject("" + stringBuilder);
+                        String status = jsonObject.getString("status");
+                        JSONArray jsonArray = null;
+                        if(status.equalsIgnoreCase("1"))
+                        {
+                            upcomingTripsAreDone=false;
+                        }
+                        else
+                        {
+                            upcomingTripsAreDone=true;
+                        }
+                        getCurrentTrip();
+
+                    }
+                    else
+                    {
+                        progressDialog.dismiss();
+                        Toast.makeText(getActivity(), ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                    }
+
+
+                } catch (IOException e) {
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                progressDialog.dismiss();
+                Log.d("errorrrr",""+error.getMessage());
+                Toast.makeText(getActivity(), "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+    }
+
+    public void getCurrentTrip()
+    {
+
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
+        final MyInterface myInterface = restAdapter.create(MyInterface.class);
+        myInterface.getDriverTrips(pref.getString("driver_id",""), "upcoming", new retrofit.Callback<retrofit.client.Response>() {
+            @Override
+            public void success(retrofit.client.Response response, retrofit.client.Response response2) {
+
+                final StringBuilder stringBuilder = new StringBuilder();
+                try {
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
+
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line);
+                    }
+                    Log.d("stringBuilder", "" + stringBuilder);
+                    //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
+
+                    if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
+                        progressDialog.dismiss();
+                        JSONObject jsonObject = new JSONObject("" + stringBuilder);
+                        String status = jsonObject.getString("status");
+                        JSONArray jsonArray = null;
+                        if(status.equalsIgnoreCase("1"))
+                        {
+                            currentTripIsDone=false;
+                        }
+                        else
+                        {
+                            currentTripIsDone=true;
+                        }
+                        if(upcomingTripsAreDone && currentTripIsDone)
+                        {
+                            if(i==0)
+                            {
+                                openImageChooser();
+                            }
+                            if(i==1)
+                            {
+                                openImageChooser2();
+                            }
+                        }
+                        else
+                        {
+                            //Toast.makeText(getActivity(), "You cannot update profile if you have any trips remaining!", Toast.LENGTH_LONG).show();
+                            new android.app.AlertDialog.Builder(getActivity()).setMessage("You cannot update profile if you have any trips remaining!").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                }
+                            }).show();
+                        }
+
+                    }
+                    else
+                    {
+                        progressDialog.dismiss();
+                        Toast.makeText(getActivity(), ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                    }
+
+
+                } catch (IOException e) {
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                progressDialog.dismiss();
+                Log.d("errorrrr",""+error.getMessage());
+                Toast.makeText(getActivity(), "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+    }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -190,10 +350,8 @@ public class AccountFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), HomeProfileActivity.class).putExtra("from","account");
-
                 startActivity(intent);
                 Bungee.slideLeft(getActivity());
-
             }
         });
 
@@ -268,7 +426,7 @@ public class AccountFragment extends Fragment {
                                 // check if all permissions are granted
                                 if (report.areAllPermissionsGranted()) {
 
-                                    openImageChooser();
+                                    getUpcomingTrips();
 
                                 }
 
@@ -312,7 +470,7 @@ public class AccountFragment extends Fragment {
                                 // check if all permissions are granted
                                 if (report.areAllPermissionsGranted()) {
 
-                                    openImageChooser2();
+                                    getUpcomingTrips();
 
                                 }
 
@@ -518,7 +676,7 @@ public class AccountFragment extends Fragment {
                 @Override
                 public void onFailureResult(String message) {
                     //progressDialog.dismiss();
-                    //Toast.makeText(ChoosePictureActivity.this, "thisssss "+message, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getActivity(), "thisssss "+message, Toast.LENGTH_SHORT).show();
                     Log.d("messageeeeeeeeeee",message);
 
                 }
@@ -565,7 +723,7 @@ public class AccountFragment extends Fragment {
                 @Override
                 public void onFailureResult(String message) {
                     //progressDialog.dismiss();
-                    //Toast.makeText(ChoosePictureActivity.this, "thisssss "+message, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getActivity(), "thisssss "+message, Toast.LENGTH_SHORT).show();
                     Log.d("messageeeeeeeeeee",message);
 
                 }
@@ -622,6 +780,7 @@ public class AccountFragment extends Fragment {
         }
 
     }
+
 
 }
 

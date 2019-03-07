@@ -8,7 +8,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -34,6 +36,11 @@ import com.eleganzit.msafiridriver.model.TripData;
 import com.eleganzit.msafiridriver.model.VehicleData;
 import com.eleganzit.msafiridriver.utils.MyInterface;
 import com.eleganzit.msafiridriver.utils.RobotoMediumTextView;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,6 +52,7 @@ import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import retrofit.RestAdapter;
@@ -338,6 +346,7 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
     Context context;
     ProgressDialog progressDialog;
     String type;
+
     public UpcomingTripAdapter(String type,ArrayList<TripData> arrayList, Context context) {
         this.arrayList = arrayList;
         this.context = context;
@@ -349,7 +358,6 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
             progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.setCancelable(false);
         }
-
 
     }
 
@@ -412,6 +420,7 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
                 }
                 else if(type.equalsIgnoreCase("company"))
                 {
+
                     SharedPreferences p_pref;
                     SharedPreferences.Editor p_editor;
                     p_pref=context.getSharedPreferences("passenger_pref",Context.MODE_PRIVATE);
@@ -425,9 +434,40 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
                 {
                     final Dialog dialog=new Dialog(context);
                     dialog.setContentView(R.layout.trip_options_layout);
-                    final TextView update=dialog.findViewById(R.id.car);
-                    final TextView delete=dialog.findViewById(R.id.van);
-                    final TextView passengers=dialog.findViewById(R.id.bike);
+                    final TextView update=dialog.findViewById(R.id.update);
+                    final TextView delete=dialog.findViewById(R.id.delete);
+                    final View divider_delete=dialog.findViewById(R.id.divider_delete);
+                    final TextView passengers=dialog.findViewById(R.id.passengers);
+                    final TextView delay=dialog.findViewById(R.id.delay);
+
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    try {
+                        Date mDate = sdf.parse(tripData.getPickup_time());
+                        long tripMilliseconds = mDate.getTime();
+                        Calendar c = Calendar.getInstance();
+                        System.out.println("Current time => "+c.getTime());
+                        long currentMilliseconds =c.getTime().getTime();
+                        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        String formattedDate = df.format(c.getTime());
+
+                        long timeGap=(tripMilliseconds-currentMilliseconds);
+                        long twoHours=7140003;
+                        if(timeGap>=twoHours)
+                        {
+                            //Toast.makeText(context, diff+"   is equal or greater", Toast.LENGTH_SHORT).show();
+                            delete.setVisibility(View.VISIBLE);
+                            divider_delete.setVisibility(View.VISIBLE);
+                        }
+                        else
+                        {
+                            //Toast.makeText(context, diff+"   is lesser", Toast.LENGTH_SHORT).show();
+                            delete.setVisibility(View.GONE);
+                            divider_delete.setVisibility(View.GONE);
+                        }
+
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
 
                     update.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -435,6 +475,14 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
                             context.startActivity(new Intent(context,PickupLocation.class).putExtra("id",tripData.getId()+"").putExtra("from","update"));
                             Bungee.slideLeft(context);
                             dialog.dismiss();
+                        }
+                    });
+
+                    delay.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialog.dismiss();
+                            delayTrip(tripData.getId(),holder.getAdapterPosition(),holder);
                         }
                     });
 
@@ -554,6 +602,97 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
         }
         return str;
     }
+
+    public void delayTrip(String id, final int position, final MyViewHolder holder)
+    {
+        if(context!=null) {
+            progressDialog.show();
+        }
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
+        final MyInterface myInterface = restAdapter.create(MyInterface.class);
+        myInterface.delayTrip(id, "yes", new retrofit.Callback<retrofit.client.Response>() {
+                    @Override
+                    public void success(retrofit.client.Response response, retrofit.client.Response response2) {
+                        if(context!=null) {
+                            progressDialog.dismiss();
+                        }
+                        final StringBuilder stringBuilder = new StringBuilder();
+                        try {
+                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
+
+                            String line;
+                            while ((line = bufferedReader.readLine()) != null) {
+                                stringBuilder.append(line);
+                            }
+                            Log.d("stringBuilder", "" + stringBuilder);
+                            //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
+
+                            if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
+
+                                JSONObject jsonObject = new JSONObject("" + stringBuilder);
+                                String status = jsonObject.getString("status");
+                                String message = jsonObject.getString("message");
+                                JSONArray jsonArray = jsonObject.getJSONArray("data");
+                                for(int i=0;i<jsonArray.length();i++)
+                                {
+                                    JSONObject jsonObject1=jsonArray.getJSONObject(i);
+
+                                    String id = jsonObject1.getString("id");
+                                    String from_title = jsonObject1.getString("from_title");
+                                    String from_lat = jsonObject1.getString("from_lat");
+                                    String from_lng = jsonObject1.getString("from_lng");
+                                    String from_address = jsonObject1.getString("from_address");
+                                    String to_title = jsonObject1.getString("to_title");
+                                    String to_lat = jsonObject1.getString("to_lat");
+                                    String to_lng = jsonObject1.getString("to_lng");
+                                    String to_address = jsonObject1.getString("to_address");
+                                    String pickup_time = jsonObject1.getString("datetime");
+                                    String destination_time = jsonObject1.getString("end_datetime");
+                                    String statuss = jsonObject1.getString("status");
+                                    String trip_price = jsonObject1.getString("trip_price");
+
+                                    TripData tripData=new TripData("upcoming",id,from_title,from_lat,from_lng,from_address,to_title,to_lat,to_lng,to_address,pickup_time,destination_time,statuss,trip_price);
+                                    if(status.equalsIgnoreCase("1"))
+                                    {
+                                        Toast.makeText(context, "Updated successfully", Toast.LENGTH_SHORT).show();
+                                        arrayList.set(position, tripData);
+                                        notifyItemChanged(position);
+                                    }
+                                    else
+                                    {
+                                        Toast.makeText(context, ""+message, Toast.LENGTH_SHORT).show();
+                                    }
+
+                                }
+
+                            }
+                            else
+                            {
+
+                                Toast.makeText(context, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                            }
+
+
+                        } catch (IOException e) {
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        if(context!=null) {
+                            progressDialog.dismiss();
+                        }
+                        //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+
     public void removeDrivertrip(String id, final int position)
     {
         if(context!=null) {
@@ -561,7 +700,7 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
         }
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.removeDrivertrip(id, new retrofit.Callback<retrofit.client.Response>() {
+        myInterface.updateTripStatus(id,"cancel", new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                 if(context!=null) {
@@ -588,7 +727,7 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
                         if(status.equalsIgnoreCase("1"))
                         {
                             removeAt(position);
-                            Toast.makeText(context, "Deleted successfully", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "Trip cancelled", Toast.LENGTH_SHORT).show();
                         }
                         else
                         {

@@ -44,6 +44,7 @@ import com.eleganzit.msafiridriver.activity.NavHomeActivity;
 import com.eleganzit.msafiridriver.fragment.TripFragment;
 import com.eleganzit.msafiridriver.uploadImage.CallAPiActivity;
 import com.eleganzit.msafiridriver.uploadImage.GetResponse;
+import com.eleganzit.msafiridriver.utils.MyInterface;
 import com.hzn.lib.EasyTransition;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -57,12 +58,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
 
 import static com.eleganzit.msafiridriver.ProfileActivity.profileActivity;
 
@@ -82,6 +87,8 @@ public class ChoosePictureActivity extends AppCompatActivity {
     SharedPreferences pref;
     SharedPreferences.Editor editor;
     private boolean finishEnter;
+    boolean upcomingTripsAreDone=false;
+    boolean currentTripIsDone=false;
 
     @Override
     protected void onResume() {
@@ -156,7 +163,7 @@ public class ChoosePictureActivity extends AppCompatActivity {
                                 // check if all permissions are granted
                                 if (report.areAllPermissionsGranted()) {
 
-                                    openImageChooser();
+                                    getUpcomingTrips();
 
                                 }
 
@@ -184,6 +191,140 @@ public class ChoosePictureActivity extends AppCompatActivity {
             }
         });
     }
+
+    public void getUpcomingTrips()
+    {
+        progressDialog.show();
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
+        final MyInterface myInterface = restAdapter.create(MyInterface.class);
+        myInterface.getDriverTrips(pref.getString("driver_id",""), "current", new retrofit.Callback<retrofit.client.Response>() {
+            @Override
+            public void success(retrofit.client.Response response, retrofit.client.Response response2) {
+
+                final StringBuilder stringBuilder = new StringBuilder();
+                try {
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
+
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line);
+                    }
+                    Log.d("stringBuilder", "" + stringBuilder);
+                    //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
+
+                    if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
+
+                        JSONObject jsonObject = new JSONObject("" + stringBuilder);
+                        String status = jsonObject.getString("status");
+                        JSONArray jsonArray = null;
+                        if(status.equalsIgnoreCase("1"))
+                        {
+                            upcomingTripsAreDone=false;
+                        }
+                        else
+                        {
+                            upcomingTripsAreDone=true;
+                        }
+                        getCurrentTrip();
+
+                    }
+                    else
+                    {
+                        progressDialog.dismiss();
+                        Toast.makeText(ChoosePictureActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                    }
+
+
+                } catch (IOException e) {
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                progressDialog.dismiss();
+                Log.d("errorrrr",""+error.getMessage());
+                Toast.makeText(ChoosePictureActivity.this, "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+    }
+
+    public void getCurrentTrip()
+    {
+
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
+        final MyInterface myInterface = restAdapter.create(MyInterface.class);
+        myInterface.getDriverTrips(pref.getString("driver_id",""), "upcoming", new retrofit.Callback<retrofit.client.Response>() {
+            @Override
+            public void success(retrofit.client.Response response, retrofit.client.Response response2) {
+
+                final StringBuilder stringBuilder = new StringBuilder();
+                try {
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
+
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line);
+                    }
+                    Log.d("stringBuilder", "" + stringBuilder);
+                    //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
+
+                    if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
+                        progressDialog.dismiss();
+                        JSONObject jsonObject = new JSONObject("" + stringBuilder);
+                        String status = jsonObject.getString("status");
+                        JSONArray jsonArray = null;
+                        if(status.equalsIgnoreCase("1"))
+                        {
+                            currentTripIsDone=false;
+                        }
+                        else
+                        {
+                            currentTripIsDone=true;
+                        }
+                        if(upcomingTripsAreDone && currentTripIsDone)
+                        {
+                            openImageChooser();
+                        }
+                        else
+                        {
+                            //Toast.makeText(ChoosePictureActivity.this, "You cannot update profile if you have any trips remaining!", Toast.LENGTH_LONG).show();
+                            new android.app.AlertDialog.Builder(ChoosePictureActivity.this).setMessage("You cannot update profile if you have any trips remaining!").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                }
+                            }).show();
+                        }
+
+                    }
+                    else
+                    {
+                        progressDialog.dismiss();
+                        Toast.makeText(ChoosePictureActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                    }
+
+
+                } catch (IOException e) {
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                progressDialog.dismiss();
+                Log.d("errorrrr",""+error.getMessage());
+                Toast.makeText(ChoosePictureActivity.this, "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+    }
+
 
     private void showSettingsDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

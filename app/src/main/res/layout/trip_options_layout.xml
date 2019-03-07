@@ -30,56 +30,62 @@
         android:background="@drawable/dialog_bg"
         android:orientation="vertical">
 
-
         <TextView
-            android:id="@+id/car"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
+            android:id="@+id/update"
+            android:padding="15dp"
             android:text="Update Trip"
+            android:visibility="gone"
             android:textColor="#333333"
             android:background="?android:selectableItemBackground"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-            android:layout_marginTop="15dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="0.7dp"
-            android:layout_marginTop="15dp"
+            android:visibility="gone"
             android:background="#c9c9c9"/>
 
         <TextView
-            android:id="@+id/van"
-            android:layout_marginLeft="15dp"
+            android:id="@+id/delete"
             android:textColor="#333333"
-            android:layout_marginRight="15dp"
             android:text="Cancel Trip"
             android:background="?android:selectableItemBackground"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-            android:layout_marginTop="15dp"
+            android:padding="15dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <View
+            android:id="@+id/divider_delete"
             android:layout_width="match_parent"
             android:layout_height="0.7dp"
-            android:layout_marginTop="15dp"
             android:background="#c9c9c9"/>
 
         <TextView
-            android:id="@+id/bike"
-            android:layout_marginLeft="15dp"
+            android:id="@+id/passengers"
             android:textColor="#333333"
-            android:layout_marginRight="15dp"
             android:text="Passenger List"
             android:background="?android:selectableItemBackground"
-            android:layout_marginBottom="15dp"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-            android:layout_marginTop="15dp"
+            android:padding="15dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.7dp"
+            android:background="#c9c9c9"/>
 
+        <TextView
+            android:id="@+id/delay"
+            android:textColor="#333333"
+            android:text="Delay by 30 min"
+            android:background="?android:selectableItemBackground"
+            android:padding="15dp"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 

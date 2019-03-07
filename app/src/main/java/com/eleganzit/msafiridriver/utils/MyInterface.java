@@ -197,6 +197,13 @@ public interface MyInterface
 
     @retrofit.http.FormUrlEncoded
     @retrofit.http.POST("/updateDrivertrip")
+    public void delayTrip(@retrofit.http.Field("id") String id,
+                                 @retrofit.http.Field("delaytime") String delaytime,
+                                 Callback<Response> callback
+    );
+
+    @retrofit.http.FormUrlEncoded
+    @retrofit.http.POST("/updateDrivertrip")
     public void updateTripStatus(@retrofit.http.Field("id") String id,
                                  @retrofit.http.Field("status") String status,
                                  @retrofit.http.Field("trip_map_screenshot") String trip_map_screenshot,

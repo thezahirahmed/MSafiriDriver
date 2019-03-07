@@ -395,6 +395,7 @@ public class HomeFragment extends Fragment {
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
                 //Toast.makeText(getActivity(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.d("errorrrr",""+error.getMessage());
+                Toast.makeText(getActivity(), "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
                 reload.setVisibility(View.VISIBLE);
 
             }

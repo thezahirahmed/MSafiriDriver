@@ -71,6 +71,8 @@ public class DocumentsActivity extends AppCompatActivity {
     private String id;
     private String hasDocs="no";
     private String approvel;
+    boolean upcomingTripsAreDone=false;
+    boolean currentTripIsDone=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,24 +182,158 @@ public class DocumentsActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    new AlertDialog.Builder(DocumentsActivity.this).setMessage("Are you sure you want to save the changes?")
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    uploadDocument();
-                                }
-                            }).setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            onBackPressed();
-                        }
-                    }).show();
-
+                    getUpcomingTrips();
                 }
             }
         });
 
     }
+
+    public void getUpcomingTrips()
+    {
+        progressDialog.show();
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
+        final MyInterface myInterface = restAdapter.create(MyInterface.class);
+        myInterface.getDriverTrips(pref.getString("driver_id",""), "current", new retrofit.Callback<retrofit.client.Response>() {
+            @Override
+            public void success(retrofit.client.Response response, retrofit.client.Response response2) {
+
+                final StringBuilder stringBuilder = new StringBuilder();
+                try {
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
+
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line);
+                    }
+                    Log.d("stringBuilder", "" + stringBuilder);
+                    //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
+
+                    if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
+
+                        JSONObject jsonObject = new JSONObject("" + stringBuilder);
+                        String status = jsonObject.getString("status");
+                        JSONArray jsonArray = null;
+                        if(status.equalsIgnoreCase("1"))
+                        {
+                            upcomingTripsAreDone=false;
+                        }
+                        else
+                        {
+                            upcomingTripsAreDone=true;
+                        }
+                        getCurrentTrip();
+
+                    }
+                    else
+                    {
+                        progressDialog.dismiss();
+                        Toast.makeText(DocumentsActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                    }
+
+
+                } catch (IOException e) {
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                progressDialog.dismiss();
+                Log.d("errorrrr",""+error.getMessage());
+                Toast.makeText(DocumentsActivity.this, "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+    }
+
+    public void getCurrentTrip()
+    {
+
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
+        final MyInterface myInterface = restAdapter.create(MyInterface.class);
+        myInterface.getDriverTrips(pref.getString("driver_id",""), "upcoming", new retrofit.Callback<retrofit.client.Response>() {
+            @Override
+            public void success(retrofit.client.Response response, retrofit.client.Response response2) {
+
+                final StringBuilder stringBuilder = new StringBuilder();
+                try {
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
+
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line);
+                    }
+                    Log.d("stringBuilder", "" + stringBuilder);
+                    //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
+
+                    if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
+                        progressDialog.dismiss();
+                        JSONObject jsonObject = new JSONObject("" + stringBuilder);
+                        String status = jsonObject.getString("status");
+                        JSONArray jsonArray = null;
+                        if(status.equalsIgnoreCase("1"))
+                        {
+                            currentTripIsDone=false;
+                        }
+                        else
+                        {
+                            currentTripIsDone=true;
+                        }
+                        if(upcomingTripsAreDone && currentTripIsDone)
+                        {
+                            new AlertDialog.Builder(DocumentsActivity.this).setMessage("Are you sure you want to save the changes?")
+                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            uploadDocument();
+                                        }
+                                    }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    onBackPressed();
+                                }
+                            }).show();
+
+                        }
+                        else
+                        {
+                            //Toast.makeText(DocumentsActivity.this, "You cannot update profile if you have any trips remaining!", Toast.LENGTH_LONG).show();
+                            new AlertDialog.Builder(DocumentsActivity.this).setMessage("You cannot update profile if you have any trips remaining!").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                }
+                            }).show();
+                        }
+
+                    }
+                    else
+                    {
+                        progressDialog.dismiss();
+                        Toast.makeText(DocumentsActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                    }
+
+
+                } catch (IOException e) {
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                progressDialog.dismiss();
+                Log.d("errorrrr",""+error.getMessage());
+                Toast.makeText(DocumentsActivity.this, "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+    }
+
 
     @Override
     protected void onResume() {

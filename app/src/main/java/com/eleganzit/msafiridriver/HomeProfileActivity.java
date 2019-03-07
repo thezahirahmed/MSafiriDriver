@@ -91,7 +91,6 @@ public class HomeProfileActivity extends AppCompatActivity {
         circularProgressDrawable.start();
 
 
-
         final EasyTransitionOptions options =
                 EasyTransitionOptions.makeTransitionOptions(
                         HomeProfileActivity.this,

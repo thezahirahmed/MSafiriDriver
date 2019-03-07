@@ -206,6 +206,7 @@
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/upcoming"
                     android:layout_width="match_parent"
+                    android:splitMotionEvents="false"
                     android:layout_height="match_parent">
 
                 </android.support.v7.widget.RecyclerView>
