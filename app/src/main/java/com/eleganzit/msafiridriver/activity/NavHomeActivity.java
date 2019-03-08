@@ -118,7 +118,10 @@ public class NavHomeActivity  extends AppCompatActivity
         setContentView(R.layout.activity_main2);
 
         home_title=findViewById(R.id.home_title);
+        SharedPreferences p_pref=getSharedPreferences("passenger_pref",Context.MODE_PRIVATE);
+        SharedPreferences.Editor p_editor=p_pref.edit();
 
+        Log.d("trip_status","home activity   "+p_pref.getString("trip_status","")+"");
         active=findViewById(R.id.active);
         prog_rel=findViewById(R.id.prog_rel);
         pop_anim = AnimationUtils.loadAnimation(this, R.anim.pop_anim);

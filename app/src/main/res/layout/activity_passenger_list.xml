@@ -116,7 +116,6 @@
     <LinearLayout
         android:id="@+id/start"
         android:layout_width="match_parent"
-        android:visibility="gone"
         android:layout_alignParentBottom="true"
         android:layout_height="?attr/actionBarSize"
         android:background="#0e406b">

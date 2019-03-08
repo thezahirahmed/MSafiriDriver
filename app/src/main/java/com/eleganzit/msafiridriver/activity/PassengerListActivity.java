@@ -67,7 +67,6 @@ import spencerstudios.com.bungeelib.Bungee;
 
 public class PassengerListActivity extends AppCompatActivity {
 
-
     RelativeLayout top;
     RecyclerView passengers;
     ProgressBar progress;
@@ -95,12 +94,12 @@ public class PassengerListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_passenger_list);
 
-
         p_pref=getSharedPreferences("passenger_pref",Context.MODE_PRIVATE);
         p_editor=p_pref.edit();
         pref=getSharedPreferences("location_pref",MODE_PRIVATE);
         editor=pref.edit();
-
+        trip_status=p_pref.getString("trip_status","");
+        Log.d("trip_status","activity on create"+trip_status+"");
         handler=new Handler();
         mSensorService = new SensorService(handler,pref);
         mServiceIntent = new Intent(PassengerListActivity.this, mSensorService.getClass());
@@ -175,23 +174,22 @@ public class PassengerListActivity extends AppCompatActivity {
         trip_lat2=p_pref.getString("trip_lat2","");
         trip_lng2=p_pref.getString("trip_lng2","");
         trip_status=p_pref.getString("trip_status","");
-        Log.d("trip_status",trip_status+"");
+        Log.d("trip_status","activity on resume"+trip_status+"");
         if(trip_status.equalsIgnoreCase("ongoing"))
         {
             getOnBoardPassengers();
             //Toast.makeText(PassengerListActivity.this, ""+trip_status, Toast.LENGTH_SHORT).show();
             trip_text.setText("End Trip");
             passengers.setVisibility(View.GONE);
-            top.setVisibility(View.GONE);
         }
         else {
             getPassengers();
-            top.setVisibility(View.VISIBLE);
             //Toast.makeText(PassengerListActivity.this, ""+trip_status, Toast.LENGTH_SHORT).show();
             trip_text.setText("Start Trip");
         }
 
         from=getIntent().getStringExtra("from");
+        Log.d("fromwhereee",""+from+"");
 
     }
 
@@ -204,7 +202,7 @@ public class PassengerListActivity extends AppCompatActivity {
             {
                 return true;
             }
-            else
+             else
             {
                 return false;
             }
@@ -571,6 +569,9 @@ public class PassengerListActivity extends AppCompatActivity {
         top.setVisibility(View.GONE);
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
+
+        Log.d("ppppppppstringBuilder", "" + trip_id);
+
         myInterface.getPassengers(trip_id, new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
@@ -595,25 +596,34 @@ public class PassengerListActivity extends AppCompatActivity {
                         JSONArray jsonArray = null;
                         if(status.equalsIgnoreCase("1"))
                         {
-                            if(trip_status.equalsIgnoreCase("ongoing"))
+                            if(from.equalsIgnoreCase("trip"))
                             {
+                                if(trip_status.equalsIgnoreCase("ongoing"))
+                                {
+                                    top.setVisibility(View.GONE);
+                                }
+                                else
+                                {
+                                    top.setVisibility(View.VISIBLE);
+                                }
+                            }
+                            else
+                            {
+                                top.setVisibility(View.GONE);
+                            }
+
+                            passengers.setVisibility(View.VISIBLE);
+                            /*if(from.equalsIgnoreCase("home"))
+                            {
+                                start.setVisibility(View.GONE);
                                 top.setVisibility(View.GONE);
                             }
                             else
                             {
+                                start.setVisibility(View.VISIBLE);
                                 top.setVisibility(View.VISIBLE);
                             }
-
-                            passengers.setVisibility(View.VISIBLE);
-                            if(from.equalsIgnoreCase("home"))
-                            {
-                                start.setVisibility(View.GONE);
-                            }
-                            else
-                            {
-                                start.setVisibility(View.VISIBLE);
-                            }
-
+*/
                             jsonArray = jsonObject.getJSONArray("data");
                             for(int i=0;i<jsonArray.length();i++)
                             {
@@ -638,7 +648,7 @@ public class PassengerListActivity extends AppCompatActivity {
                             no_passenger.setVisibility(View.VISIBLE);
 
                             passengers.setVisibility(View.GONE);
-                            start.setVisibility(View.GONE);
+                           // start.setVisibility(View.GONE);
 
                         }
 
@@ -674,6 +684,8 @@ public class PassengerListActivity extends AppCompatActivity {
 
     public void getOnBoardPassengers()
     {
+        top.setVisibility(View.GONE);
+
         progress.setVisibility(View.VISIBLE);
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
@@ -702,14 +714,8 @@ public class PassengerListActivity extends AppCompatActivity {
                         if(status.equalsIgnoreCase("1"))
                         {
                             passengers.setVisibility(View.VISIBLE);
-                            if(from.equalsIgnoreCase("home"))
-                            {
-                                start.setVisibility(View.GONE);
-                            }
-                            else
-                            {
+
                                 start.setVisibility(View.VISIBLE);
-                            }
 
                             jsonArray = jsonObject.getJSONArray("data");
                             for(int i=0;i<jsonArray.length();i++)
@@ -839,12 +845,14 @@ public class PassengerListActivity extends AppCompatActivity {
                     }
                 }
             });
+            Toast.makeText(PassengerListActivity.this, "here", Toast.LENGTH_SHORT).show();
 
 
             start.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
+                    Toast.makeText(PassengerListActivity.this, "click", Toast.LENGTH_SHORT).show();
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(PassengerListActivity.this)) {
 

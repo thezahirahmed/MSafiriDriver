@@ -28,6 +28,7 @@ import com.eleganzit.msafiridriver.PickupLocation;
 import com.eleganzit.msafiridriver.R;
 import com.eleganzit.msafiridriver.VehicleDetailsActivity;
 import com.eleganzit.msafiridriver.activity.Home;
+import com.eleganzit.msafiridriver.activity.HomePassengerListActivity;
 import com.eleganzit.msafiridriver.activity.NavHomeActivity;
 import com.eleganzit.msafiridriver.activity.PassengerListActivity;
 import com.eleganzit.msafiridriver.activity.TripDetail;
@@ -514,7 +515,7 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
                             p_editor=p_pref.edit();
                             p_editor.putString("trip_id",tripData.getId()+"");
                             p_editor.commit();
-                            context.startActivity(new Intent(context,PassengerListActivity.class).putExtra("from","home"));
+                            context.startActivity(new Intent(context,HomePassengerListActivity.class));
                             Bungee.slideLeft(context);
 
                             dialog.dismiss();

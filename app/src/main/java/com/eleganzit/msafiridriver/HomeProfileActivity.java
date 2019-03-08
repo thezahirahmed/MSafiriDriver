@@ -46,17 +46,17 @@ public class HomeProfileActivity extends AppCompatActivity {
 
     SharedPreferences pref;
     SharedPreferences.Editor editor;
-    TextView name,txtsubmit;
+    TextView name, txtsubmit;
     FrameLayout add_photo;
-    ImageView profile_pic,logout;
+    ImageView profile_pic, logout;
     LinearLayout submit;
-    TableRow personal_info,bank,docs,vehicle_detail;
-    private String photo="";
+    TableRow personal_info, bank, docs, vehicle_detail;
+    private String photo = "";
     public static HomeProfileActivity profileActivity;
     RelativeLayout profile;
     ProgressDialog progressDialog;
-    private String country_id="";
-    private String profile_status,docs_status,vechicle_status,bank_status,approvel;
+    private String country_id = "";
+    private String profile_status, docs_status, vechicle_status, bank_status, approvel;
     CircularProgressDrawable circularProgressDrawable;
     String from;
 
@@ -67,21 +67,21 @@ public class HomeProfileActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_profile);
 
-        from=getIntent().getStringExtra("from");
+        from = getIntent().getStringExtra("from");
 
-        profileActivity=this;
-        profile_pic=findViewById(R.id.profile_pic);
-        profile=findViewById(R.id.profile);
+        profileActivity = this;
+        profile_pic = findViewById(R.id.profile_pic);
+        profile = findViewById(R.id.profile);
 
-        logout=findViewById(R.id.logout);
-        name=findViewById(R.id.name);
-        submit=findViewById(R.id.submit);
-        txtsubmit=findViewById(R.id.txtsubmit);
-        personal_info=findViewById(R.id.personal_info);
-        bank=findViewById(R.id.bank);
-        docs=findViewById(R.id.docs);
-        vehicle_detail=findViewById(R.id.vehicle_detail);
-        progressDialog=new ProgressDialog(this);
+        logout = findViewById(R.id.logout);
+        name = findViewById(R.id.name);
+        submit = findViewById(R.id.submit);
+        txtsubmit = findViewById(R.id.txtsubmit);
+        personal_info = findViewById(R.id.personal_info);
+        bank = findViewById(R.id.bank);
+        docs = findViewById(R.id.docs);
+        vehicle_detail = findViewById(R.id.vehicle_detail);
+        progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Please wait...");
         progressDialog.setCancelable(false);
         progressDialog.setCanceledOnTouchOutside(false);
@@ -113,11 +113,10 @@ public class HomeProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
 
 
-                Log.d("apprdataaaa",""+profile_status+"    "+docs_status+"    "+vechicle_status+"   "+bank_status);
+                Log.d("apprdataaaa", "" + profile_status + "    " + docs_status + "    " + vechicle_status + "   " + bank_status);
 
-                if(txtsubmit.getText().toString().equalsIgnoreCase("Submit for Approval"))
-                {
-                    if(photo.equalsIgnoreCase("") || photo.equalsIgnoreCase("http://itechgaints.com/M-safiri-API/user_uploads/no_profile.png"))
+                if (txtsubmit.getText().toString().equalsIgnoreCase("Submit for Approval")) {
+                    /*if(photo.equalsIgnoreCase("") || photo.equalsIgnoreCase("http://itechgaints.com/M-safiri-API/user_uploads/no_profile.png"))
                     {
                         Toast.makeText(HomeProfileActivity.this, "Please select profile picture", Toast.LENGTH_SHORT).show();
                     }
@@ -141,17 +140,13 @@ public class HomeProfileActivity extends AppCompatActivity {
                         }
                     }
                     else if (profile_status.equalsIgnoreCase("1") && docs_status.equalsIgnoreCase("1") && bank_status.equalsIgnoreCase("1") && vechicle_status.equalsIgnoreCase("1"))
-                    {
-                        //call api
-                        updateApprovalStatus();
-                    }
-                }
-                else if(txtsubmit.getText().toString().equalsIgnoreCase("Waiting for Approval"))
-                {
+                    {*/
+                    //call api
+                    updateApprovalStatus();
+                    /*}*/
+                } else if (txtsubmit.getText().toString().equalsIgnoreCase("Waiting for Approval")) {
 
-                }
-                else
-                {
+                } else {
                     onBackPressed();
                 }
 
@@ -160,7 +155,7 @@ public class HomeProfileActivity extends AppCompatActivity {
         personal_info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(HomeProfileActivity.this,PersonalInfoActivity.class));
+                startActivity(new Intent(HomeProfileActivity.this, PersonalInfoActivity.class));
                 Bungee.slideLeft(HomeProfileActivity.this);
 
             }
@@ -168,7 +163,7 @@ public class HomeProfileActivity extends AppCompatActivity {
         bank.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(HomeProfileActivity.this,BankAccountActivity.class));
+                startActivity(new Intent(HomeProfileActivity.this, BankAccountActivity.class));
                 Bungee.slideLeft(HomeProfileActivity.this);
 
             }
@@ -176,9 +171,8 @@ public class HomeProfileActivity extends AppCompatActivity {
         docs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(HomeProfileActivity.this,DocumentsActivity.class));
+                startActivity(new Intent(HomeProfileActivity.this, DocumentsActivity.class));
                 Bungee.slideLeft(HomeProfileActivity.this);
-
 
 
             }
@@ -186,7 +180,7 @@ public class HomeProfileActivity extends AppCompatActivity {
         vehicle_detail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(HomeProfileActivity.this,VehicleDetailsActivity.class));
+                startActivity(new Intent(HomeProfileActivity.this, VehicleDetailsActivity.class));
                 Bungee.slideLeft(HomeProfileActivity.this);
 
             }
@@ -195,7 +189,7 @@ public class HomeProfileActivity extends AppCompatActivity {
         profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EasyTransition.startActivity(new Intent(HomeProfileActivity.this,ChoosePictureActivity.class), options);
+                EasyTransition.startActivity(new Intent(HomeProfileActivity.this, ChoosePictureActivity.class), options);
                 //startActivity(new Intent(ProfileActivity.this,ChoosePictureActivity.class),options.toBundle());
                 //overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
             }
@@ -204,13 +198,12 @@ public class HomeProfileActivity extends AppCompatActivity {
     }
 
 
-    public void updateApprovalStatus()
-    {
+    public void updateApprovalStatus() {
         progressDialog.show();
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.updateApprovalStatus(pref.getString("driver_id",""), "no",
-                 new retrofit.Callback<retrofit.client.Response>() {
+        myInterface.updateApprovalStatus(pref.getString("driver_id", ""), "no",
+                new retrofit.Callback<retrofit.client.Response>() {
                     @Override
                     public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                         progressDialog.dismiss();
@@ -230,43 +223,34 @@ public class HomeProfileActivity extends AppCompatActivity {
                                 JSONObject jsonObject = new JSONObject("" + stringBuilder);
                                 String status = jsonObject.getString("status");
                                 JSONArray jsonArray = null;
-                                if(status.equalsIgnoreCase("1"))
-                                {
+                                if (status.equalsIgnoreCase("1")) {
 
                                     jsonArray = jsonObject.getJSONArray("data");
-                                    for(int i=0;i<jsonArray.length();i++)
-                                    {
-                                        JSONObject jsonObject1=jsonArray.getJSONObject(i);
+                                    for (int i = 0; i < jsonArray.length(); i++) {
+                                        JSONObject jsonObject1 = jsonArray.getJSONObject(i);
 
-                                        approvel=jsonObject1.getString("approvel");
+                                        approvel = jsonObject1.getString("approvel");
                                         editor.putString("approvel", approvel);
                                         editor.commit();
 
-                                        if(approvel.equalsIgnoreCase("yes"))
-                                        {
+                                        if (approvel.equalsIgnoreCase("yes")) {
                                             startActivity(new Intent(HomeProfileActivity.this, NavHomeActivity.class));
-                                            overridePendingTransition(android.R.anim.slide_in_left,android.R.anim.slide_in_left);
+                                            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_in_left);
                                             finish();
-                                        }
-                                        else
-                                        {
+                                        } else {
                                             Toast.makeText(HomeProfileActivity.this, "Profile has been submitted for approval", Toast.LENGTH_SHORT).show();
                                         }
                                     }
 
-                                }
-                                else
-                                {
+                                } else {
 
                                 }
 
                                 // Toast.makeText(RegistrationActivity.this, "scc "+Token, Toast.LENGTH_SHORT).show();
 
-                            }
-                            else
-                            {
+                            } else {
 
-                                Toast.makeText(HomeProfileActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(HomeProfileActivity.this, "" + stringBuilder, Toast.LENGTH_SHORT).show();
                             }
 
 
@@ -288,12 +272,11 @@ public class HomeProfileActivity extends AppCompatActivity {
                 });
     }
 
-    public void getPersonalInfo()
-    {
+    public void getPersonalInfo() {
         progressDialog.show();
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.getPersonalInfo(pref.getString("driver_id",""), new retrofit.Callback<retrofit.client.Response>() {
+        myInterface.getPersonalInfo(pref.getString("driver_id", ""), new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                 progressDialog.dismiss();
@@ -313,12 +296,10 @@ public class HomeProfileActivity extends AppCompatActivity {
                         JSONObject jsonObject = new JSONObject("" + stringBuilder);
                         String status = jsonObject.getString("status");
                         JSONArray jsonArray = null;
-                        if(status.equalsIgnoreCase("1"))
-                        {
+                        if (status.equalsIgnoreCase("1")) {
                             jsonArray = jsonObject.getJSONArray("data");
-                            for(int i=0;i<jsonArray.length();i++)
-                            {
-                                JSONObject jsonObject1=jsonArray.getJSONObject(i);
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObject1 = jsonArray.getJSONObject(i);
 
                                 /*String fullname = jsonObject1.getString("fullname");
                                 editor.putString("fullname", fullname);
@@ -344,24 +325,20 @@ public class HomeProfileActivity extends AppCompatActivity {
                                 editor.putString("gender", gender);
                                 editor.commit();
                             }
-                            Log.d("photooooooo","photo "+photo);
+                            Log.d("photooooooo", "photo " + photo);
                             Glide
                                     .with(HomeProfileActivity.this)
                                     .load(photo)
                                     .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop()).into(profile_pic);
-                        }
-                        else
-                        {
+                        } else {
 
                         }
 
                         // Toast.makeText(RegistrationActivity.this, "scc "+Token, Toast.LENGTH_SHORT).show();
 
-                    }
-                    else
-                    {
+                    } else {
 
-                        Toast.makeText(HomeProfileActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(HomeProfileActivity.this, "" + stringBuilder, Toast.LENGTH_SHORT).show();
                     }
 
 
@@ -383,12 +360,11 @@ public class HomeProfileActivity extends AppCompatActivity {
         });
     }
 
-    public void getApprovalStatus()
-    {
+    public void getApprovalStatus() {
         progressDialog.show();
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.getApprovalStatus(pref.getString("email",""), new retrofit.Callback<retrofit.client.Response>() {
+        myInterface.getApprovalStatus(pref.getString("email", ""), new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                 progressDialog.dismiss();
@@ -409,13 +385,11 @@ public class HomeProfileActivity extends AppCompatActivity {
                         String status = jsonObject.getString("status");
                         String message = jsonObject.getString("message");
                         JSONArray jsonArray = null;
-                        if(status.equalsIgnoreCase("1"))
-                        {
+                        if (status.equalsIgnoreCase("1")) {
                             getPersonalInfo();
                             jsonArray = jsonObject.getJSONArray("data");
-                            for(int i=0;i<jsonArray.length();i++)
-                            {
-                                JSONObject jsonObject1=jsonArray.getJSONObject(i);
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObject1 = jsonArray.getJSONObject(i);
 
                                 String fullname = jsonObject1.getString("fullname");
                                 editor.putString("fullname", fullname);
@@ -426,48 +400,39 @@ public class HomeProfileActivity extends AppCompatActivity {
 
                                 editor.commit();
                             }
-                            Log.d("photooooooo","photo "+photo);
+                            Log.d("photooooooo", "photo " + photo);
                             /*personalInfo=pref.getString("personalInfo","");
                             documentsInfo=pref.getString("documentsInfo","");
                             vehicleInfo=pref.getString("vehicleInfo","");
                             bankInfo=pref.getString("bankInfo","");
                             approvel=pref.getString("approvel","");*/
 
-                            if(approvel.equalsIgnoreCase("0"))
-                            {
-                                Log.d("whereis","appr no");
+                            if (approvel.equalsIgnoreCase("0")) {
+                                Log.d("whereis", "appr no");
 
                                 txtsubmit.setText("Submit for Approval");
-                            }
-                            else if(approvel.equalsIgnoreCase("no"))
-                            {
-                                Log.d("whereis","appr no");
+                            } else if (approvel.equalsIgnoreCase("no")) {
+                                Log.d("whereis", "appr no");
 
-                                    Log.d("whereis","docs");
-                                    txtsubmit.setText("Waiting for Approval");
+                                Log.d("whereis", "docs");
+                                txtsubmit.setText("Waiting for Approval");
 
-                            }
-                            else
-                            {
-                                    Log.d("whereis","docs");
-                                    txtsubmit.setText("Go back");
+                            } else {
+                                Log.d("whereis", "docs");
+                                txtsubmit.setText("Go back");
                             }
 
-                        }
-                        else
-                        {
-                            Toast.makeText(HomeProfileActivity.this, ""+message, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(HomeProfileActivity.this, "" + message, Toast.LENGTH_SHORT).show();
                             submit.setEnabled(false);
                             submit.setClickable(false);
                         }
 
                         // Toast.makeText(RegistrationActivity.this, "scc "+Token, Toast.LENGTH_SHORT).show();
 
-                    }
-                    else
-                    {
+                    } else {
 
-                        Toast.makeText(HomeProfileActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(HomeProfileActivity.this, "" + stringBuilder, Toast.LENGTH_SHORT).show();
                     }
 
 
@@ -494,15 +459,12 @@ public class HomeProfileActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         pref = getSharedPreferences("mysession", MODE_PRIVATE);
-        editor=pref.edit();
+        editor = pref.edit();
 
-        if(pref.getString("type","").equalsIgnoreCase("individual"))
-        {
+        if (pref.getString("type", "").equalsIgnoreCase("individual")) {
             vehicle_detail.setVisibility(View.VISIBLE);
             bank.setVisibility(View.VISIBLE);
-        }
-        else
-        {
+        } else {
             vehicle_detail.setVisibility(View.GONE);
             bank.setVisibility(View.GONE);
         }
@@ -510,14 +472,14 @@ public class HomeProfileActivity extends AppCompatActivity {
         getApprovalStatus();
 
 
-        name.setText(pref.getString("fullname",""));
+        name.setText(pref.getString("fullname", ""));
 
     }
 
     @Override
     public void onBackPressed() {
-
-            if(approvel.equalsIgnoreCase("0") || approvel.equalsIgnoreCase("no")) {
+        if (approvel != null) {
+            if (approvel.equalsIgnoreCase("0") || approvel.equalsIgnoreCase("no")) {
                 new AlertDialog.Builder(HomeProfileActivity.this).setTitle("Logout").setMessage("You will be logged out!")
                         .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                             @Override
@@ -541,8 +503,7 @@ public class HomeProfileActivity extends AppCompatActivity {
                     }
                 }).show();
             }
-            else
-        {
+        } else {
             super.onBackPressed();
             Bungee.slideRight(this);
         }

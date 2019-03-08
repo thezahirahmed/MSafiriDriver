@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -389,6 +390,19 @@ public class AccountFragment extends Fragment {
                                 editor.clear();
                                 editor.commit();
                                 editor.apply();
+                                SharedPreferences p_pref=getActivity().getSharedPreferences("passenger_pref", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor p_editor=p_pref.edit();
+                                SharedPreferences pref=getActivity().getSharedPreferences("location_pref",MODE_PRIVATE);
+                                SharedPreferences.Editor editor=pref.edit();
+
+                                p_editor.clear();
+                                p_editor.commit();
+                                p_editor.apply();
+
+                                editor.clear();
+                                editor.commit();
+                                editor.apply();
+
                                 Intent intent = new Intent(getActivity(), SignInActivity.class).putExtra("from","account");
                                 startActivity(intent);
                                 Bungee.slideLeft(getActivity());

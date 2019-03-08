@@ -2,6 +2,7 @@ package com.eleganzit.msafiridriver.fragment;
 
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -113,7 +114,10 @@ public class HomeFragment extends Fragment {
         past = v.findViewById(R.id.past);
         pop_anim = AnimationUtils.loadAnimation(getActivity(), R.anim.pop_anim);
 
+        SharedPreferences p_pref=getActivity().getSharedPreferences("passenger_pref",Context.MODE_PRIVATE);
+        SharedPreferences.Editor p_editor=p_pref.edit();
 
+        Log.d("trip_status","home fragment   "+p_pref.getString("trip_status","")+"");
         Log.d("whereeeee","oncreateview");
 
 

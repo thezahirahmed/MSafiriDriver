@@ -528,7 +528,7 @@ public class DocumentsActivity extends AppCompatActivity {
 
             final VehicleData vehicleData=arrayList.get(position);
 
-            Toast.makeText(context, ""+arrayList.get(position).getPhoto_type(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, ""+arrayList.get(position).getPhoto_type(), Toast.LENGTH_SHORT).show();
 
             if(arrayList.get(position).getPhoto_type().equalsIgnoreCase(""))
             {

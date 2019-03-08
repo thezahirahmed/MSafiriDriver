@@ -138,11 +138,15 @@
         <activity
             android:name=".ResetPasswordActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".BottomSheetActivity"
+        <activity
+            android:name=".BottomSheetActivity"
             android:screenOrientation="portrait" />
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="da053ae7792cbe461205212aac624d1afcd9fa4c" />
+
+        <activity android:name=".activity.HomePassengerListActivity"></activity>
     </application>
 
 </manifest>

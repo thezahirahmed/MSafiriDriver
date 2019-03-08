@@ -97,12 +97,11 @@ public class SensorService extends Service implements GoogleApiClient.Connection
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         pref = getSharedPreferences("location_pref", MODE_PRIVATE);
-        intent_data=intent.getStringExtra("click");
+
 
         intent_action = pref.getString("action", "");
         trip_id = pref.getString("trip_id", "");
 
-        Log.i("wherreeeeeee", "onStartCommand  "+trip_id+"   "+intent_data);
 
         mChatHeadView = LayoutInflater.from(this).inflate(R.layout.layout_chat_head, null);
 
@@ -122,22 +121,28 @@ public class SensorService extends Service implements GoogleApiClient.Connection
         //Add the view to the window
         mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
 
-        Log.d("whereeereee","intent_data  "+intent_data);
-        if(intent_data!=null)
+        if(intent!=null)
         {
-            if(intent_data.equalsIgnoreCase("first"))
+            intent_data=intent.getStringExtra("click");
+            Log.i("wherreeeeeee", "onStartCommand  "+trip_id+"   "+intent_data);
+            Log.d("whereeereee","intent_data  "+intent_data);
+            if(intent_data!=null)
             {
-                Log.d("whereeereee","first");
-                if(intent_action.equalsIgnoreCase("start")) {
-                    Log.d("whereeereee","start");
-                    mWindowManager.addView(mChatHeadView, params);
+                if(intent_data.equalsIgnoreCase("first"))
+                {
+                    Log.d("whereeereee","first");
+                    if(intent_action.equalsIgnoreCase("start")) {
+                        Log.d("whereeereee","start");
+                        mWindowManager.addView(mChatHeadView, params);
+                    }
+                }
+                else
+                {
+                    Log.d("whereeereee","elsee");
+                    mWindowManager.removeViewImmediate(mChatHeadView);
                 }
             }
-            else
-            {
-                Log.d("whereeereee","elsee");
-                mWindowManager.removeViewImmediate(mChatHeadView);
-            }
+
         }
 
         //Set the close button.
