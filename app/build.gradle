@@ -22,7 +22,7 @@ android {
         applicationId "com.eleganzit.msafiridriver"
         minSdkVersion 19
         targetSdkVersion 28
-        project.ext.set("archivesBaseName", "MSafiriDriver-26-02-2019" + defaultConfig.versionName)
+        project.ext.set("archivesBaseName", "MSafiriDriver-9-3-2019" + defaultConfig.versionName)
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
