@@ -2,19 +2,26 @@ package com.eleganzit.msafiridriver.activity;
 
 import android.app.ActivityManager;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.speech.RecognitionListener;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,6 +30,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -43,6 +51,7 @@ import com.eleganzit.msafiridriver.adapter.PassengerAdapter;
 import com.eleganzit.msafiridriver.adapter.UpcomingTripAdapter;
 import com.eleganzit.msafiridriver.model.PassengerData;
 import com.eleganzit.msafiridriver.model.TripData;
+import com.eleganzit.msafiridriver.utils.GoogleService;
 import com.eleganzit.msafiridriver.utils.MyInterface;
 import com.eleganzit.msafiridriver.utils.SensorService;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -59,6 +68,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit.RestAdapter;
@@ -88,6 +99,13 @@ public class PassengerListActivity extends AppCompatActivity {
     private String from;
     private String photoPath;
     CheckBox select_allcheck;
+    private static final int REQUEST_PERMISSIONS = 100;
+    boolean boolean_permission;
+    TextView tv_latitude, tv_longitude, tv_address,tv_area,tv_locality;
+    SharedPreferences mPref;
+    SharedPreferences.Editor medit;
+    Double latitude,longitude;
+    Geocoder geocoder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +116,9 @@ public class PassengerListActivity extends AppCompatActivity {
         p_editor=p_pref.edit();
         pref=getSharedPreferences("location_pref",MODE_PRIVATE);
         editor=pref.edit();
+        mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        medit = mPref.edit();
+
         trip_status=p_pref.getString("trip_status","");
         Log.d("trip_status","activity on create"+trip_status+"");
         handler=new Handler();
@@ -115,7 +136,6 @@ public class PassengerListActivity extends AppCompatActivity {
 
         photoPath=p_pref.getString("photoPath","");
         Log.d("photoPathPP",""+photoPath);
-
         top=findViewById(R.id.top);
         passengers=findViewById(R.id.passengers);
         trip_text=findViewById(R.id.trip_text);
@@ -133,8 +153,163 @@ public class PassengerListActivity extends AppCompatActivity {
 
         RecyclerView.LayoutManager layoutManager=new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false);
         passengers.setLayoutManager(layoutManager);
+        geocoder = new Geocoder(this, Locale.getDefault());
+        mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        medit = mPref.edit();
 
+/*
+        start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (boolean_permission) {
+
+                    if (mPref.getString("service", "").matches("")) {
+                        medit.putString("service", "service").commit();
+
+                        Intent intent = new Intent(getApplicationContext(), GoogleService.class);
+                        startService(intent);
+
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Service is already running", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(getApplicationContext(), "Please enable the gps", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+        fn_permission();*/
+
+        /*start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               *//* if (boolean_permission) {
+
+                    if (mPref.getString("service", "").matches("")) {
+                        medit.putString("service", "service").commit();
+
+                        Intent intent = new Intent(getApplicationContext(), GoogleService.class);
+                        startService(intent);
+
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Service is already running", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(getApplicationContext(), "Please enable the gps", Toast.LENGTH_SHORT).show();
+                }
+                Toast.makeText(PassengerListActivity.this, "click", Toast.LENGTH_SHORT).show();
+*//*
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(PassengerListActivity.this)) {
+
+                    //If the draw over permission is not available open the settings screen
+                    //to grant the permission.
+                    Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                            Uri.parse("package:" + getPackageName()));
+                    startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION);
+                } else {
+                    if(trip_text.getText().toString().equalsIgnoreCase("start trip"))
+                    {
+                        mServiceIntent = new Intent(PassengerListActivity.this, mSensorService.getClass()).putExtra("click","first");
+                        //Check if the application has draw over other apps permission or not?
+                        //This permission is by default available for API<23. But for API > 23
+                        //you have to ask for the permission in runtime.
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(PassengerListActivity.this)) {
+
+                            //If the draw over permission is not available open the settings screen
+                            //to grant the permission.
+                            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                    Uri.parse("package:" + getPackageName()));
+                            startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION);
+                        } else {
+                            startService(mServiceIntent);
+
+                        }
+                    }
+
+                }
+
+
+                if(trip_text.getText().toString().equalsIgnoreCase("end trip"))
+                {
+                    updateDeactiveStatus("deactive",null);
+                    p_editor.putBoolean("firstTime",false);
+                    p_editor.commit();
+                }
+
+
+            }
+        });*/
+
+        //fn_permission();
     }
+
+    private void fn_permission() {
+        if ((ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+
+            if ((ActivityCompat.shouldShowRequestPermissionRationale(PassengerListActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION))) {
+
+
+            } else {
+                ActivityCompat.requestPermissions(PassengerListActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION
+
+                        },
+                        REQUEST_PERMISSIONS);
+
+            }
+        } else {
+            boolean_permission = true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case REQUEST_PERMISSIONS: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    boolean_permission = true;
+
+                } else {
+                    Toast.makeText(getApplicationContext(), "Please allow the permission", Toast.LENGTH_LONG).show();
+
+                }
+            }
+        }
+    }
+
+
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            latitude = Double.valueOf(intent.getStringExtra("latutide"));
+            longitude = Double.valueOf(intent.getStringExtra("longitude"));
+
+            List<Address> addresses = null;
+
+            try {
+                addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                String cityName = addresses.get(0).getAddressLine(0);
+                String stateName = addresses.get(0).getAddressLine(1);
+                String countryName = addresses.get(0).getAddressLine(2);
+
+
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+
+/*
+            tv_latitude.setText(latitude+"");
+            tv_longitude.setText(longitude+"");
+            tv_address.getText();*/
+            Toast.makeText(context, "lat "+latitude+" lng "+longitude, Toast.LENGTH_SHORT).show();
+
+
+        }
+    };
+
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
@@ -148,12 +323,19 @@ public class PassengerListActivity extends AppCompatActivity {
         return false;
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(broadcastReceiver);
+    }
 
     @Override
     protected void onDestroy() {
 
         //stopService(mServiceIntent);
-
+        medit.clear();
+        medit.apply();
+        medit.commit();
         Log.i("wherreeeeeee", "onDestroy!");
         super.onDestroy();
 
@@ -162,6 +344,7 @@ public class PassengerListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        registerReceiver(broadcastReceiver, new IntentFilter(GoogleService.str_receiver));
 
         if(select_allcheck.isChecked())
         {
@@ -851,9 +1034,22 @@ public class PassengerListActivity extends AppCompatActivity {
             start.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    /*if (boolean_permission) {
 
+                        if (mPref.getString("service", "").matches("")) {
+                            medit.putString("service", "service").commit();
+
+                            Intent intent = new Intent(getApplicationContext(), GoogleService.class);
+                            startService(intent);
+
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Service is already running", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Please enable the gps", Toast.LENGTH_SHORT).show();
+                    }
                     Toast.makeText(PassengerListActivity.this, "click", Toast.LENGTH_SHORT).show();
-
+*/
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(PassengerListActivity.this)) {
 
                         //If the draw over permission is not available open the settings screen

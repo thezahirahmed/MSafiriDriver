@@ -39,6 +39,9 @@
             </intent-filter>
         </service>
 
+        <service android:name=".utils.GoogleService"
+            android:enabled="true"/>
+
         <activity
             android:name=".SplashActivity"
             android:screenOrientation="portrait">
@@ -146,7 +149,8 @@
             android:name="io.fabric.ApiKey"
             android:value="da053ae7792cbe461205212aac624d1afcd9fa4c" />
 
-        <activity android:name=".activity.HomePassengerListActivity"></activity>
+        <activity android:name=".activity.HomePassengerListActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

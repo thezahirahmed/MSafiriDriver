@@ -129,27 +129,14 @@ public class HomeFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        upcoming.setVisibility(View.GONE);
-        shimmerFrameLayout.setVisibility(View.VISIBLE);
-        YoYo.with(Techniques.SlideInLeft)
-                .duration(300)
-                .repeat(0)
-                .playOn(shimmerFrameLayout);
-
-        shimmerFrameLayout.startShimmer();
         current.setBackgroundResource(R.drawable.tab_left_light_bg);
         past.setBackgroundResource(R.drawable.tab_right_dark_bg);
         no_trips.setVisibility(View.GONE);
         upcoming.setVisibility(View.GONE);
         trip_title.setText("Upcoming Trips");
-        YoYo.with(Techniques.SlideInLeft)
-                .duration(300)
-                .repeat(0)
-                .playOn(shimmerFrameLayout);
-        shimmerFrameLayout.setVisibility(View.VISIBLE);
+
         card.setCardElevation(0);
         card.setMaxCardElevation(0);
-        shimmerFrameLayout.startShimmer();
         getDriverTrips("current");
         Log.d("whereeeee","onResume");
 
@@ -280,7 +267,12 @@ public class HomeFragment extends Fragment {
 
     public void getDriverTrips(final String trip_type)
     {
-
+        shimmerFrameLayout.setVisibility(View.VISIBLE);
+        YoYo.with(Techniques.SlideInLeft)
+                .duration(300)
+                .repeat(0)
+                .playOn(shimmerFrameLayout);
+        shimmerFrameLayout.startShimmer();
         reload.setVisibility(View.GONE);
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);

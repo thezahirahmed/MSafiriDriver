@@ -238,7 +238,7 @@
                 <com.eleganzit.msafiridriver.utils.RobotoMediumTextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="Create your peofile"
+                    android:text="Create your profile"
                     android:padding="12dp"
                     android:textStyle="bold"
                     android:layout_gravity="center"

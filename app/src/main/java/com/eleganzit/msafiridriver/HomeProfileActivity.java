@@ -503,6 +503,10 @@ public class HomeProfileActivity extends AppCompatActivity {
                     }
                 }).show();
             }
+            else {
+                super.onBackPressed();
+                Bungee.slideRight(this);
+            }
         } else {
             super.onBackPressed();
             Bungee.slideRight(this);

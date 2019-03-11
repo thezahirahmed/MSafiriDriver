@@ -143,7 +143,7 @@ public class ChoosePictureActivity extends AppCompatActivity {
 
         profile=findViewById(R.id.profile);
         progressDialog=new ProgressDialog(this);
-        progressDialog.setMessage("Uploading...");
+        progressDialog.setMessage("Please wait...");
         progressDialog.setCancelable(false);
         progressDialog.setCanceledOnTouchOutside(false);
         URLUPDATEUSER = "http://itechgaints.com/M-safiri-API/driverPhoto";

@@ -38,6 +38,8 @@
             android:layout_marginLeft="20dp"
             android:layout_gravity="center"
             android:text=""
+            android:singleLine="true"
+            android:ellipsize="end"
             android:textColor="#000"
             android:textStyle="bold"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"/>

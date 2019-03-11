@@ -81,6 +81,7 @@ public class SensorService extends Service implements GoogleApiClient.Connection
     }
 
     public SensorService() {
+
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -284,17 +285,25 @@ public class SensorService extends Service implements GoogleApiClient.Connection
                             @Override
                             public void gotLocation(Location location){
 
-                                Location destLocation=new Location("newlocation");
-                                double lat=Double.parseDouble(pref.getString("dest_lat",""));
-                                double lng=Double.parseDouble(pref.getString("dest_lng",""));
-                                destLocation.setLatitude(lat);
-                                destLocation.setLongitude(lng);
-                                last_lat=String.valueOf(location.getLatitude());
-                                last_lng=String.valueOf(location.getLongitude());
-                                updatelastLocation();
-                                float distance = location.distanceTo(destLocation) /1000;
-                                Log.i("wherreeeeeee lllllll", "distance between "+ location.getLatitude()+" and  "+location.getLongitude()+" is "+ distance);
-                                //Log.i("wherreeeeeee lllllll", ""+ location.getLatitude()+"   "+location.getLongitude());
+                                if(location==null)
+                                {
+
+                                }
+                                else
+                                {
+                                    Location destLocation=new Location("newlocation");
+                                    double lat=Double.parseDouble(pref.getString("dest_lat",""));
+                                    double lng=Double.parseDouble(pref.getString("dest_lng",""));
+                                    destLocation.setLatitude(lat);
+                                    destLocation.setLongitude(lng);
+                                    last_lat=String.valueOf(location.getLatitude());
+                                    last_lng=String.valueOf(location.getLongitude());
+                                    updatelastLocation();
+                                    float distance = location.distanceTo(destLocation) /1000;
+                                    Log.i("wherreeeeeee lllllll", "distance between "+ location.getLatitude()+" and  "+location.getLongitude()+" is "+ distance);
+                                    //Log.i("wherreeeeeee lllllll", ""+ location.getLatitude()+"   "+location.getLongitude());
+
+                                }
 
                             }
                         };

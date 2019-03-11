@@ -258,7 +258,7 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                     vehicle_number.requestFocus();
                     vehicle_number.setError("Please enter number plate");
                 }
-                else if(seats.getText().toString().isEmpty())
+                else if(seats.getText().toString().isEmpty() || seats.getText().toString().equalsIgnoreCase("0"))
                 {
                     YoYo.with(Techniques.Shake)
                             .duration(700)

@@ -8,7 +8,9 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -135,11 +137,65 @@ public class MyLocation {
                 locationResult.gotLocation(net_loc);
                 return;
             }
-            locationResult.gotLocation(null);
+            //locationResult.gotLocation(null);
+            if(net_loc==null || gps_loc==null)
+            {
+                getLastKnownLocation();
+            }
         }
     }
 
     public static abstract class LocationResult{
         public abstract void gotLocation(Location location);
+    }
+
+    public void getLastKnownLocation() {
+        List<String> providers = lm.getProviders(true);
+        Location bestLocation = null;
+        for (String provider : providers) {
+            if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.
+                    checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return ;
+            }
+            Location l = lm.getLastKnownLocation(provider);
+
+//            Log.e("last known location, provider: %s, location: %s", provider,
+//                    l);
+
+//            Toast.makeText(this, ""+l.getLatitude()+","+l.getLongitude(), Toast.LENGTH_SHORT).show();
+
+            if (l == null) {
+                continue;
+            }
+            else {
+                Log.d("gxgd",l.getLatitude()+"xfgxdg"+l.getLongitude());
+
+            }
+            if (bestLocation == null
+                    || l.getAccuracy() < bestLocation.getAccuracy()) {
+                //   ALog.d("found best last known location: %s", l);
+                bestLocation = l;
+
+/*
+
+                editor.putString("lat" ,String.valueOf(l.getLatitude()));
+                editor.putString("long" ,String.valueOf(l.getLongitude()));
+                editor.commit();
+
+*/
+
+
+            }
+        }
+        if (bestLocation == null) {
+
+        }
     }
 }

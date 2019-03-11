@@ -428,7 +428,7 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
                     p_editor=p_pref.edit();
                     p_editor.putString("trip_id",tripData.getId()+"");
                     p_editor.commit();
-                    context.startActivity(new Intent(context,PassengerListActivity.class).putExtra("from","home"));
+                    context.startActivity(new Intent(context,HomePassengerListActivity.class));
                     Bungee.slideLeft(context);
                 }
                 else
@@ -582,9 +582,18 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
     }
 
     public void removeAt(int position) {
-        arrayList.remove(position);
-        notifyItemRemoved(position);
-        notifyItemRangeChanged(position, arrayList.size());
+        if(arrayList.size()==1)
+        {
+            arrayList.remove(position);
+            notifyDataSetChanged();
+        }
+        else
+        {
+            arrayList.remove(position);
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(position, arrayList.size());
+        }
+
     }
     public String parseDateToddMMyyyy2(String time)   {
         String inputPattern = "yyyy-MM-dd HH:mm:ss";
@@ -633,37 +642,38 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
                                 JSONObject jsonObject = new JSONObject("" + stringBuilder);
                                 String status = jsonObject.getString("status");
                                 String message = jsonObject.getString("message");
-                                JSONArray jsonArray = jsonObject.getJSONArray("data");
-                                for(int i=0;i<jsonArray.length();i++)
+                                if(status.equalsIgnoreCase("1"))
                                 {
-                                    JSONObject jsonObject1=jsonArray.getJSONObject(i);
-
-                                    String id = jsonObject1.getString("id");
-                                    String from_title = jsonObject1.getString("from_title");
-                                    String from_lat = jsonObject1.getString("from_lat");
-                                    String from_lng = jsonObject1.getString("from_lng");
-                                    String from_address = jsonObject1.getString("from_address");
-                                    String to_title = jsonObject1.getString("to_title");
-                                    String to_lat = jsonObject1.getString("to_lat");
-                                    String to_lng = jsonObject1.getString("to_lng");
-                                    String to_address = jsonObject1.getString("to_address");
-                                    String pickup_time = jsonObject1.getString("datetime");
-                                    String destination_time = jsonObject1.getString("end_datetime");
-                                    String statuss = jsonObject1.getString("status");
-                                    String trip_price = jsonObject1.getString("trip_price");
-
-                                    TripData tripData=new TripData("upcoming",id,from_title,from_lat,from_lng,from_address,to_title,to_lat,to_lng,to_address,pickup_time,destination_time,statuss,trip_price);
-                                    if(status.equalsIgnoreCase("1"))
+                                    JSONArray jsonArray = jsonObject.getJSONArray("data");
+                                    for(int i=0;i<jsonArray.length();i++)
                                     {
-                                        Toast.makeText(context, "Updated successfully", Toast.LENGTH_SHORT).show();
+                                        JSONObject jsonObject1=jsonArray.getJSONObject(i);
+
+                                        String id = jsonObject1.getString("id");
+                                        String from_title = jsonObject1.getString("from_title");
+                                        String from_lat = jsonObject1.getString("from_lat");
+                                        String from_lng = jsonObject1.getString("from_lng");
+                                        String from_address = jsonObject1.getString("from_address");
+                                        String to_title = jsonObject1.getString("to_title");
+                                        String to_lat = jsonObject1.getString("to_lat");
+                                        String to_lng = jsonObject1.getString("to_lng");
+                                        String to_address = jsonObject1.getString("to_address");
+                                        String pickup_time = jsonObject1.getString("datetime");
+                                        String destination_time = jsonObject1.getString("end_datetime");
+                                        String statuss = jsonObject1.getString("status");
+                                        String trip_price = jsonObject1.getString("trip_price");
+
+                                        TripData tripData=new TripData("upcoming",id,from_title,from_lat,from_lng,from_address,to_title,to_lat,to_lng,to_address,pickup_time,destination_time,statuss,trip_price);
+
+                                        Toast.makeText(context, "Trip delayed by 30 min", Toast.LENGTH_SHORT).show();
                                         arrayList.set(position, tripData);
                                         notifyItemChanged(position);
-                                    }
-                                    else
-                                    {
-                                        Toast.makeText(context, ""+message, Toast.LENGTH_SHORT).show();
-                                    }
 
+                                    }
+                                }
+                                else
+                                {
+                                    Toast.makeText(context, ""+message, Toast.LENGTH_SHORT).show();
                                 }
 
                             }

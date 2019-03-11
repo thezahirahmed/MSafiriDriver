@@ -269,7 +269,7 @@ public class PersonalInfoActivity extends AppCompatActivity {
                     edphone.setError("Please enter phone number");
                     edphone.requestFocus();
                 }
-                else if(edbirth.getText().toString().isEmpty())
+                else if(edbirth.getText().toString().isEmpty() || edbirth.getText().toString().equalsIgnoreCase("0000-00-00"))
                 {
                     YoYo.with(Techniques.Shake)
                             .duration(700)
