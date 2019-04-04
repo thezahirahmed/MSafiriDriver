@@ -1,4 +1,4 @@
-package com.eleganzit.msafiridriver;
+package com.eleganzit.msafiridriver.activities_from_register;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -13,12 +13,10 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.widget.CircularProgressDrawable;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -34,16 +32,10 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
-import com.eleganzit.msafiridriver.activity.NavHomeActivity;
-import com.eleganzit.msafiridriver.adapter.UpcomingTripAdapter;
-import com.eleganzit.msafiridriver.adapter.VehicleImagesAdapter;
-import com.eleganzit.msafiridriver.model.TripData;
+import com.eleganzit.msafiridriver.R;
 import com.eleganzit.msafiridriver.model.VehicleData;
-import com.eleganzit.msafiridriver.uploadImage.CallAPiActivity;
-import com.eleganzit.msafiridriver.uploadImage.GetResponse;
 import com.eleganzit.msafiridriver.utils.MyInterface;
 
 import org.json.JSONArray;
@@ -62,7 +54,7 @@ import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import spencerstudios.com.bungeelib.Bungee;
 
-public class VehicleDetailsActivity extends AppCompatActivity {
+public class RegisterVehicleDetailsActivity extends AppCompatActivity {
 
     String data="0";
     String id = "";
@@ -101,10 +93,10 @@ public class VehicleDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 onBackPressed();
-                Bungee.slideRight(VehicleDetailsActivity.this);
+                Bungee.slideRight(RegisterVehicleDetailsActivity.this);
             }
         });
-        callAPiActivity = new com.eleganzit.msafiridriver.uploadMultupleImage.CallAPiActivity(VehicleDetailsActivity.this);
+        callAPiActivity = new com.eleganzit.msafiridriver.uploadMultupleImage.CallAPiActivity(RegisterVehicleDetailsActivity.this);
         URLUPDATEUSER = "http://itechgaints.com/M-safiri-API/addVehicledetail";
         URLUPDATEUSER2 = "http://itechgaints.com/M-safiri-API/updateVehicledetail";
         pref = getSharedPreferences("mysession", MODE_PRIVATE);
@@ -113,8 +105,8 @@ public class VehicleDetailsActivity extends AppCompatActivity {
         rc_vehicle_images=findViewById(R.id.rc_vehicle_images);
         rc_number_images=findViewById(R.id.rc_number_images);
 
-        RecyclerView.LayoutManager layoutManager=new LinearLayoutManager(VehicleDetailsActivity.this,LinearLayoutManager.HORIZONTAL,false);
-        RecyclerView.LayoutManager layoutManager2=new LinearLayoutManager(VehicleDetailsActivity.this,LinearLayoutManager.HORIZONTAL,false);
+        RecyclerView.LayoutManager layoutManager=new LinearLayoutManager(RegisterVehicleDetailsActivity.this,LinearLayoutManager.HORIZONTAL,false);
+        RecyclerView.LayoutManager layoutManager2=new LinearLayoutManager(RegisterVehicleDetailsActivity.this,LinearLayoutManager.HORIZONTAL,false);
         rc_vehicle_images.setLayoutManager(layoutManager);
         rc_number_images.setLayoutManager(layoutManager2);
 
@@ -185,7 +177,7 @@ public class VehicleDetailsActivity extends AppCompatActivity {
         vehicle_type.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final Dialog dialog=new Dialog(VehicleDetailsActivity.this);
+                final Dialog dialog=new Dialog(RegisterVehicleDetailsActivity.this);
                 dialog.setContentView(R.layout.vehicle_type_dialog);
                 final TextView car=dialog.findViewById(R.id.car);
                 final TextView van=dialog.findViewById(R.id.van);
@@ -225,11 +217,11 @@ public class VehicleDetailsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(str_vehicle_array.size()==0)
                 {
-                    Toast.makeText(VehicleDetailsActivity.this, "Please upload vehicle images", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterVehicleDetailsActivity.this, "Please upload vehicle images", Toast.LENGTH_SHORT).show();
                 }
                 else if(str_num_plate_array.size()==0)
                 {
-                    Toast.makeText(VehicleDetailsActivity.this, "Please upload number plate images", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterVehicleDetailsActivity.this, "Please upload number plate images", Toast.LENGTH_SHORT).show();
                 }
                 else if(vehicle_name.getText().toString().isEmpty())
                 {
@@ -278,7 +270,8 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                     else
                     {*/
                         Log.d("whereeeeee","else   vehicle"+str_vehicle_array+"  numuberr "+str_num_plate_array);
-                   getUpcomingTrips();
+                   //getUpcomingTrips();
+                    updateVehicle();
                     //}
 
                 }
@@ -325,7 +318,7 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                     else
                     {
                         progressDialog.dismiss();
-                        Toast.makeText(VehicleDetailsActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterVehicleDetailsActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
                     }
 
 
@@ -340,7 +333,7 @@ public class VehicleDetailsActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 Log.d("errorrrr",""+error.getMessage());
-                Toast.makeText(VehicleDetailsActivity.this, "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterVehicleDetailsActivity.this, "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -381,11 +374,11 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                         }
                         if(upcomingTripsAreDone && currentTripIsDone)
                         {
-                            new AlertDialog.Builder(VehicleDetailsActivity.this).setMessage("Are you sure you want to save the changes?")
+                            new AlertDialog.Builder(RegisterVehicleDetailsActivity.this).setMessage("Are you sure you want to save the changes?")
                                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
-                                            updateVehicle();
+
                                         }
                                     }).setNegativeButton("No", new DialogInterface.OnClickListener() {
                                 @Override
@@ -398,7 +391,7 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                         else
                         {
                             //Toast.makeText(VehicleDetailsActivity.this, "You cannot update profile if you have any trips remaining!", Toast.LENGTH_LONG).show();
-                            new AlertDialog.Builder(VehicleDetailsActivity.this).setMessage("You cannot update profile if you have any trips remaining!").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            new AlertDialog.Builder(RegisterVehicleDetailsActivity.this).setMessage("You cannot update profile if you have any trips remaining!").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     dialogInterface.dismiss();
@@ -410,7 +403,7 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                     else
                     {
                         progressDialog.dismiss();
-                        Toast.makeText(VehicleDetailsActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterVehicleDetailsActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
                     }
 
 
@@ -425,7 +418,7 @@ public class VehicleDetailsActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 Log.d("errorrrr",""+error.getMessage());
-                Toast.makeText(VehicleDetailsActivity.this, "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterVehicleDetailsActivity.this, "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -433,11 +426,15 @@ public class VehicleDetailsActivity extends AppCompatActivity {
 
 
     void openImageChooser(int SELECT_PICTURE) {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        /*Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("image/jpeg|image/jpg|image/png");
 
         Intent chooser = Intent.createChooser(intent, "Choose a Picture");
-        startActivityForResult(chooser, SELECT_PICTURE);
+        startActivityForResult(chooser, SELECT_PICTURE);*/
+
+        Intent galleryIntent=new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        startActivityForResult(Intent.createChooser(galleryIntent, "Select Picture"), SELECT_PICTURE);
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -456,7 +453,7 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                 str_num_plate_array.add(mediapath);
                 VehicleData vehicleData=new VehicleData("","proof",mediapath);
                 model_num_plate_array.add(vehicleData);
-                rc_number_images.setAdapter(new VehicleImagesAdapter2(str_num_plate_array,model_num_plate_array,VehicleDetailsActivity.this));
+                rc_number_images.setAdapter(new VehicleImagesAdapter2(str_num_plate_array,model_num_plate_array, RegisterVehicleDetailsActivity.this));
 
                 Log.d("file_size", "mediapath : " + mediapath + " ----num_pic3 ");
                 Log.d("num_picssssss",""+str_num_plate_array);
@@ -475,7 +472,7 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                 str_vehicle_array.add(mediapath);
                 VehicleData vehicleData=new VehicleData("","licence",mediapath);
                 model_vehicle_array.add(vehicleData);
-                rc_vehicle_images.setAdapter(new VehicleImagesAdapter(str_vehicle_array,model_vehicle_array,VehicleDetailsActivity.this));
+                rc_vehicle_images.setAdapter(new VehicleImagesAdapter(str_vehicle_array,model_vehicle_array, RegisterVehicleDetailsActivity.this));
 
                 Log.d("file_size", "mediapath : " + mediapath + " ---- num_pic1");
                 Log.d("imagesssssss",""+model_vehicle_array.size());
@@ -500,7 +497,7 @@ public class VehicleDetailsActivity extends AppCompatActivity {
             map.put("vehicle_type", vehicle_type.getText().toString());
             map.put("vehicle_number", vehicle_number.getText().toString());
             map.put("seats", seats.getText().toString());
-            callAPiActivity.doPostWithFiles(VehicleDetailsActivity.this, map, URLUPDATEUSER, str_vehicle_array, "vehicle_photo[]", str_num_plate_array, "numberplate_photo[]", new com.eleganzit.msafiridriver.uploadMultupleImage.GetResponse() {
+            callAPiActivity.doPostWithFiles(RegisterVehicleDetailsActivity.this, map, URLUPDATEUSER, str_vehicle_array, "vehicle_photo[]", str_num_plate_array, "numberplate_photo[]", new com.eleganzit.msafiridriver.uploadMultupleImage.GetResponse() {
 
                 @Override
                 public void onSuccesResult(JSONObject result) throws JSONException {
@@ -511,7 +508,7 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                         editor.putString("vehicleInfo", "filled");
                         editor.putString("vehicle_name",vehicle_name.getText().toString());
                         editor.commit();
-                        Toast.makeText(VehicleDetailsActivity.this, "successfully uploaded", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterVehicleDetailsActivity.this, "successfully uploaded", Toast.LENGTH_SHORT).show();
                     }
                     finish();
                     Log.d("messageeeeeeeeeee","succccccccessss"+status);
@@ -525,7 +522,7 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                         editor.putString("vehicleInfo", "filled");
                         editor.putString("vehicle_name",vehicle_name.getText().toString());
                         editor.commit();
-                        Toast.makeText(VehicleDetailsActivity.this, "successfully uploaded", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterVehicleDetailsActivity.this, "successfully uploaded", Toast.LENGTH_SHORT).show();
                     }
                     finish();
                     Log.d("messageeeeeeeeeee",message);
@@ -905,7 +902,7 @@ public class VehicleDetailsActivity extends AppCompatActivity {
         map.put("vehicle_type", vehicle_type.getText().toString());
         map.put("vehicle_number", vehicle_number.getText().toString());
         map.put("seats", seats.getText().toString());
-        callAPiActivity.doPostWithFiles(VehicleDetailsActivity.this, map, URLUPDATEUSER2, str_vehicle_array, "vehicle_photo[]", str_num_plate_array, "numberplate_photo[]", new com.eleganzit.msafiridriver.uploadMultupleImage.GetResponse() {
+        callAPiActivity.doPostWithFiles(RegisterVehicleDetailsActivity.this, map, URLUPDATEUSER2, str_vehicle_array, "vehicle_photo[]", str_num_plate_array, "numberplate_photo[]", new com.eleganzit.msafiridriver.uploadMultupleImage.GetResponse() {
 
             @Override
             public void onSuccesResult(JSONObject result) throws JSONException {
@@ -921,7 +918,7 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    Toast.makeText(VehicleDetailsActivity.this, ""+result.getString("message"), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterVehicleDetailsActivity.this, ""+result.getString("message"), Toast.LENGTH_SHORT).show();
                 }
 
                 Log.d("messageeeeeeeeeee","succccccccessss"+status);
@@ -936,11 +933,11 @@ public class VehicleDetailsActivity extends AppCompatActivity {
 
                     editor.putString("vehicle_name",vehicle_name.getText().toString());
                     editor.commit();
-                    Toast.makeText(VehicleDetailsActivity.this, "successfully uploaded", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterVehicleDetailsActivity.this, "successfully uploaded", Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
-                    Toast.makeText(VehicleDetailsActivity.this, ""+message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterVehicleDetailsActivity.this, ""+message, Toast.LENGTH_SHORT).show();
                 }
                 Log.d("messageeeeeeeeeee",message);
 
@@ -952,7 +949,7 @@ public class VehicleDetailsActivity extends AppCompatActivity {
 
     public void updateApprovalStatus()
     {
-        progressDialog.show();
+        //progressDialog.show();
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
         myInterface.updateApprovalStatus(pref.getString("driver_id",""), "0",
@@ -989,14 +986,14 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                                         editor.commit();
 
 
-                                        Toast.makeText(VehicleDetailsActivity.this, "Please submit your profile for approval", Toast.LENGTH_LONG).show();
+                                        //Toast.makeText(RegisterVehicleDetailsActivity.this, "Please submit your profile for approval", Toast.LENGTH_LONG).show();
                                         finish();
                                     }
 
                                 }
                                 else
                                 {
-                                    Toast.makeText(VehicleDetailsActivity.this, ""+jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(RegisterVehicleDetailsActivity.this, ""+jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
                                 }
 
                                 // Toast.makeText(RegistrationActivity.this, "scc "+Token, Toast.LENGTH_SHORT).show();
@@ -1004,7 +1001,7 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                             }
                             else
                             {
-                                Toast.makeText(VehicleDetailsActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(RegisterVehicleDetailsActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
                             }
 
 
@@ -1020,7 +1017,7 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                     public void failure(RetrofitError error) {
                         progressDialog.dismiss();
                         //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                        Toast.makeText(VehicleDetailsActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterVehicleDetailsActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
 
                     }
                 });
@@ -1100,10 +1097,10 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                             vehicle_type.setText(vehicle_typee);
                             vehicle_number.setText(vehicle_numberr);
                             seats.setText(seatss);
-                            rc_vehicle_images.setAdapter(new VehicleImagesAdapter(sarrayList,arrayList,VehicleDetailsActivity.this));
+                            rc_vehicle_images.setAdapter(new VehicleImagesAdapter(sarrayList,arrayList, RegisterVehicleDetailsActivity.this));
                             model_vehicle_array=arrayList;
                             str_vehicle_array=sarrayList;
-                            rc_number_images.setAdapter(new VehicleImagesAdapter2(sarrayList2,arrayList2,VehicleDetailsActivity.this));
+                            rc_number_images.setAdapter(new VehicleImagesAdapter2(sarrayList2,arrayList2, RegisterVehicleDetailsActivity.this));
                             model_num_plate_array=arrayList2;
                             str_num_plate_array=sarrayList2;
                         }
@@ -1118,7 +1115,7 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                     else
                     {
 
-                        Toast.makeText(VehicleDetailsActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterVehicleDetailsActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
                     }
 
 
@@ -1135,7 +1132,7 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                 progressDialog.dismiss();
 
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(VehicleDetailsActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterVehicleDetailsActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -1155,7 +1152,7 @@ public class VehicleDetailsActivity extends AppCompatActivity {
         {
 
             Glide
-                    .with(VehicleDetailsActivity.this)
+                    .with(RegisterVehicleDetailsActivity.this)
                     .load(data.getData())
                     .into(profile_pic);
 
@@ -1170,6 +1167,6 @@ public class VehicleDetailsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Bungee.slideRight(VehicleDetailsActivity.this);
+        Bungee.slideRight(RegisterVehicleDetailsActivity.this);
     }
 }

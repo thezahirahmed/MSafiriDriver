@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.widget.CircularProgressDrawable;
@@ -539,7 +540,7 @@ public class DocumentsActivity extends AppCompatActivity {
                 Glide
                         .with(context)
                         .load(arrayList2.get(position))
-                        .apply(new RequestOptions().centerCrop().placeholder(circularProgressDrawable)).into(holder.image);
+                        .apply(new RequestOptions().centerCrop().placeholder(Drawable.createFromPath(arrayList2.get(position)))).into(holder.image);
             }
 
             holder.remove.setOnClickListener(new View.OnClickListener() {
@@ -703,7 +704,7 @@ public class DocumentsActivity extends AppCompatActivity {
                 Glide
                         .with(context)
                         .load(arrayList2.get(position))
-                        .apply(new RequestOptions().centerCrop().placeholder(circularProgressDrawable)).into(holder.image);
+                        .apply(new RequestOptions().centerCrop().placeholder(Drawable.createFromPath(arrayList2.get(position)))).into(holder.image);
             }
             holder.remove.setOnClickListener(new View.OnClickListener() {
                 @Override

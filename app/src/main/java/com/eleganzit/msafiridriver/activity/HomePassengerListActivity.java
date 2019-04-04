@@ -109,7 +109,7 @@ public class HomePassengerListActivity extends AppCompatActivity {
         trip_id=p_pref.getString("trip_id","");
 
 
-            getPassengers();
+        getPassengers();
 
     }
 

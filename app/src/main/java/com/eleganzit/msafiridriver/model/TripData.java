@@ -1,11 +1,14 @@
 package com.eleganzit.msafiridriver.model;
 
+import java.util.Date;
+
 public class TripData
 
 {
-    String trip_type,id,from_title,from_lat,from_lng,from_address,to_title,to_lat,to_lng,to_address,pickup_time,destination_time,statuss,trip_price;
+    String trip_type,id,from_title,from_lat,from_lng,from_address,to_title,to_lat,to_lng,to_address,str_pickup_time,destination_time,statuss,trip_price;
+    Date pickup_time;
 
-    public TripData(String trip_type, String id, String from_title, String from_lat, String from_lng, String from_address, String to_title, String to_lat, String to_lng, String to_address, String pickup_time, String destination_time, String statuss, String trip_price) {
+    public TripData(String trip_type, String id, String from_title, String from_lat, String from_lng, String from_address, String to_title, String to_lat, String to_lng, String to_address, String str_pickup_time, Date pickup_time, String destination_time, String statuss, String trip_price) {
         this.trip_type = trip_type;
         this.id = id;
         this.from_title = from_title;
@@ -17,6 +20,7 @@ public class TripData
         this.to_lng = to_lng;
         this.to_address = to_address;
         this.pickup_time = pickup_time;
+        this.str_pickup_time = str_pickup_time;
         this.destination_time = destination_time;
         this.statuss = statuss;
         this.trip_price = trip_price;
@@ -102,11 +106,19 @@ public class TripData
         this.to_address = to_address;
     }
 
-    public String getPickup_time() {
+    public String getStr_pickup_time() {
+        return str_pickup_time;
+    }
+
+    public void setStr_pickup_time(String str_pickup_time) {
+        this.str_pickup_time = str_pickup_time;
+    }
+
+    public Date getPickup_time() {
         return pickup_time;
     }
 
-    public void setPickup_time(String pickup_time) {
+    public void setPickup_time(Date pickup_time) {
         this.pickup_time = pickup_time;
     }
 

@@ -92,6 +92,25 @@
             android:name=".DocumentsActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".VehicleDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities_from_register.RegisterChoosePictureActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".activities_from_register.RegisterPersonalInfoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities_from_register.RegisterBankAccountActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities_from_register.RegisterDocumentsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities_from_register.RegisterVehicleDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".activity.NavHomeActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -102,9 +121,6 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.HelpActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".VehicleDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".PickupLocation"

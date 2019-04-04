@@ -1,5 +1,6 @@
 package com.eleganzit.msafiridriver;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.AlertDialog;
@@ -8,7 +9,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -29,10 +32,22 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.eleganzit.msafiridriver.activities_from_register.RegisterBankAccountActivity;
+import com.eleganzit.msafiridriver.activities_from_register.RegisterChoosePictureActivity;
+import com.eleganzit.msafiridriver.activities_from_register.RegisterDocumentsActivity;
+import com.eleganzit.msafiridriver.activities_from_register.RegisterPersonalInfoActivity;
+import com.eleganzit.msafiridriver.activities_from_register.RegisterVehicleDetailsActivity;
 import com.eleganzit.msafiridriver.activity.NavHomeActivity;
 import com.eleganzit.msafiridriver.utils.MyInterface;
 import com.hzn.lib.EasyTransition;
 import com.hzn.lib.EasyTransitionOptions;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.DexterError;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.PermissionRequestErrorListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,6 +56,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -178,37 +194,87 @@ public class ProfileActivity extends AppCompatActivity {
 
             }
         });
+
         personal_info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ProfileActivity.this,PersonalInfoActivity.class));
-                Bungee.slideLeft(ProfileActivity.this);
+                if(pref.getString("approvel","").equalsIgnoreCase("no"))
+                {
+                    new AlertDialog.Builder(ProfileActivity.this).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    }).setMessage("Please wait for approval or contact admin for further process.").show();
+                }
+                else {
+
+                    startActivity(new Intent(ProfileActivity.this, RegisterPersonalInfoActivity.class));
+                    Bungee.slideLeft(ProfileActivity.this);
+                }
 
             }
         });
+
         bank.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ProfileActivity.this,BankAccountActivity.class));
-                Bungee.slideLeft(ProfileActivity.this);
+                if(pref.getString("approvel","").equalsIgnoreCase("no"))
+                {
+                    new AlertDialog.Builder(ProfileActivity.this).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    }).setMessage("Please wait for approval or contact admin for further process.").show();
+                }
+                else {
+                    startActivity(new Intent(ProfileActivity.this,RegisterBankAccountActivity.class));
+                    Bungee.slideLeft(ProfileActivity.this);
+                }
 
             }
         });
+
         docs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ProfileActivity.this,DocumentsActivity.class));
-                Bungee.slideLeft(ProfileActivity.this);
+                if(pref.getString("approvel","").equalsIgnoreCase("no"))
+                {
+                    new AlertDialog.Builder(ProfileActivity.this).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    }).setMessage("Please wait for approval or contact admin for further process.").show();
+                }
+                else {
+                    startActivity(new Intent(ProfileActivity.this,RegisterDocumentsActivity.class));
+                    Bungee.slideLeft(ProfileActivity.this);
 
 
+                }
 
             }
         });
+
         vehicle_detail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ProfileActivity.this,VehicleDetailsActivity.class));
-                Bungee.slideLeft(ProfileActivity.this);
+                if(pref.getString("approvel","").equalsIgnoreCase("no"))
+                {
+                    new AlertDialog.Builder(ProfileActivity.this).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    }).setMessage("Please wait for approval or contact admin for further process.").show();
+                }
+                else {
+                    startActivity(new Intent(ProfileActivity.this,RegisterVehicleDetailsActivity.class));
+                    Bungee.slideLeft(ProfileActivity.this);
+
+                }
 
             }
         });
@@ -216,14 +282,25 @@ public class ProfileActivity extends AppCompatActivity {
         profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EasyTransition.startActivity(new Intent(ProfileActivity.this,ChoosePictureActivity.class), options);
+                if(pref.getString("approvel","").equalsIgnoreCase("no"))
+                {
+                    new AlertDialog.Builder(ProfileActivity.this).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    }).setMessage("Please wait for approval or contact admin for further process.").show();
+                }
+                else {
+                    EasyTransition.startActivity(new Intent(ProfileActivity.this,RegisterChoosePictureActivity.class), options);
+
+                }
                 //startActivity(new Intent(ProfileActivity.this,ChoosePictureActivity.class),options.toBundle());
                 //overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
             }
         });
 
     }
-
 
     public void updateApprovalStatus()
     {
@@ -312,7 +389,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     public void getPersonalInfo()
     {
-        progressDialog.show();
+        //progressDialog.show();
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
         myInterface.getPersonalInfo(pref.getString("driver_id",""), new retrofit.Callback<retrofit.client.Response>() {
@@ -388,9 +465,10 @@ public class ProfileActivity extends AppCompatActivity {
 
 
                 } catch (IOException e) {
-
+                    Toast.makeText(ProfileActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    Toast.makeText(ProfileActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -399,7 +477,7 @@ public class ProfileActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(ProfileActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ProfileActivity.this, "" + error.getMessage()+": Couldn't load Profile picture", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -407,13 +485,13 @@ public class ProfileActivity extends AppCompatActivity {
 
     public void getApprovalStatus()
     {
-        progressDialog.show();
+        //progressDialog.show();
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
         myInterface.getApprovalStatus(pref.getString("email",""), new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
-                progressDialog.dismiss();
+
                 final StringBuilder stringBuilder = new StringBuilder();
                 try {
                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
@@ -494,9 +572,10 @@ public class ProfileActivity extends AppCompatActivity {
 
 
                 } catch (IOException e) {
-
+                    Toast.makeText(ProfileActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    Toast.makeText(ProfileActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -505,7 +584,7 @@ public class ProfileActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(ProfileActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ProfileActivity.this, "" + error.getMessage()+ ": Couldn't load Approval status", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -523,7 +602,7 @@ public class ProfileActivity extends AppCompatActivity {
                 bank_info_status.setVisibility(View.VISIBLE);
                 docs_info_status.setVisibility(View.VISIBLE);
                 vehicle_info_status.setVisibility(View.VISIBLE);
-                progressDialog.dismiss();
+
                 getApprovalStatus();
                 final StringBuilder stringBuilder = new StringBuilder();
                 try {
@@ -612,9 +691,10 @@ public class ProfileActivity extends AppCompatActivity {
 
 
                 } catch (IOException e) {
-
+                    Toast.makeText(ProfileActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    Toast.makeText(ProfileActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -623,7 +703,7 @@ public class ProfileActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(ProfileActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ProfileActivity.this, "" + error.getMessage() +": Couldn't load Empty Fields", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -645,11 +725,73 @@ public class ProfileActivity extends AppCompatActivity {
             vehicle_detail.setVisibility(View.VISIBLE);
             bank.setVisibility(View.VISIBLE);
         }
+        Dexter.withActivity(ProfileActivity.this)
+                .withPermissions(
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.CAMERA)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        // check if all permissions are granted
+                        if (report.areAllPermissionsGranted()) {
+
+                            //getUpcomingTrips();
+
+                        }
+
+                        // check for permanent denial of any permission
+                        if (report.isAnyPermissionPermanentlyDenied()) {
+                            // show alert dialog navigating to Settings
+                            showSettingsDialog();
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).
+                withErrorListener(new PermissionRequestErrorListener() {
+                    @Override
+                    public void onError(DexterError error) {
+                        Toast.makeText(ProfileActivity.this, "Error occurred! ", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .onSameThread()
+                .check();
 
         getEmptyFields();
 
         name.setText(pref.getString("fullname",""));
 
+    }
+
+    private void showSettingsDialog() {
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
+        builder.setTitle("Need Permissions");
+        builder.setMessage("This app needs permission to use this feature. You can grant them in app settings.");
+        builder.setPositiveButton("GOTO SETTINGS", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                openSettings();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+
+    }
+    private void openSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getPackageName(), null);
+        intent.setData(uri);
+        startActivityForResult(intent, 101);
     }
 
     @Override

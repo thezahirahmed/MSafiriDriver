@@ -2,8 +2,11 @@ package com.eleganzit.msafiridriver.fragment;
 
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -30,6 +33,7 @@ import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.eleganzit.msafiridriver.PersonalInfoActivity;
 import com.eleganzit.msafiridriver.R;
+import com.eleganzit.msafiridriver.VehicleDetailsActivity;
 import com.eleganzit.msafiridriver.activity.NavHomeActivity;
 import com.eleganzit.msafiridriver.adapter.UpcomingTripAdapter;
 import com.eleganzit.msafiridriver.model.TripData;
@@ -49,7 +53,12 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -70,7 +79,7 @@ public class HomeFragment extends Fragment {
     TextView no_trips;
     ImageView reload;
     ArrayList<TripData> arrayList;
-    LinearLayout lcontent;
+    LinearLayout lcontent,sort;
     TextView trip_title;
     CardView card,upcoming_card,past_card;
     String trip_type="current";
@@ -107,6 +116,7 @@ public class HomeFragment extends Fragment {
         past_card = v.findViewById(R.id.past_card);
         upcoming = v.findViewById(R.id.upcoming);
         lcontent = v.findViewById(R.id.lcontent);
+        sort = v.findViewById(R.id.sort);
         no_trips = v.findViewById(R.id.no_trips);
         reload = v.findViewById(R.id.reload);
         current = v.findViewById(R.id.current);
@@ -152,6 +162,53 @@ public class HomeFragment extends Fragment {
         String locale2 = java.util.Locale.getDefault().getDisplayName();
 
         Log.d("llocacleeeeee",locale+"      "+locale2);
+
+        sort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Dialog dialog=new Dialog(getActivity());
+                dialog.setContentView(R.layout.sorting_dialog);
+                final TextView date=dialog.findViewById(R.id.date);
+                final TextView location=dialog.findViewById(R.id.location);
+
+                date.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Collections.sort(arrayList, new Comparator<TripData>() {
+                            public int compare(TripData o1, TripData o2) {
+                                if (o1.getPickup_time() == null || o2.getPickup_time() == null)
+                                    return 0;
+                                return o1.getPickup_time().compareTo(o2.getPickup_time());
+                            }
+                        });
+                        upcoming.setAdapter(new UpcomingTripAdapter(pref.getString("type",""),arrayList, getActivity()));
+                        dialog.dismiss();
+                    }
+                });
+
+                location.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Collections.sort(arrayList, new Comparator<TripData>() {
+                            public int compare(TripData o1, TripData o2) {
+                                if (o1.getFrom_address() == null || o2.getFrom_address() == null)
+                                    return 0;
+                                return o1.getFrom_address().compareTo(o2.getFrom_address());
+                            }
+                        });
+                        upcoming.setAdapter(new UpcomingTripAdapter(pref.getString("type",""),arrayList, getActivity()));
+                        dialog.dismiss();
+                    }
+                });
+
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                if(arrayList.size()>0 && arrayList!=null)
+                {
+                    dialog.show();
+
+                }
+            }
+        });
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         upcoming.setLayoutManager(layoutManager);
@@ -338,9 +395,18 @@ public class HomeFragment extends Fragment {
                                 String destination_time = jsonObject1.getString("end_datetime");
                                 String statuss = jsonObject1.getString("status");
                                 String trip_price = jsonObject1.getString("trip_price");
+                                Date date = null;
+                                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                try {
+                                    date = format.parse(pickup_time);
+                                    System.out.println(date);
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
 
-                                TripData tripData=new TripData(trip_type,id,from_title,from_lat,from_lng,from_address,to_title,to_lat,to_lng,to_address,pickup_time,destination_time,statuss,trip_price);
+                                TripData tripData=new TripData(trip_type,id,from_title,from_lat,from_lng,from_address,to_title,to_lat,to_lng,to_address,pickup_time,date,destination_time,statuss,trip_price);
                                 arrayList.add(tripData);
+
                             }
                             upcoming.setAdapter(new UpcomingTripAdapter(pref.getString("type",""),arrayList, getActivity()));
                         }

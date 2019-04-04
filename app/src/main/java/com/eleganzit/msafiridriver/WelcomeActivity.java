@@ -42,6 +42,7 @@ public class WelcomeActivity extends AppCompatActivity {
     TextView username;
     ProgressDialog progressDialog;
     CallAPiActivity callAPiActivity;
+    boolean uploadVehicleSuccess,uploadVehicleProfileSuccess,addBankdetailsSuccess,uploadDocumentSuccess;
     com.eleganzit.msafiridriver.uploadMultupleImage.CallAPiActivity callAPiActivity2;
     private String URLUPDATEVEHICLE= "http://itechgaints.com/M-safiri-API/drivervehiclePhoto";
     private String URLUPDATEUSER = "http://itechgaints.com/M-safiri-API/drvierDocument";
@@ -67,7 +68,9 @@ public class WelcomeActivity extends AppCompatActivity {
         create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addBankdetails();
+                startActivity(new Intent(WelcomeActivity.this,ProfileActivity.class).putExtra("from","welcome"));
+                finish();
+                //addBankdetails();
 
             }
         });
@@ -86,6 +89,8 @@ public class WelcomeActivity extends AppCompatActivity {
                 @Override
                 public void onSuccessResult(JSONObject result) throws JSONException {
                     //progressDialog.dismiss();
+                    uploadVehicleProfileSuccess=true;
+                    progressDialog.dismiss();
                     String status = result.getString("status");
                     JSONArray jsonArray = null;
                     if(status.equalsIgnoreCase("1")) {
@@ -93,6 +98,8 @@ public class WelcomeActivity extends AppCompatActivity {
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject jsonObject1 = jsonArray.getJSONObject(i);
 
+                            editor.putString("status", "loggedin");
+                            editor.commit();
 
                         }
                         Log.d("result",""+result);
@@ -108,6 +115,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 @Override
                 public void onFailureResult(String message) {
                     //progressDialog.dismiss();
+                    uploadVehicleProfileSuccess=false;
                     Toast.makeText(WelcomeActivity.this, ""+message, Toast.LENGTH_SHORT).show();
                     Log.d("messageeeeeeeeeee",message);
 
@@ -119,7 +127,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private void uploadDocument() {
 
-        progressDialog.show();
+        //progressDialog.show();
 
         HashMap<String, String> map = new HashMap<>();
         Log.d("iddddd",pref.getString("driver_id", ""));
@@ -136,8 +144,9 @@ public class WelcomeActivity extends AppCompatActivity {
                 String status = result.getString("status");
                 if(status.equalsIgnoreCase("1"))
                 {
-                    startActivity(new Intent(WelcomeActivity.this,ProfileActivity.class).putExtra("from","welcome"));
-                    finish();
+                   /* startActivity(new Intent(WelcomeActivity.this,ProfileActivity.class).putExtra("from","welcome"));
+                    finish();*/
+
                     /*if(hasDocs.equalsIgnoreCase("yes"))
                     {*/
                         /*editor.putString("documentsInfo", "changed");
@@ -196,7 +205,8 @@ public class WelcomeActivity extends AppCompatActivity {
 
             @Override
             public void onSuccesResult(JSONObject result) throws JSONException {
-                progressDialog.dismiss();
+
+                uploadVehicleSuccess=true;
                 String status = result.getString("status");
                 if(status.equalsIgnoreCase("1"))
                 {
@@ -206,6 +216,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 else
                 {
                     Log.d("messageeeeeeeeeee","veh 2"+status);
+                    Toast.makeText(WelcomeActivity.this, ""+result.getString("message"), Toast.LENGTH_SHORT).show();
                 }
 
 
@@ -214,6 +225,8 @@ public class WelcomeActivity extends AppCompatActivity {
             @Override
             public void onFailureResult(String message) {
                 progressDialog.dismiss();
+                uploadVehicleSuccess=false;
+
                 if(message.equalsIgnoreCase("success"))
                 {
 
@@ -221,6 +234,8 @@ public class WelcomeActivity extends AppCompatActivity {
                 }
                 else
                 {
+                    Toast.makeText(WelcomeActivity.this, ""+message, Toast.LENGTH_SHORT).show();
+
                     Log.d("messageeeeeeeeeee","veh 4"+message);
                 }
                 Log.d("messageeeeeeeeeee","veh 5"+message);
@@ -242,7 +257,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 "","","", "", new retrofit.Callback<retrofit.client.Response>() {
                     @Override
                     public void success(retrofit.client.Response response, retrofit.client.Response response2) {
-                        progressDialog.dismiss();
+                        addBankdetailsSuccess=true;
                         final StringBuilder stringBuilder = new StringBuilder();
                         try {
                             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
@@ -261,7 +276,7 @@ public class WelcomeActivity extends AppCompatActivity {
                                 JSONArray jsonArray = null;
                                 if(status.equalsIgnoreCase("1"))
                                 {
-                                    uploadDocument();
+                                    //uploadDocument();
                                     jsonArray = jsonObject.getJSONArray("data");
                                     for(int i=0;i<jsonArray.length();i++)
                                     {
@@ -287,9 +302,11 @@ public class WelcomeActivity extends AppCompatActivity {
                             }
 
                         } catch (IOException e) {
+                            Toast.makeText(WelcomeActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            Toast.makeText(WelcomeActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -297,6 +314,7 @@ public class WelcomeActivity extends AppCompatActivity {
                     @Override
                     public void failure(RetrofitError error) {
                         progressDialog.dismiss();
+                        addBankdetailsSuccess=false;
                         //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
                         Toast.makeText(WelcomeActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
 

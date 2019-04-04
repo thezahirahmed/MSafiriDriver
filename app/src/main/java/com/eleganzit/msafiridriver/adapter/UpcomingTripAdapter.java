@@ -385,7 +385,7 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
         {
             holder.more.setVisibility(View.VISIBLE);
         }
-        holder.trip_time.setText(parseDateToddMMyyyy2(tripData.getPickup_time()));
+        holder.trip_time.setText(parseDateToddMMyyyy2(tripData.getStr_pickup_time()));
         holder.from.setSelected(true);
         holder.from.setText(tripData.getFrom_address());
         holder.to.setSelected(true);
@@ -443,7 +443,7 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
 
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     try {
-                        Date mDate = sdf.parse(tripData.getPickup_time());
+                        Date mDate = sdf.parse(tripData.getStr_pickup_time());
                         long tripMilliseconds = mDate.getTime();
                         Calendar c = Calendar.getInstance();
                         System.out.println("Current time => "+c.getTime());
@@ -663,7 +663,17 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
                                         String statuss = jsonObject1.getString("status");
                                         String trip_price = jsonObject1.getString("trip_price");
 
-                                        TripData tripData=new TripData("upcoming",id,from_title,from_lat,from_lng,from_address,to_title,to_lat,to_lng,to_address,pickup_time,destination_time,statuss,trip_price);
+                                        Date date = null;
+                                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                        try {
+                                            date = format.parse(pickup_time);
+                                            System.out.println(date);
+                                        } catch (ParseException e) {
+                                            e.printStackTrace();
+                                        }
+
+
+                                        TripData tripData=new TripData("upcoming",id,from_title,from_lat,from_lng,from_address,to_title,to_lat,to_lng,to_address,pickup_time,null,destination_time,statuss,trip_price);
 
                                         Toast.makeText(context, "Trip delayed by 30 min", Toast.LENGTH_SHORT).show();
                                         arrayList.set(position, tripData);

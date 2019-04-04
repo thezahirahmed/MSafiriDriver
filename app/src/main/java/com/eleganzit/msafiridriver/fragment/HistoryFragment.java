@@ -162,7 +162,7 @@ public class HistoryFragment extends Fragment{
                                 String trip_price = jsonObject1.getString("trip_price");
                                 count_trip = jsonObject1.getInt("count_trip");
 
-                                TripData tripData=new TripData("past",id,from_title,from_lat,from_lng,from_address,to_title,to_lat,to_lng,to_address,pickup_time,destination_time,statuss,trip_price);
+                                TripData tripData=new TripData("past",id,from_title,from_lat,from_lng,from_address,to_title,to_lat,to_lng,to_address,pickup_time,null,destination_time,statuss,trip_price);
                                 arrayList.add(tripData);
                             }
                             history.setAdapter(new TripAdapter(arrayList,getActivity()));

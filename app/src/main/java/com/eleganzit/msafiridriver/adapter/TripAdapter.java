@@ -61,7 +61,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.MyViewHolder>
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
 
         final TripData tripData=arrayList.get(position);
-        holder.trip_time.setText(parseDateToddMMyyyy2(tripData.getPickup_time()));
+        holder.trip_time.setText(parseDateToddMMyyyy2(tripData.getStr_pickup_time()));
         holder.from.setSelected(true);
         holder.from.setText(tripData.getFrom_title());
         holder.to.setSelected(true);

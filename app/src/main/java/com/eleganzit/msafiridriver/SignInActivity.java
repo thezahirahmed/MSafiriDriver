@@ -75,9 +75,13 @@ public class SignInActivity extends AppCompatActivity {
         Log.d("preffff",pref.getString("status","")+"   tt");
         if(pref.getString("status","").equalsIgnoreCase("loggedin"))
         {
-            startActivity(new Intent(SignInActivity.this,NavHomeActivity.class));
+            if(pref.getString("approvel","").equalsIgnoreCase("yes"))
+            {
+                startActivity(new Intent(SignInActivity.this,NavHomeActivity.class));
 
-            finish();
+                finish();
+            }
+
         }
         main=findViewById(R.id.lmain);
 
@@ -215,7 +219,52 @@ public class SignInActivity extends AppCompatActivity {
                         @Override
                         public void onAnimationEnd(Animation animation) {
 
-                            loginDriver();
+                            if(devicetoken==null)
+                            {
+                                Thread t=new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        String Token= FirebaseInstanceId.getInstance().getToken();
+                                        if (Token!=null)
+                                        {
+                                            Log.d("Rrrrrmytokenn", Token);
+
+                                            devicetoken=Token;
+                                            StrictMode.ThreadPolicy threadPolicy = new StrictMode.ThreadPolicy.Builder().build();
+                                            StrictMode.setThreadPolicy(threadPolicy);
+                                            try {
+                                                JSONObject jsonObject=new JSONObject(Token);
+                                                Log.d("mytoken", jsonObject.getString("token"));
+                                                //devicetoken=jsonObject.getString("token");
+
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                            //getLoginBoth(Token);
+
+                                        }
+                                        else
+                                        {
+                                            Looper.prepare();
+                                            Log.d("No token","No token");
+                                            //Toast.makeText(SignInActivity.this, "No token", Toast.LENGTH_SHORT).show();
+                                        }
+                                        try {
+                                            loginDriver();
+                                            Thread.sleep(1000);
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });t.start();
+
+
+                            }
+                            else
+                            {
+                                loginDriver();
+                            }
+
                             /*new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
@@ -337,7 +386,7 @@ public class SignInActivity extends AppCompatActivity {
     public void loginDriver()
     {
 
-        Log.d("devicetoken",devicetoken);
+        Log.d("devicetoken",""+devicetoken);
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
         myInterface.loginDriver(email.getText().toString(), password.getText().toString(),devicetoken, new retrofit.Callback<retrofit.client.Response>() {

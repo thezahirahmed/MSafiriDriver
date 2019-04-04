@@ -35,6 +35,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,6 +56,8 @@ public class RegisterationActivity extends AppCompatActivity {
     private String Token;
     private String devicetoken;
     private String type="individual";
+    private String URLUPDATEUSER = "http://itechgaints.com/M-safiri-API/drvierDocument";
+    com.eleganzit.msafiridriver.uploadMultupleImage.CallAPiActivity callAPiActivity2;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -71,6 +74,7 @@ public class RegisterationActivity extends AppCompatActivity {
         main=findViewById(R.id.mainn);
         company=findViewById(R.id.company);
         edit_auth=findViewById(R.id.edit_auth);
+        callAPiActivity2 = new com.eleganzit.msafiridriver.uploadMultupleImage.CallAPiActivity(this);
 
         name=findViewById(R.id.name);
         email=findViewById(R.id.email);
@@ -229,7 +233,7 @@ public class RegisterationActivity extends AppCompatActivity {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
 
-                progressDialog.dismiss();
+                //progressDialog.dismiss();
                 final StringBuilder stringBuilder = new StringBuilder();
                 try {
                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
@@ -255,7 +259,7 @@ public class RegisterationActivity extends AppCompatActivity {
 
                                 String id = jsonObject1.getString("driver_id");
                                 editor.putString("driver_id", id);
-                                editor.putString("status", "loggedin");
+                                //editor.putString("status", "loggedin");
                                 String fullname = jsonObject1.getString("fullname");
                                 editor.putString("fullname", fullname);
                                 String email = jsonObject1.getString("email");
@@ -271,10 +275,11 @@ public class RegisterationActivity extends AppCompatActivity {
                                 editor.commit();
                             }
 
+                            addBankdetails();
                             //Toast.makeText(RegistrationActivity.this, "" + jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(RegisterationActivity.this, WelcomeActivity.class));
+                            /*startActivity(new Intent(RegisterationActivity.this, WelcomeActivity.class));
                             overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
-                            finish();
+                            finish();*/
                         }
 
                         // Toast.makeText(RegistrationActivity.this, "scc "+Token, Toast.LENGTH_SHORT).show();
@@ -316,6 +321,143 @@ public class RegisterationActivity extends AppCompatActivity {
             }
         });
     }
+
+    public void addBankdetails()
+    {
+        //progressDialog.show();
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
+        final MyInterface myInterface = restAdapter.create(MyInterface.class);
+        myInterface.addBankdetails(pref.getString("driver_id",""), "",
+                "", "", "",
+                "", "", "",
+                "","","", "", new retrofit.Callback<retrofit.client.Response>() {
+                    @Override
+                    public void success(retrofit.client.Response response, retrofit.client.Response response2) {
+                        final StringBuilder stringBuilder = new StringBuilder();
+                        try {
+                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
+
+                            String line;
+                            while ((line = bufferedReader.readLine()) != null) {
+                                stringBuilder.append(line);
+                            }
+                            Log.d("stringBuilder", "" + stringBuilder);
+                            //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
+
+                            if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
+
+                                JSONObject jsonObject = new JSONObject("" + stringBuilder);
+                                String status = jsonObject.getString("status");
+                                JSONArray jsonArray = null;
+                                if(status.equalsIgnoreCase("1"))
+                                {
+                                    uploadDocument();
+                                    jsonArray = jsonObject.getJSONArray("data");
+                                    for(int i=0;i<jsonArray.length();i++)
+                                    {
+                                        JSONObject jsonObject1=jsonArray.getJSONObject(i);
+
+
+                                    }
+                                    //Toast.makeText(BankAccountActivity.this, "Successfully updated!", Toast.LENGTH_SHORT).show();
+
+                                }
+                                else
+                                {
+                                    Toast.makeText(RegisterationActivity.this, ""+jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+                                }
+
+                                // Toast.makeText(RegistrationActivity.this, "scc "+Token, Toast.LENGTH_SHORT).show();
+
+                            }
+                            else
+                            {
+
+                                Toast.makeText(RegisterationActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                            }
+
+                        } catch (IOException e) {
+                            Toast.makeText(RegisterationActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(RegisterationActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        progressDialog.dismiss();
+                        //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterationActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+    }
+
+    private void uploadDocument() {
+
+        //progressDialog.show();
+
+        HashMap<String, String> map = new HashMap<>();
+        Log.d("iddddd",pref.getString("driver_id", ""));
+        map.put("driver_id", pref.getString("driver_id", ""));
+        map.put("blank", "1");
+        map.put("driving_livence[]", "");
+        map.put("address_proof[]", "");
+
+        callAPiActivity2.doPost(RegisterationActivity.this, map, URLUPDATEUSER, new com.eleganzit.msafiridriver.uploadMultupleImage.GetResponse() {
+
+            @Override
+            public void onSuccesResult(JSONObject result) throws JSONException {
+                progressDialog.dismiss();
+                String status = result.getString("status");
+                if(status.equalsIgnoreCase("1"))
+                {
+                    startActivity(new Intent(RegisterationActivity.this, WelcomeActivity.class));
+                    overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                    finish();
+                    /*if(hasDocs.equalsIgnoreCase("yes"))
+                    {*/
+                        /*editor.putString("documentsInfo", "changed");
+                        editor.commit();*/
+
+                    /*}
+                    else
+                    {
+                        *//*editor.putString("documentsInfo", "filled");
+                        editor.commit();*//*
+                    }
+*/
+                }
+                else
+                {
+                    Toast.makeText(RegisterationActivity.this, ""+result.getString("message"), Toast.LENGTH_SHORT).show();
+                }
+
+                Log.d("messageeeeeeeeeee","succccccccessss"+status);
+            }
+
+            @Override
+            public void onFailureResult(String message) {
+                progressDialog.dismiss();
+                if(message.equalsIgnoreCase("success"))
+                {
+                    startActivity(new Intent(RegisterationActivity.this,ProfileActivity.class).putExtra("from","welcome"));
+                }
+                else
+                {
+                    Toast.makeText(RegisterationActivity.this, ""+message, Toast.LENGTH_SHORT).show();
+                }
+                Log.d("messageeeeeeeeeee",message);
+
+            }
+        });
+
+
+    }
+
 
     @Override
     public void onBackPressed() {

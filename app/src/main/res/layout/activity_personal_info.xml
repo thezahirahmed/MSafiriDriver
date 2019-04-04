@@ -290,21 +290,7 @@
                     android:layout_marginTop="10dp"
                     android:orientation="vertical">
 
-                    <EditText
-                        android:id="@+id/edstreet"
-                        android:layout_gravity="center"
-                        android:inputType="textCapSentences"
-                        android:background="@drawable/edittxt_bg"
-                        android:padding="10dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Street"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        />
-
                     <LinearLayout
-
                         android:layout_width="match_parent"
                         android:orientation="horizontal"
                         android:layout_gravity="center"
@@ -312,54 +298,7 @@
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="5dp"
                         android:layout_height="wrap_content">
-                        <EditText
-                            android:id="@+id/edcity"
-                            android:layout_gravity="center"
-                            android:background="@drawable/edittxt_bg"
-                            android:layout_weight="1"
-                            android:layout_margin="5dp"
-                            android:padding="10dp"
-                            android:inputType="textCapSentences"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="City"
-                            />
-                        <EditText
-                            android:id="@+id/edstate"
-                            android:layout_weight="1"
-                            android:layout_margin="5dp"
-                            android:padding="10dp"
-                            android:focusable="false"
-                            android:layout_gravity="center"
-                            android:background="@drawable/edittxt_bg"
-                            android:inputType="text"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="State"
-                            />
-                    </LinearLayout>
-                    <LinearLayout
 
-                        android:layout_width="match_parent"
-                        android:orientation="horizontal"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginRight="5dp"
-                        android:layout_height="wrap_content">
-                        <EditText
-                            android:id="@+id/edpostal"
-                            android:layout_gravity="center"
-                            android:background="@drawable/edittxt_bg"
-                            android:layout_weight="1"
-                            android:layout_margin="5dp"
-                            android:maxLength="6"
-                            android:padding="10dp"
-                            android:inputType="number"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Postal Code"
-                            />
                         <EditText
                             android:id="@+id/edcountry"
                             android:layout_weight="1"
@@ -376,7 +315,75 @@
                             android:layout_height="wrap_content"
                             android:hint="Country"
                             />
+                        <EditText
+                            android:id="@+id/edstate"
+                            android:layout_weight="1"
+                            android:layout_margin="5dp"
+                            android:paddingLeft="10dp"
+                            android:paddingTop="5dp"
+                            android:paddingBottom="5dp"
+                            android:focusable="false"
+                            android:drawableRight="@drawable/arrow_down"
+                            android:layout_gravity="center"
+                            android:background="@drawable/edittxt_bg"
+                            android:inputType="text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="State"
+                            />
+
                     </LinearLayout>
+                    <LinearLayout
+
+                        android:layout_width="match_parent"
+                        android:orientation="horizontal"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_height="wrap_content">
+
+                        <EditText
+                            android:id="@+id/edcity"
+                            android:layout_gravity="center"
+                            android:background="@drawable/edittxt_bg"
+                            android:layout_weight="1"
+                            android:layout_margin="5dp"
+                            android:padding="10dp"
+                            android:inputType="textCapSentences"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="City"
+                            />
+                        <EditText
+                            android:id="@+id/edpostal"
+                            android:layout_gravity="center"
+                            android:background="@drawable/edittxt_bg"
+                            android:layout_weight="1"
+                            android:layout_margin="5dp"
+                            android:maxLength="6"
+                            android:padding="10dp"
+                            android:inputType="number"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Postal Code"
+                            />
+
+                    </LinearLayout>
+
+                    <EditText
+                        android:id="@+id/edstreet"
+                        android:layout_gravity="center"
+                        android:inputType="textCapSentences"
+                        android:background="@drawable/edittxt_bg"
+                        android:padding="10dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Street"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        />
 
                 </LinearLayout>
 
