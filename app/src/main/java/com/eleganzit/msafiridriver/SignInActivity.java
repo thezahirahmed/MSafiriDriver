@@ -1,10 +1,14 @@
 package com.eleganzit.msafiridriver;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -61,6 +65,14 @@ public class SignInActivity extends AppCompatActivity {
     SharedPreferences.Editor editor;
     String devicetoken;
 
+    public boolean isOnline(Context context) {
+
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        //should check null because in airplane mode it will be null
+        return (netInfo != null && netInfo.isConnected());
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +83,11 @@ public class SignInActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_in);
         pref = getSharedPreferences("mysession", MODE_PRIVATE);
         editor=pref.edit();
+
+        //Toast.makeText(this, ""+isOnline(this), Toast.LENGTH_SHORT).show();
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
 
         Log.d("preffff",pref.getString("status","")+"   tt");
         if(pref.getString("status","").equalsIgnoreCase("loggedin"))
@@ -153,8 +170,7 @@ public class SignInActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if (!isValideEmail(email.getText().toString()) && password.getText().toString().trim().isEmpty())
-                {
+                if (!isValideEmail(email.getText().toString()) && password.getText().toString().trim().isEmpty()) {
                     YoYo.with(Techniques.Shake)
                             .duration(750)
                             .repeat(0)
@@ -168,9 +184,7 @@ public class SignInActivity extends AppCompatActivity {
                     password.setError("Please enter your Password");
 
 
-                }
-                else if (!isValideEmail(email.getText().toString()))
-                {
+                } else if (!isValideEmail(email.getText().toString())) {
                     YoYo.with(Techniques.Shake)
                             .duration(700)
                             .repeat(0)
@@ -178,133 +192,102 @@ public class SignInActivity extends AppCompatActivity {
                     email.setError("Please enter valid Email");
                     email.requestFocus();
 
-                }
-                else if (password.getText().toString().trim().isEmpty())
-                {
+                } else if (password.getText().toString().trim().isEmpty()) {
                     YoYo.with(Techniques.Shake)
                             .duration(700)
                             .repeat(0)
                             .playOn(password);
                     password.setError("Please enter your Password");
                     password.requestFocus();
-                }
-                else
-                {
-                    email.startAnimation(flyout2);
-                    password.startAnimation(flyout3);
-                    signbtn.startAnimation(flyout4);
-                    forgot.startAnimation(flyout5);
-                    signinwith.startAnimation(flyout6);
-                    facebookbtn.startAnimation(flyout7);
-                    googlebtn.startAnimation(flyout7);
-                    registertxt.startAnimation(flyout7);
+                } else {
+                    if (isOnline(SignInActivity.this)) {
+                        email.startAnimation(flyout2);
+                        password.startAnimation(flyout3);
+                        signbtn.startAnimation(flyout4);
+                        forgot.startAnimation(flyout5);
+                        signinwith.startAnimation(flyout6);
+                        facebookbtn.startAnimation(flyout7);
+                        googlebtn.startAnimation(flyout7);
+                        registertxt.startAnimation(flyout7);
 
 
-                    progressBar.setVisibility(View.VISIBLE);
-                    progressBar.startAnimation(flyin1);
+                        progressBar.setVisibility(View.VISIBLE);
+                        progressBar.startAnimation(flyin1);
 
-                    flyout3.setAnimationListener(new Animation.AnimationListener() {
-                        @Override
-                        public void onAnimationStart(Animation animation) {
-                            YoYo.with(Techniques.Bounce)
-                                    .duration(700)
-                                    .repeat(8)
-                                    .playOn(logo);
+                        flyout3.setAnimationListener(new Animation.AnimationListener() {
+                            @Override
+                            public void onAnimationStart(Animation animation) {
+                                YoYo.with(Techniques.Bounce)
+                                        .duration(700)
+                                        .repeat(8)
+                                        .playOn(logo);
                             /*progress.startAnimation(flyin1);
                             progress.setVisibility(View.VISIBLE);
                             animationDrawable.start();*/
 
-                        }
+                            }
 
-                        @Override
-                        public void onAnimationEnd(Animation animation) {
+                            @Override
+                            public void onAnimationEnd(Animation animation) {
 
-                            if(devicetoken==null)
-                            {
-                                Thread t=new Thread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        String Token= FirebaseInstanceId.getInstance().getToken();
-                                        if (Token!=null)
-                                        {
-                                            Log.d("Rrrrrmytokenn", Token);
+                                if (isOnline(SignInActivity.this)) {
+                                    if (devicetoken == null) {
+                                        Thread t = new Thread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                String Token = FirebaseInstanceId.getInstance().getToken();
+                                                if (Token != null) {
+                                                    Log.d("Rrrrrmytokenn", Token);
 
-                                            devicetoken=Token;
-                                            StrictMode.ThreadPolicy threadPolicy = new StrictMode.ThreadPolicy.Builder().build();
-                                            StrictMode.setThreadPolicy(threadPolicy);
-                                            try {
-                                                JSONObject jsonObject=new JSONObject(Token);
-                                                Log.d("mytoken", jsonObject.getString("token"));
-                                                //devicetoken=jsonObject.getString("token");
+                                                    devicetoken = Token;
+                                                    StrictMode.ThreadPolicy threadPolicy = new StrictMode.ThreadPolicy.Builder().build();
+                                                    StrictMode.setThreadPolicy(threadPolicy);
+                                                    try {
+                                                        JSONObject jsonObject = new JSONObject(Token);
+                                                        Log.d("mytoken", jsonObject.getString("token"));
+                                                        //devicetoken=jsonObject.getString("token");
 
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                    //getLoginBoth(Token);
+
+                                                } else {
+                                                    Looper.prepare();
+                                                    Log.d("No token", "No token");
+                                                    //Toast.makeText(SignInActivity.this, "No token", Toast.LENGTH_SHORT).show();
+                                                }
+                                                try {
+                                                    loginDriver();
+                                                    Thread.sleep(1000);
+                                                } catch (InterruptedException e) {
+                                                    e.printStackTrace();
+                                                }
                                             }
-                                            //getLoginBoth(Token);
-
-                                        }
-                                        else
-                                        {
-                                            Looper.prepare();
-                                            Log.d("No token","No token");
-                                            //Toast.makeText(SignInActivity.this, "No token", Toast.LENGTH_SHORT).show();
-                                        }
-                                        try {
-                                            loginDriver();
-                                            Thread.sleep(1000);
-                                        } catch (InterruptedException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                });t.start();
+                                        });
+                                        t.start();
 
 
-                            }
-                            else
-                            {
-                                loginDriver();
-                            }
-
-                            /*new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-
-                                    if(status.equalsIgnoreCase("success"))
-                                    {
-                                        logo.startAnimation(flyout1);
-
-                                        *//*progress.startAnimation(flyout1);
-                                        animationDrawable.stop();*//*
-                                        progressBar.setVisibility(View.GONE);
-                                        progressBar.startAnimation(flyout2);
-                                        startActivity(new Intent(SignInActivity.this,Home.class));
-
-                                        finish();
-                                        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
-                                    }
-                                    else
-                                    {
-                                        logo.startAnimation(flyout1);
-                                        *//*progress.startAnimation(flyout1);
-                                        animationDrawable.stop();*//*
-                                        progressBar.setVisibility(View.GONE);
-                                        progressBar.startAnimation(flyout2);
-                                        Intent i = new Intent(SignInActivity.this, SignInActivity.class);
-                                        startActivity(i);
-                                        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
-                                        finish();
+                                    } else {
+                                        loginDriver();
                                     }
 
+                                } else {
+                                    Toast.makeText(SignInActivity.this, "Please check you Internet connection", Toast.LENGTH_SHORT).show();
                                 }
-                            },2000);*/
 
-                        }
+                            }
 
-                        @Override
-                        public void onAnimationRepeat(Animation animation) {
+                            @Override
+                            public void onAnimationRepeat(Animation animation) {
 
-                        }
-                    });
+                            }
+                        });
+                    }
+                    else
+                    {
+                        Toast.makeText(SignInActivity.this, "Please check you Internet connection", Toast.LENGTH_SHORT).show();
+                    }
                 }
 
             }
@@ -496,9 +479,12 @@ public class SignInActivity extends AppCompatActivity {
 
 
                 } catch (IOException e) {
+                    Toast.makeText(SignInActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
 
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    Toast.makeText(SignInActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+
                 }
 
             }

@@ -287,24 +287,6 @@ public class PersonalInfoActivity extends AppCompatActivity {
                     edstreet.setError("Please enter street");
                     edstreet.requestFocus();
                 }
-                else if(edstreet.getText().toString().isEmpty())
-                {
-                    YoYo.with(Techniques.Shake)
-                            .duration(700)
-                            .repeat(0)
-                            .playOn(edstreet);
-                    edstreet.setError("Please enter street");
-                    edstreet.requestFocus();
-                }
-                else if(edstreet.getText().toString().isEmpty())
-                {
-                    YoYo.with(Techniques.Shake)
-                            .duration(700)
-                            .repeat(0)
-                            .playOn(edstreet);
-                    edstreet.setError("Please enter street");
-                    edstreet.requestFocus();
-                }
                 else if(edcity.getText().toString().isEmpty())
                 {
                     YoYo.with(Techniques.Shake)

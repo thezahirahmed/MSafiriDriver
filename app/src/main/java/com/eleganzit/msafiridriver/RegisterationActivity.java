@@ -1,9 +1,12 @@
 package com.eleganzit.msafiridriver;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.StrictMode;
 import android.support.annotation.RequiresApi;
@@ -58,6 +61,15 @@ public class RegisterationActivity extends AppCompatActivity {
     private String type="individual";
     private String URLUPDATEUSER = "http://itechgaints.com/M-safiri-API/drvierDocument";
     com.eleganzit.msafiridriver.uploadMultupleImage.CallAPiActivity callAPiActivity2;
+
+    public boolean isOnline(Context context) {
+
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        //should check null because in airplane mode it will be null
+        return (netInfo != null && netInfo.isConnected());
+    }
+
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -153,12 +165,27 @@ public class RegisterationActivity extends AppCompatActivity {
                         }
                         else
                         {
-                            registerDriver();
+                            if(isOnline(RegisterationActivity.this))
+                            {
+                                registerDriver();
+                            }
+                            else
+                            {
+                                Toast.makeText(RegisterationActivity.this, "Please check you Internet connection", Toast.LENGTH_SHORT).show();
+                            }
+
                         }
                     }
                     else
                     {
-                        registerDriver();
+                        if(isOnline(RegisterationActivity.this))
+                        {
+                            registerDriver();
+                        }
+                        else
+                        {
+                            Toast.makeText(RegisterationActivity.this, "Please check you Internet connection", Toast.LENGTH_SHORT).show();
+                        }
                     }
 
                 }

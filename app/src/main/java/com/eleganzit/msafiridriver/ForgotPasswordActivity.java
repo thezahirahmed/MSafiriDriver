@@ -1,6 +1,9 @@
 package com.eleganzit.msafiridriver;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -23,6 +26,16 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     RobotoMediumTextView fp_signin;
     EditText fp_email;
     LinearLayout fp_signbtn;
+
+
+    public boolean isOnline(Context context) {
+
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        //should check null because in airplane mode it will be null
+        return (netInfo != null && netInfo.isConnected());
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,9 +70,17 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    startActivity(new Intent(ForgotPasswordActivity.this,OTPActivity.class).putExtra("email",fp_email.getText().toString()));
-                    overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
-                    finish();
+                    if(isOnline(ForgotPasswordActivity.this))
+                    {
+                        startActivity(new Intent(ForgotPasswordActivity.this,OTPActivity.class).putExtra("email",fp_email.getText().toString()));
+                        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                        finish();
+                    }
+                    else
+                    {
+                        Toast.makeText(ForgotPasswordActivity.this, "Please check you Internet connection", Toast.LENGTH_SHORT).show();
+                    }
+
                 }
 
             }
