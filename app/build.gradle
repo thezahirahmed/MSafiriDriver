@@ -50,7 +50,7 @@ dependencies {
     implementation 'com.infideap.drawerbehavior:drawer-behavior:0.0.5'
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.github.mirrajabi:search-dialog:1.2.3'
-
+    implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'de.hdodenhof:circleimageview:2.0.0'
     implementation 'com.cheekiat:indicatorsteplib:1.8'
     implementation 'com.android.support:appcompat-v7:28.0.0'
@@ -78,7 +78,7 @@ dependencies {
     implementation 'com.chaos.view:pinview:1.4.2'
     implementation 'com.github.GoodieBag:Pinview:v1.3'
     implementation 'com.google.android:flexbox:1.0.0'
-
+    compile project(':multi-image-picker')
     testImplementation 'junit:junit:4.12'
     compile('com.crashlytics.sdk.android:crashlytics:2.9.9@aar') {
         transitive = true;

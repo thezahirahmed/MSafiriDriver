@@ -7,9 +7,11 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -46,16 +48,20 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import me.nereo.multi_image_selector.MultiImageSelector;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 
 public class RegisterChoosePictureActivity extends AppCompatActivity {
 
     private static final int SELECT_PICTURE = 100;
-
+    private static final int REQUEST_IMAGE = 101;
+    protected static final int REQUEST_STORAGE_READ_ACCESS_PERMISSION = 102;
+    private ArrayList<String> mSelectPath;
     RelativeLayout profile;
     Bitmap bitmap;
     ImageView profile_pic;
@@ -68,17 +74,17 @@ public class RegisterChoosePictureActivity extends AppCompatActivity {
     SharedPreferences pref;
     SharedPreferences.Editor editor;
     private boolean finishEnter;
-    boolean upcomingTripsAreDone=false;
-    boolean currentTripIsDone=false;
+    boolean upcomingTripsAreDone = false;
+    boolean currentTripIsDone = false;
 
     @Override
     protected void onResume() {
         super.onResume();
         pref = getSharedPreferences("mysession", MODE_PRIVATE);
-        editor=pref.edit();
-        photo=pref.getString("photo","");
+        editor = pref.edit();
+        photo = pref.getString("photo", "");
 
-        Log.d("photooooooo","photo "+photo);
+        Log.d("photooooooo", "photo " + photo);
 
         Glide
                 .with(this)
@@ -90,10 +96,10 @@ public class RegisterChoosePictureActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityCompat.requestPermissions(RegisterChoosePictureActivity.this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},0);
+        ActivityCompat.requestPermissions(RegisterChoosePictureActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
         setContentView(R.layout.activity_choose_picture);
-        profile_pic=findViewById(R.id.profile_pic);
-        final ImageView back=findViewById(R.id.back);
+        profile_pic = findViewById(R.id.profile_pic);
+        final ImageView back = findViewById(R.id.back);
         back.setEnabled(true);
         back.setClickable(true);
         long transitionDuration = 400;
@@ -116,14 +122,14 @@ public class RegisterChoosePictureActivity extends AppCompatActivity {
                 back.setClickable(false);
                 //onBackPressed();
                 //supportFinishAfterTransition();
-                EasyTransition.exit(RegisterChoosePictureActivity.this,400, new DecelerateInterpolator());
+                EasyTransition.exit(RegisterChoosePictureActivity.this, 400, new DecelerateInterpolator());
                 //overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
 
             }
         });
 
-        profile=findViewById(R.id.profile);
-        progressDialog=new ProgressDialog(this);
+        profile = findViewById(R.id.profile);
+        progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Please wait...");
         progressDialog.setCancelable(false);
         progressDialog.setCanceledOnTouchOutside(false);
@@ -145,7 +151,8 @@ public class RegisterChoosePictureActivity extends AppCompatActivity {
                                 if (report.areAllPermissionsGranted()) {
 
                                     //getUpcomingTrips();
-                                    openImageChooser();
+                                    //openImageChooser();
+                                    pickImage();
                                 }
 
                                 // check for permanent denial of any permission
@@ -173,12 +180,11 @@ public class RegisterChoosePictureActivity extends AppCompatActivity {
         });
     }
 
-    public void getUpcomingTrips()
-    {
+    public void getUpcomingTrips() {
         progressDialog.show();
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.getDriverTrips(pref.getString("driver_id",""), "current", new retrofit.Callback<retrofit.client.Response>() {
+        myInterface.getDriverTrips(pref.getString("driver_id", ""), "current", new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
 
@@ -198,21 +204,16 @@ public class RegisterChoosePictureActivity extends AppCompatActivity {
                         JSONObject jsonObject = new JSONObject("" + stringBuilder);
                         String status = jsonObject.getString("status");
                         JSONArray jsonArray = null;
-                        if(status.equalsIgnoreCase("1"))
-                        {
-                            upcomingTripsAreDone=false;
-                        }
-                        else
-                        {
-                            upcomingTripsAreDone=true;
+                        if (status.equalsIgnoreCase("1")) {
+                            upcomingTripsAreDone = false;
+                        } else {
+                            upcomingTripsAreDone = true;
                         }
                         getCurrentTrip();
 
-                    }
-                    else
-                    {
+                    } else {
                         progressDialog.dismiss();
-                        Toast.makeText(RegisterChoosePictureActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterChoosePictureActivity.this, "" + stringBuilder, Toast.LENGTH_SHORT).show();
                     }
 
 
@@ -226,19 +227,18 @@ public class RegisterChoosePictureActivity extends AppCompatActivity {
             @Override
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
-                Log.d("errorrrr",""+error.getMessage());
+                Log.d("errorrrr", "" + error.getMessage());
                 Toast.makeText(RegisterChoosePictureActivity.this, "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
 
             }
         });
     }
 
-    public void getCurrentTrip()
-    {
+    public void getCurrentTrip() {
 
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.getDriverTrips(pref.getString("driver_id",""), "upcoming", new retrofit.Callback<retrofit.client.Response>() {
+        myInterface.getDriverTrips(pref.getString("driver_id", ""), "upcoming", new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
 
@@ -258,20 +258,14 @@ public class RegisterChoosePictureActivity extends AppCompatActivity {
                         JSONObject jsonObject = new JSONObject("" + stringBuilder);
                         String status = jsonObject.getString("status");
                         JSONArray jsonArray = null;
-                        if(status.equalsIgnoreCase("1"))
-                        {
-                            currentTripIsDone=false;
+                        if (status.equalsIgnoreCase("1")) {
+                            currentTripIsDone = false;
+                        } else {
+                            currentTripIsDone = true;
                         }
-                        else
-                        {
-                            currentTripIsDone=true;
-                        }
-                        if(upcomingTripsAreDone && currentTripIsDone)
-                        {
+                        if (upcomingTripsAreDone && currentTripIsDone) {
 
-                        }
-                        else
-                        {
+                        } else {
                             //Toast.makeText(ChoosePictureActivity.this, "You cannot update profile if you have any trips remaining!", Toast.LENGTH_LONG).show();
                             new android.app.AlertDialog.Builder(RegisterChoosePictureActivity.this).setMessage("You cannot update profile if you have any trips remaining!").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                 @Override
@@ -281,11 +275,9 @@ public class RegisterChoosePictureActivity extends AppCompatActivity {
                             }).show();
                         }
 
-                    }
-                    else
-                    {
+                    } else {
                         progressDialog.dismiss();
-                        Toast.makeText(RegisterChoosePictureActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterChoosePictureActivity.this, "" + stringBuilder, Toast.LENGTH_SHORT).show();
                     }
 
 
@@ -299,7 +291,7 @@ public class RegisterChoosePictureActivity extends AppCompatActivity {
             @Override
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
-                Log.d("errorrrr",""+error.getMessage());
+                Log.d("errorrrr", "" + error.getMessage());
                 Toast.makeText(RegisterChoosePictureActivity.this, "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
 
             }
@@ -327,6 +319,7 @@ public class RegisterChoosePictureActivity extends AppCompatActivity {
         builder.show();
 
     }
+
     private void openSettings() {
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         Uri uri = Uri.fromParts("package", getPackageName(), null);
@@ -338,28 +331,73 @@ public class RegisterChoosePictureActivity extends AppCompatActivity {
     public void onBackPressed() {
         //super.onBackPressed();
         //supportFinishAfterTransition();
-        EasyTransition.exit(RegisterChoosePictureActivity.this,400, new DecelerateInterpolator());
+        EasyTransition.exit(RegisterChoosePictureActivity.this, 400, new DecelerateInterpolator());
         //overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
     }
 
-    void openImageChooser() {
-        Intent galleryIntent=new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        /*Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);*/
-        startActivityForResult(Intent.createChooser(galleryIntent, "Select Picture"), SELECT_PICTURE);
+    private void pickImage() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN // Permission was added in API Level 16
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE,
+                    getString(R.string.mis_permission_rationale),
+                    REQUEST_STORAGE_READ_ACCESS_PERMISSION);
+        }else {
+
+            MultiImageSelector selector = MultiImageSelector.create(RegisterChoosePictureActivity.this);
+            selector.single();
+            selector.showCamera(false);
+
+            selector.origin(mSelectPath);
+            selector.start(RegisterChoosePictureActivity.this, REQUEST_IMAGE);
+        }
     }
+
+    private void requestPermission(final String permission, String rationale, final int requestCode){
+        if(ActivityCompat.shouldShowRequestPermissionRationale(this, permission)){
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.mis_permission_dialog_title)
+                    .setMessage(rationale)
+                    .setPositiveButton(R.string.mis_permission_dialog_ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions(RegisterChoosePictureActivity.this, new String[]{permission}, requestCode);
+                        }
+                    })
+                    .setNegativeButton(R.string.mis_permission_dialog_cancel, null)
+                    .create().show();
+        }else{
+            ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
+        }
+    }
+
+    void openImageChooser() {
+       /* Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        *//*Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);*//*
+        startActivityForResult(Intent.createChooser(galleryIntent, "Select Picture"), SELECT_PICTURE);
+*/
+/*
+        PhotoPicker.builder()
+                .setPhotoCount(1)
+                .setShowCamera(false)
+                .setShowGif(false)
+                .setPreviewEnabled(false)
+                .start(this, PhotoPicker.REQUEST_CODE);*/
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode==RESULT_OK) {
+        if (resultCode == RESULT_OK) {
 
-            if (requestCode == SELECT_PICTURE) {
-               /* File file = new File(String.valueOf(data));
+            /*if (requestCode == SELECT_PICTURE) {
+               *//* File file = new File(String.valueOf(data));
                 int file_size = Integer.parseInt(String.valueOf(file.length()/1024));
                 Log.d("file_size1",""+file_size);
                 onSelectFromGalleryResult(data);
-                */
+                *//*
 
                 Uri selectedImage = data.getData();
                 String[] filePathColumn = {MediaStore.Images.Media.DATA};
@@ -373,18 +411,66 @@ public class RegisterChoosePictureActivity extends AppCompatActivity {
                 Log.d("file_size", "mediapath : " + mediapath + " ---- " + file_size);
                 uploadProfile();
 
+            }*/
+            /*if (requestCode == PhotoPicker.REQUEST_CODE) {
+                if (data != null) {
+                    ArrayList<String> photos =
+                            data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
+                    StringBuilder sb = new StringBuilder();
+                    for(String p: photos){
+                        sb.append(p);
+                        sb.append("\n");
+                    }
+
+
+                    mediapath=""+sb.toString().trim();
+
+                    Glide
+                            .with(RegisterChoosePictureActivity.this)
+                            .load(mediapath.trim())
+                            .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop())
+                            .into(profile_pic);
+                    uploadProfile();
+
+
+                    Log.d("sdadad",""+mediapath);
+                }
+            }*/
+        }
+        if(requestCode == REQUEST_IMAGE){
+            if(resultCode == RESULT_OK){
+                mSelectPath = data.getStringArrayListExtra(MultiImageSelector.EXTRA_RESULT);
+                StringBuilder sb = new StringBuilder();
+                for(String p: mSelectPath){
+                    sb.append(p);
+                    sb.append("\n");
+                }
+
+
+                mediapath=""+sb.toString().trim();
+
+                /*Glide
+                        .with(RegisterChoosePictureActivity.this)
+                        .load(mediapath.trim())
+                        .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop())
+                        .into(profile_pic);*/
+                uploadProfile();
+
+
+                Log.d("mediapathhhhhhhh",""+mediapath);
             }
         }
-        if (resultCode==RESULT_CANCELED)
-        {
+        if (resultCode == RESULT_CANCELED) {
 
         }
 
     }
+
     private void uploadProfile() {
 
         //progressDialog.show();
         if ((mediapath != null) && (!(mediapath.isEmpty()))) {
+            Log.d("mediapathhhhhhhh",""+mediapath);
 
             HashMap<String, String> map = new HashMap<>();
             map.put("driver_id", pref.getString("driver_id", ""));
@@ -394,14 +480,14 @@ public class RegisterChoosePictureActivity extends AppCompatActivity {
                     //progressDialog.dismiss();
                     String status = result.getString("status");
                     JSONArray jsonArray = null;
-                    if(status.equalsIgnoreCase("1")) {
+                    if (status.equalsIgnoreCase("1")) {
                         jsonArray = result.getJSONArray("data");
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                             photo = jsonObject1.getString("photo");
 
                         }
-                        Log.d("result",""+photo);
+                        Log.d("result", "" + result.toString());
 
                         editor.putString("photo", photo);
                         editor.commit();
@@ -420,7 +506,7 @@ public class RegisterChoosePictureActivity extends AppCompatActivity {
                 public void onFailureResult(String message) {
                     //progressDialog.dismiss();
                     //Toast.makeText(ChoosePictureActivity.this, "thisssss "+message, Toast.LENGTH_SHORT).show();
-                    Log.d("messageeeeeeeeeee",message);
+                    Log.d("messageeeeeeeeeee", message);
 
                 }
             });

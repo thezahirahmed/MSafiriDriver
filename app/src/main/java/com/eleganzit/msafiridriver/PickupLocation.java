@@ -1,80 +1,54 @@
 package com.eleganzit.msafiridriver;
 
-import android.animation.Animator;
 
-import com.eleganzit.msafiridriver.model.CountryData;
-import com.eleganzit.msafiridriver.model.SampleSearchModel;
+import com.eleganzit.msafiridriver.model.ContactModel;
+import com.eleganzit.msafiridriver.utils.ContactSearchDialogCompat;
 import com.eleganzit.msafiridriver.utils.CustomDateTimePicker;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.support.annotation.IdRes;
-import android.support.annotation.RequiresApi;
+
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewAnimationUtils;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.WindowManager;
+
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.daimajia.androidanimations.library.Techniques;
-import com.daimajia.androidanimations.library.YoYo;
-import com.eleganzit.msafiridriver.activity.Home;
-import com.eleganzit.msafiridriver.activity.NavHomeActivity;
-import com.eleganzit.msafiridriver.activity.SaveRouteActivity;
-import com.eleganzit.msafiridriver.fragment.TripFragment;
 import com.eleganzit.msafiridriver.utils.DirectionsJSONParser;
 import com.eleganzit.msafiridriver.utils.MyInterface;
-import com.github.gfranks.minimal.notification.GFMinimalNotification;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
+
 import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONArray;
@@ -97,14 +71,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import ir.mirrajabi.searchdialog.SimpleSearchDialogCompat;
 import ir.mirrajabi.searchdialog.core.BaseSearchDialogCompat;
 import ir.mirrajabi.searchdialog.core.SearchResultListener;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import spencerstudios.com.bungeelib.Bungee;
 
-import static android.view.Window.FEATURE_NO_TITLE;
 
 public class PickupLocation extends AppCompatActivity implements OnMapReadyCallback {
     MapView mapView;
@@ -119,7 +91,6 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
     ImageView timeline;
     LinearLayout lin1,lin2,lin4;
     NestedScrollView lin3;
-    ArrayList<String> getTenantses=new ArrayList<>();
     EditText pickup_location,pickup_date,pickup_time,destination_location,destination_date,destination_time;
     Calendar calendar=Calendar.getInstance();
     private String lat,lng,lat2,lng2;
@@ -146,7 +117,7 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
     private String date_is;
     public static final String inputFormat = "HH:mm";
     CustomDateTimePicker custom;
-    ArrayList<SampleSearchModel> arrayList=new ArrayList<>();
+    ArrayList<ContactModel> arrayList=new ArrayList<>();
     private String compareStringOne;
 
     SimpleDateFormat inputParser = new SimpleDateFormat(inputFormat, Locale.US);
@@ -406,12 +377,12 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
             public void onClick(View view) {
                 //pickup_location.setEnabled(false);
 
-                new SimpleSearchDialogCompat(PickupLocation.this, "Search",
+                new ContactSearchDialogCompat(PickupLocation.this, "Search",
                         "Search for pickup", null, arrayList,
-                        new SearchResultListener<SampleSearchModel>() {
+                        new SearchResultListener<ContactModel>() {
                             @Override
                             public void onSelected(BaseSearchDialogCompat dialog,
-                                                   SampleSearchModel item, int position) {
+                                                   ContactModel item, int position) {
                                 pickup_location.setText(item.getTitle());
                                 lat=""+item.getLat();
                                 lng=""+item.getLng();
@@ -578,12 +549,12 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
             public void onClick(View view) {
                 //destination_location.setEnabled(false);
 
-                new SimpleSearchDialogCompat(PickupLocation.this, "Search",
+                new ContactSearchDialogCompat(PickupLocation.this, "Search",
                         "Search for destination", null, arrayList,
-                        new SearchResultListener<SampleSearchModel>() {
+                        new SearchResultListener<ContactModel>() {
                             @Override
                             public void onSelected(BaseSearchDialogCompat dialog,
-                                                   SampleSearchModel item, int position) {
+                                                   ContactModel item, int position) {
                                 destination_location.setText(item.getTitle());
                                 lin1.setVisibility(View.GONE);
                                 pickupcontinue.setVisibility(View.GONE);
@@ -838,9 +809,9 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
                                 String latitude = jsonObject1.getString("latitude");
                                 String longitude = jsonObject1.getString("longitude");
 
-                                SampleSearchModel sampleSearchModel=new SampleSearchModel(address,latitude,longitude);
+                                ContactModel contactModel=new ContactModel(address,latitude,longitude);
 
-                                arrayList.add(sampleSearchModel);
+                                arrayList.add(contactModel);
                             }
 
                         }

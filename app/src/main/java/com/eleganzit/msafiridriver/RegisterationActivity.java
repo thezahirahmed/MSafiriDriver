@@ -98,6 +98,42 @@ public class RegisterationActivity extends AppCompatActivity {
         progressDialog.setMessage("Please wait...");
         progressDialog.setCancelable(false);
         progressDialog.setCanceledOnTouchOutside(false);
+
+
+        Thread t=new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Token= FirebaseInstanceId.getInstance().getToken();
+                if (Token!=null)
+                {
+                    Log.d("Rrrrrmytokenn", Token);
+
+                    devicetoken=Token;
+                    StrictMode.ThreadPolicy threadPolicy = new StrictMode.ThreadPolicy.Builder().build();
+                    StrictMode.setThreadPolicy(threadPolicy);
+                    try {
+                        JSONObject jsonObject=new JSONObject(Token);
+                        Log.d("mytoken", jsonObject.getString("token"));
+                        //devicetoken=jsonObject.getString("token");
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    //getLoginBoth(Token);
+
+                }
+                else
+                {
+                    Toast.makeText(RegisterationActivity.this, "No token", Toast.LENGTH_SHORT).show();
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });t.start();
+
         newaccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -215,39 +251,7 @@ public class RegisterationActivity extends AppCompatActivity {
         SpannableString content = new SpannableString("Terms and conditions");
         content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
         textView.setText(content);*/
-        Thread t=new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Token= FirebaseInstanceId.getInstance().getToken();
-                if (Token!=null)
-                {
-                    Log.d("Rrrrrmytokenn", Token);
 
-                    devicetoken=Token;
-                    StrictMode.ThreadPolicy threadPolicy = new StrictMode.ThreadPolicy.Builder().build();
-                    StrictMode.setThreadPolicy(threadPolicy);
-                    try {
-                        JSONObject jsonObject=new JSONObject(Token);
-                        Log.d("mytoken", jsonObject.getString("token"));
-                        //devicetoken=jsonObject.getString("token");
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    //getLoginBoth(Token);
-
-                }
-                else
-                {
-                    Toast.makeText(RegisterationActivity.this, "No token", Toast.LENGTH_SHORT).show();
-                }
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });t.start();
     }
 
     public void registerDriver()

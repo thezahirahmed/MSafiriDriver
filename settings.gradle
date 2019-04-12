@@ -1,1 +1,2 @@
-include ':app'
+include ':app', ':multi-image-picker'
+project(':multi-image-picker').projectDir = new File('multi-image-selector')

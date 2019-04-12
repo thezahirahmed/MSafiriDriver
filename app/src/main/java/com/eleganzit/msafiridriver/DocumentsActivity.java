@@ -1,16 +1,20 @@
 package com.eleganzit.msafiridriver;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.CircularProgressDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,6 +31,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.eleganzit.msafiridriver.activities_from_register.RegisterDocumentsActivity;
 import com.eleganzit.msafiridriver.activity.NavHomeActivity;
 import com.eleganzit.msafiridriver.adapter.VehicleImagesAdapter;
 import com.eleganzit.msafiridriver.model.VehicleData;
@@ -44,6 +49,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import me.nereo.multi_image_selector.MultiImageSelector;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import spencerstudios.com.bungeelib.Bungee;
@@ -55,13 +61,18 @@ public class DocumentsActivity extends AppCompatActivity {
     ImageView save,lic_pic,num_pic1,num_pic2,num_pic3,proof_pic1,proof_pic2,proof_pic3;
     RecyclerView rc_licence_images,rc_number_images,rc_ad_proof_images;
     private String mediapath;
-
+    protected static final int REQUEST_STORAGE_READ_ACCESS_PERMISSION = 102;
+    private ArrayList<String> mSelectPath;
     com.eleganzit.msafiridriver.uploadMultupleImage.CallAPiActivity callAPiActivity;
     public static String URLUPDATEUSER;
     public static String URLUPDATEUSER2;
     ProgressDialog progressDialog;
     CircularProgressDrawable circularProgressDrawable;
+    private static final int REQUEST_IMAGE1 = 1;
+    private static final int REQUEST_IMAGE2 = 5;
 
+    private ArrayList<String> mSelectPath1;
+    private ArrayList<String> mSelectPath2;
     SharedPreferences pref;
     SharedPreferences.Editor editor;
     ArrayList<String> str_licence_array=new ArrayList<>();
@@ -130,45 +141,45 @@ public class DocumentsActivity extends AppCompatActivity {
         lic_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openImageChooser(1);
+                pickImage1();
             }
         });
-        num_add1.setOnClickListener(new View.OnClickListener() {
+        /*num_add1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openImageChooser(2);
+                pickImage(2);
             }
         });
         num_add2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openImageChooser(3);
+                pickImage(3);
             }
         });
         num_add3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openImageChooser(4);
+                pickImage(4);
             }
-        });
+        });*/
         proof_add1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openImageChooser(5);
+                pickImage2();
             }
         });
-        proof_add2.setOnClickListener(new View.OnClickListener() {
+        /*proof_add2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openImageChooser(6);
+                pickImage(6);
             }
         });
         proof_add3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openImageChooser(7);
+                pickImage(7);
             }
-        });
+        });*/
         getDriverdocuments();
         save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -343,20 +354,76 @@ public class DocumentsActivity extends AppCompatActivity {
 
     }
 
-    void openImageChooser(int SELECT_PICTURE) {
+    /*void openImageChooser(int SELECT_PICTURE) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("image/jpeg|image/jpg|image/png");
 
         Intent chooser = Intent.createChooser(intent, "Choose a Picture");
         startActivityForResult(chooser, SELECT_PICTURE);
+    }*/
+    private void pickImage1() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN // Permission was added in API Level 16
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE,
+                    getString(R.string.mis_permission_rationale),
+                    REQUEST_STORAGE_READ_ACCESS_PERMISSION);
+        }else {
+
+            MultiImageSelector selector = MultiImageSelector.create(DocumentsActivity.this);
+            selector.single();
+            selector.showCamera(false);
+
+            selector.origin(mSelectPath1);
+            selector.start(DocumentsActivity.this, REQUEST_IMAGE1);
+        }
     }
+
+    private void pickImage2() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN // Permission was added in API Level 16
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE,
+                    getString(R.string.mis_permission_rationale),
+                    REQUEST_STORAGE_READ_ACCESS_PERMISSION);
+        }else {
+
+            MultiImageSelector selector = MultiImageSelector.create(DocumentsActivity.this);
+            selector.single();
+            selector.showCamera(false);
+
+            selector.origin(mSelectPath2);
+            selector.start(DocumentsActivity.this, REQUEST_IMAGE2);
+        }
+    }
+
+    private void requestPermission(final String permission, String rationale, final int requestCode){
+        if(ActivityCompat.shouldShowRequestPermissionRationale(this, permission)){
+            new android.support.v7.app.AlertDialog.Builder(this)
+                    .setTitle(R.string.mis_permission_dialog_title)
+                    .setMessage(rationale)
+                    .setPositiveButton(R.string.mis_permission_dialog_ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions(DocumentsActivity.this, new String[]{permission}, requestCode);
+                        }
+                    })
+                    .setNegativeButton(R.string.mis_permission_dialog_cancel, null)
+                    .create().show();
+        }else{
+            ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
+        }
+    }
+
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode==RESULT_OK) {
 
-            if (requestCode == 1) {
-                Uri selectedImage = data.getData();
+            if (requestCode == REQUEST_IMAGE1) {
+                /*Uri selectedImage = data.getData();
                 String[] filePathColumn = {MediaStore.Images.Media.DATA};
                 Cursor cursor = getApplicationContext().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
                 assert cursor != null;
@@ -370,12 +437,30 @@ public class DocumentsActivity extends AppCompatActivity {
                 rc_licence_images.setAdapter(new VehicleImagesAdapter(str_licence_array,model_licence_array,DocumentsActivity.this));
 
                 Log.d("file_size", "mediapath : " + mediapath + " ---- num_pic1");
+                Log.d("imagesssssss",""+str_licence_array);*/
+
+                mSelectPath1 = data.getStringArrayListExtra(MultiImageSelector.EXTRA_RESULT);
+                StringBuilder sb = new StringBuilder();
+                for(String p: mSelectPath1){
+                    sb.append(p);
+                    sb.append("\n");
+
+                }
+                mediapath=""+sb.toString().trim();
+
+                str_licence_array.add(mediapath);
+                VehicleData vehicleData=new VehicleData("","photo",mediapath);
+                model_licence_array.add(vehicleData);
+
+                rc_licence_images.setAdapter(new VehicleImagesAdapter(str_licence_array,model_licence_array,DocumentsActivity.this));
+
+                Log.d("file_size", "mediapath : " + mediapath + " ---- num_pic1");
                 Log.d("imagesssssss",""+str_licence_array);
 
             }
 
-            if (requestCode == 5) {
-                Uri selectedImage = data.getData();
+            if (requestCode == REQUEST_IMAGE2) {
+                /*Uri selectedImage = data.getData();
                 String[] filePathColumn = {MediaStore.Images.Media.DATA};
                 Cursor cursor = getApplicationContext().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
                 assert cursor != null;
@@ -389,7 +474,25 @@ public class DocumentsActivity extends AppCompatActivity {
                 rc_ad_proof_images.setAdapter(new VehicleImagesAdapter2(str_proof_array,model_proof_array,DocumentsActivity.this));
 
                 Log.d("file_size", "mediapath : " + mediapath + " ---- num_pic1");
+                Log.d("imagesssssss",""+str_proof_array);*/
+                mSelectPath2 = data.getStringArrayListExtra(MultiImageSelector.EXTRA_RESULT);
+                StringBuilder sb = new StringBuilder();
+                for(String p: mSelectPath2){
+                    sb.append(p);
+                    sb.append("\n");
+
+                }
+                mediapath=""+sb.toString().trim();
+
+                str_proof_array.add(mediapath);
+                VehicleData vehicleData=new VehicleData("","photo",mediapath);
+                model_proof_array.add(vehicleData);
+
+                rc_ad_proof_images.setAdapter(new VehicleImagesAdapter2(str_proof_array,model_proof_array,DocumentsActivity.this));
+
+                Log.d("file_size", "mediapath : " + mediapath + " ---- num_pic1");
                 Log.d("imagesssssss",""+str_proof_array);
+
 
             }
 

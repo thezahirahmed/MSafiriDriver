@@ -10,9 +10,11 @@ import retrofit.Callback;
 import retrofit.client.Response;
 import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
+import retrofit.http.Multipart;
 import retrofit.http.POST;
+import retrofit.http.Part;
 import retrofit.http.Query;
-
+import retrofit.mime.TypedFile;
 
 
 public interface MyInterface
@@ -202,11 +204,11 @@ public interface MyInterface
                                  Callback<Response> callback
     );
 
-    @retrofit.http.FormUrlEncoded
+    @Multipart
     @retrofit.http.POST("/updateDrivertrip")
-    public void updateTripStatus(@retrofit.http.Field("id") String id,
-                                 @retrofit.http.Field("status") String status,
-                                 @retrofit.http.Field("trip_map_screenshot") String trip_map_screenshot,
+    public void updateTripStatus(@Part("id") String id,
+                                 @Part("status") String status,
+                                 @Part("trip_map_screenshot") TypedFile trip_map_screenshot,
                                  Callback<Response> callback
     );
 
@@ -300,7 +302,6 @@ public interface MyInterface
     @retrofit.http.POST("/getState")
     public void getState(@retrofit.http.Field("country_id") String country_id,
                          Callback<Response> callback);
-
 
     @retrofit.http.FormUrlEncoded
     @retrofit.http.POST("/lastLocation")

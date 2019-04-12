@@ -14,12 +14,14 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -77,6 +79,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import me.nereo.multi_image_selector.MultiImageSelector;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import spencerstudios.com.bungeelib.Bungee;
@@ -106,6 +109,12 @@ public class AccountFragment extends Fragment {
     boolean upcomingTripsAreDone=false;
     boolean currentTripIsDone=false;
     ProgressDialog progressDialog;
+    private static final int REQUEST_IMAGE1 = 101;
+    protected static final int REQUEST_STORAGE_READ_ACCESS_PERMISSION1 = 102;
+    private ArrayList<String> mSelectPath1;
+    private static final int REQUEST_IMAGE2 = 201;
+    protected static final int REQUEST_STORAGE_READ_ACCESS_PERMISSION2 = 202;
+    private ArrayList<String> mSelectPath2;
 
     public AccountFragment() {
         // Required empty public constructor
@@ -290,11 +299,13 @@ public class AccountFragment extends Fragment {
                         {
                             if(i==0)
                             {
-                                openImageChooser();
+                                //openImageChooser();
+                                pickImage1();
                             }
                             if(i==1)
                             {
-                                openImageChooser2();
+                                //openImageChooser2();
+                                pickImage2();
                             }
                         }
                         else
@@ -540,22 +551,82 @@ public class AccountFragment extends Fragment {
         startActivityForResult(intent, 101);
     }
 
-    void openImageChooser() {
+    /*void openImageChooser() {
         Intent galleryIntent=new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        /*Intent intent = new Intent();
+        *//*Intent intent = new Intent();
         intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);*/
+        intent.setAction(Intent.ACTION_GET_CONTENT);*//*
         startActivityForResult(Intent.createChooser(galleryIntent, "Select Picture"), SELECT_FILE);
 
 
+    }*/
+    private void pickImage1() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN // Permission was added in API Level 16
+                && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE,
+                    getString(R.string.mis_permission_rationale),
+                    REQUEST_STORAGE_READ_ACCESS_PERMISSION1);
+        }else {
+
+            MultiImageSelector selector = MultiImageSelector.create(getActivity());
+            selector.single();
+            selector.showCamera(false);
+
+            selector.origin(mSelectPath1);
+            selector.start(getActivity(), REQUEST_IMAGE1);
+        }
     }
+
+    private void pickImage2() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN // Permission was added in API Level 16
+                && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE,
+                    getString(R.string.mis_permission_rationale),
+                    REQUEST_STORAGE_READ_ACCESS_PERMISSION2);
+        }else {
+
+            MultiImageSelector selector = MultiImageSelector.create(getActivity());
+            selector.single();
+            selector.showCamera(false);
+
+            selector.origin(mSelectPath2);
+            selector.start(getActivity(), REQUEST_IMAGE2);
+        }
+    }
+
+    private void requestPermission(final String permission, String rationale, final int requestCode){
+        if(ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permission)){
+            new android.support.v7.app.AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.mis_permission_dialog_title)
+                    .setMessage(rationale)
+                    .setPositiveButton(R.string.mis_permission_dialog_ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions(getActivity(), new String[]{permission}, requestCode);
+                        }
+                    })
+                    .setNegativeButton(R.string.mis_permission_dialog_cancel, null)
+                    .create().show();
+        }else{
+            ActivityCompat.requestPermissions(getActivity(), new String[]{permission}, requestCode);
+        }
+    }
+
+
+/*
+
     void openImageChooser2() {
         Intent galleryIntent=new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        /*Intent intent = new Intent();
+        */
+/*Intent intent = new Intent();
         intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);*/
+        intent.setAction(Intent.ACTION_GET_CONTENT);*//*
+
         startActivityForResult(Intent.createChooser(galleryIntent, "Select Picture"), SELECT_FILE2);
     }
+*/
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -619,7 +690,7 @@ public class AccountFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == SELECT_FILE) {
+            /*if (requestCode == SELECT_FILE) {
                 onSelectFromGalleryResult(data);
                 Uri selectedImage = data.getData();
                 String[] filePathColumn = {MediaStore.Images.Media.DATA};
@@ -646,6 +717,54 @@ public class AccountFragment extends Fragment {
                 int file_size = Integer.parseInt(String.valueOf(file.length() / 1024));
                 Log.d("file_size", "mediapath : " + mediapath + " ---- " + file_size);
                 uploadVehicleProfile();
+            }*/
+
+            if(requestCode == REQUEST_IMAGE1){
+                if(resultCode == Activity.RESULT_OK){
+                    mSelectPath1 = data.getStringArrayListExtra(MultiImageSelector.EXTRA_RESULT);
+                    StringBuilder sb = new StringBuilder();
+                    for(String p: mSelectPath1){
+                        sb.append(p);
+                        sb.append("\n");
+                    }
+
+
+                    mediapath=""+sb.toString().trim();
+
+                /*Glide
+                        .with(RegisterChoosePictureActivity.this)
+                        .load(mediapath.trim())
+                        .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop())
+                        .into(profile_pic);*/
+                    uploadProfile();
+
+
+                    Log.d("mediapathhhhhhhh",""+mediapath);
+                }
+            }
+
+            if(requestCode == REQUEST_IMAGE2){
+                if(resultCode == Activity.RESULT_OK){
+                    mSelectPath2 = data.getStringArrayListExtra(MultiImageSelector.EXTRA_RESULT);
+                    StringBuilder sb = new StringBuilder();
+                    for(String p: mSelectPath2){
+                        sb.append(p);
+                        sb.append("\n");
+                    }
+
+
+                    mediapath=""+sb.toString().trim();
+
+                /*Glide
+                        .with(RegisterChoosePictureActivity.this)
+                        .load(mediapath.trim())
+                        .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop())
+                        .into(profile_pic);*/
+                    uploadVehicleProfile();
+
+
+                    Log.d("mediapathhhhhhhh",""+mediapath);
+                }
             }
             if (requestCode == REQUEST_CAMERA)
                 onCaptureImageResult(data);

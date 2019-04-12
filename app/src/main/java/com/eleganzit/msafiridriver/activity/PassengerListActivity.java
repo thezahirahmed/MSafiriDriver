@@ -65,6 +65,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -74,6 +75,7 @@ import java.util.Locale;
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
+import retrofit.mime.TypedFile;
 import spencerstudios.com.bungeelib.Bungee;
 
 public class PassengerListActivity extends AppCompatActivity {
@@ -134,7 +136,7 @@ public class PassengerListActivity extends AppCompatActivity {
             }
         });
 
-        photoPath=p_pref.getString("photoPath","");
+        photoPath=p_pref.getString("photoPath","").trim();
         Log.d("photoPathPP",""+photoPath);
         top=findViewById(R.id.top);
         passengers=findViewById(R.id.passengers);
@@ -489,7 +491,9 @@ public class PassengerListActivity extends AppCompatActivity {
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
 
-        myInterface.updateTripStatus(trip_id, tstatus, photoPath,new retrofit.Callback<retrofit.client.Response>() {
+        TypedFile map_ss=new TypedFile("multipart/form-data",new File(photoPath+""));
+
+        myInterface.updateTripStatus(trip_id, tstatus, map_ss,new retrofit.Callback<retrofit.client.Response>() {
                     @Override
                     public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                         progressDialog.dismiss();
@@ -516,6 +520,8 @@ public class PassengerListActivity extends AppCompatActivity {
                                     Log.d("finalTstatus",finalTstatus+" <<<<");
                                     if(finalTstatus.equalsIgnoreCase("ongoing"))
                                     {
+                                        Log.d("trip_latsss","lnggggggg  "+trip_lat+"   "+trip_lng);
+
                                         holder.select_radioButton.setVisibility(View.GONE);
                                         trip_text.setText("End Trip");
                                         p_editor.putString("trip_status","ongoing");
@@ -545,20 +551,25 @@ public class PassengerListActivity extends AppCompatActivity {
 
                                         }
 
+
                                         if(!isGoogleMapsInstalled())
                                         {
-                                            //Toast.makeText(PassengerListActivity.this, "not installed or is disabled", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(PassengerListActivity.this, "not installed or is disabled", Toast.LENGTH_SHORT).show();
                                             Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                                                    Uri.parse("http://maps.google.com/maps/dir/"+trip_lat+","+trip_lng+"/"+trip_lat2+","+trip_lng2));//Uri.parse("http://maps.google.com/maps?saddr="+trip_lat+","+trip_lng+"&daddr="+trip_lat2+","+trip_lng2)
+                                                    Uri.parse("http://maps.google.com/maps/dir/"+23.0350+","+72.5293+"/"+23.0120+","+72.5108));//Uri.parse("http://maps.google.com/maps?saddr="+trip_lat+","+trip_lng+"&daddr="+trip_lat2+","+trip_lng2)
                                             startActivity(intent);
                                             finish();
                                         }
                                         else
                                         {
-                                            //Toast.makeText(PassengerListActivity.this, "installed", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(PassengerListActivity.this, "installed", Toast.LENGTH_SHORT).show();
 
-                                            Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                                            /*Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
                                                     Uri.parse("google.navigation:q="+trip_lat2+","+trip_lng2));//Uri.parse("http://maps.google.com/maps?saddr="+trip_lat+","+trip_lng+"&daddr="+trip_lat2+","+trip_lng2)
+                                            startActivity(intent);
+                                            finish();*/
+                                            Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                                                    Uri.parse("http://maps.google.com/maps/dir/"+23.0350+","+72.5293+"/"+23.0120+","+72.5108));//Uri.parse("http://maps.google.com/maps?saddr="+trip_lat+","+trip_lng+"&daddr="+trip_lat2+","+trip_lng2)
                                             startActivity(intent);
                                             finish();
                                         }
@@ -670,6 +681,7 @@ public class PassengerListActivity extends AppCompatActivity {
                                                 Uri.parse("package:" + getPackageName()));
                                         startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION);
                                     } else {
+
                                         startService(mServiceIntent);
 
                                     }
