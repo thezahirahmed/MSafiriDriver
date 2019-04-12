@@ -492,6 +492,11 @@ public class RegisterChoosePictureActivity extends AppCompatActivity {
                         editor.putString("photo", photo);
                         editor.commit();
 
+                        if(photo==null || photo.equalsIgnoreCase("null"))
+                        {
+                            Toast.makeText(RegisterChoosePictureActivity.this, "Please select another picture", Toast.LENGTH_SHORT).show();
+                        }
+
                         Glide
                                 .with(RegisterChoosePictureActivity.this)
                                 .load(photo)

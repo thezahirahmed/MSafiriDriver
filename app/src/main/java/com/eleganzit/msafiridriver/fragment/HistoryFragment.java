@@ -109,7 +109,7 @@ public class HistoryFragment extends Fragment{
         shimmerFrameLayout.setVisibility(View.VISIBLE);
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.getDriverTrips(pref.getString("driver_id",""), "past", new retrofit.Callback<retrofit.client.Response>() {
+        myInterface.getDriverTrips(pref.getString("driver_id",""), "history", new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                 arrayList = new ArrayList<>();

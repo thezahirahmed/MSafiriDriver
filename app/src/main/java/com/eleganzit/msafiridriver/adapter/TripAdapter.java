@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
+import com.battleent.ribbonviews.RibbonTag;
 import com.eleganzit.msafiridriver.PickupLocation;
 import com.eleganzit.msafiridriver.R;
 import com.eleganzit.msafiridriver.activity.TripDetail;
@@ -69,6 +71,22 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.MyViewHolder>
         holder.trip_price.setSelected(true);
         holder.trip_price.setText("KSh "+tripData.getTrip_price());
 
+        if(tripData.getStatuss().equalsIgnoreCase("deactive"))
+        {
+            holder.trip_status.setTagText("Completed");
+            holder.trip_status.setRibbonColor(Color.parseColor("#cd2b9314"));
+        }
+        else if(tripData.getStatuss().equalsIgnoreCase("cancel"))
+        {
+            holder.trip_status.setTagText("Cancelled");
+            holder.trip_status.setRibbonColor(Color.parseColor("#cdda0b23"));
+        }
+        else
+        {
+            holder.trip_status.setVisibility(View.GONE);
+        }
+
+
         holder.trip_main.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -106,6 +124,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.MyViewHolder>
         RelativeLayout trip_main;
         TextView trip_time,from,to,trip_price;
         ImageView more;
+        RibbonTag trip_status;
         public MyViewHolder(View itemView) {
             super(itemView);
             trip_main=itemView.findViewById(R.id.trip_main);
@@ -113,6 +132,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.MyViewHolder>
             from=itemView.findViewById(R.id.from);
             to=itemView.findViewById(R.id.to);
             trip_price=itemView.findViewById(R.id.trip_price);
+            trip_status=itemView.findViewById(R.id.trip_status);
 
 
         }

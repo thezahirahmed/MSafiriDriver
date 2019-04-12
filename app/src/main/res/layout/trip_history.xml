@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    android:id="@+id/trip_main"
+<RelativeLayout android:id="@+id/trip_main"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:background="?android:selectableItemBackground"
     android:layout_marginTop="1dp"
-    android:layout_height="70dp">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <View
         android:layout_width="match_parent"
@@ -17,7 +17,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_below="@+id/view"
-        android:layout_height="72dp"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="1"
         android:padding="15dp"
@@ -66,15 +66,35 @@
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/trip_time"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:singleLine="true"
-            android:ellipsize="end"
             android:layout_height="wrap_content"
-            android:text="05/04/18 at 9:00 AM"
-            android:textColor="@color/uncompleted_text_color"/>
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
 
+            <TextView
+                android:id="@+id/trip_time"
+                android:layout_width="wrap_content"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="05/04/18 at 9:00 AM"
+                android:textColor="@color/uncompleted_text_color"/>
+
+
+
+            <com.battleent.ribbonviews.RibbonTag
+                android:id="@+id/trip_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:tag_ribbonRadius="5"
+                android:layout_marginRight="10dp"
+                app:tag_padding_right="6dp"
+                app:tag_padding_left="6dp" />
+
+
+        </LinearLayout>
 
     </LinearLayout>
     <TextView

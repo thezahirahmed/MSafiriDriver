@@ -59,6 +59,23 @@
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
             android:textStyle="bold"
             android:layout_centerInParent="true"/>
+        <ImageView
+            android:id="@+id/reload_passengers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            android:src="@mipmap/reload_icon"/>
+
+        <ImageView
+            android:id="@+id/reload_onboard_passengers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            android:src="@mipmap/reload_icon"/>
+
+
         <ProgressBar
             android:id="@+id/progress"
             android:layout_centerInParent="true"

@@ -167,6 +167,14 @@ public class RegisterationActivity extends AppCompatActivity {
                     password.setError("Please enter your Password");
                     password.requestFocus();
                 }
+                else if (password.getText().toString().length()<6) {
+                    YoYo.with(Techniques.Shake)
+                            .duration(700)
+                            .repeat(0)
+                            .playOn(password);
+                    password.setError("Password must contain at least 6 characters");
+                    password.requestFocus();
+                }
                 else if (confirm.getText().toString().trim().isEmpty())
                 {
                     YoYo.with(Techniques.Shake)

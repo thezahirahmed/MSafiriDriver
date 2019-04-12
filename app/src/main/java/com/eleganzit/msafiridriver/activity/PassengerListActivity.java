@@ -1,9 +1,11 @@
 package com.eleganzit.msafiridriver.activity;
 
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -13,6 +15,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -53,7 +56,10 @@ import com.eleganzit.msafiridriver.model.PassengerData;
 import com.eleganzit.msafiridriver.model.TripData;
 import com.eleganzit.msafiridriver.utils.GoogleService;
 import com.eleganzit.msafiridriver.utils.MyInterface;
+import com.eleganzit.msafiridriver.utils.MyLocation;
 import com.eleganzit.msafiridriver.utils.SensorService;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -108,6 +114,8 @@ public class PassengerListActivity extends AppCompatActivity {
     SharedPreferences.Editor medit;
     Double latitude,longitude;
     Geocoder geocoder;
+    private String last_lat,last_lng;
+    ImageView reload_passengers,reload_onboard_passengers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,6 +153,8 @@ public class PassengerListActivity extends AppCompatActivity {
         progress=findViewById(R.id.progress);
         no_passenger=findViewById(R.id.no_passenger);
         select_allcheck=findViewById(R.id.select_allcheck);
+        reload_passengers = findViewById(R.id.reload_passengers);
+        reload_onboard_passengers = findViewById(R.id.reload_onboard_passengers);
 
         progressDialog=new ProgressDialog(this);
         progressDialog.setCancelable(false);
@@ -158,6 +168,50 @@ public class PassengerListActivity extends AppCompatActivity {
         geocoder = new Geocoder(this, Locale.getDefault());
         mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         medit = mPref.edit();
+
+        reload_passengers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getPassengers();
+            }
+        });
+
+        reload_onboard_passengers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getOnBoardPassengers();
+            }
+        });
+
+        MyLocation.LocationResult locationResult = new MyLocation.LocationResult(){
+            @Override
+            public void gotLocation(Location location){
+
+                if(location==null)
+                {
+
+                }
+                else
+                {
+                    Location destLocation=new Location("newlocation");
+                    double lat=Double.parseDouble(pref.getString("dest_lat",""));
+                    double lng=Double.parseDouble(pref.getString("dest_lng",""));
+                    destLocation.setLatitude(lat);
+                    destLocation.setLongitude(lng);
+                    last_lat=String.valueOf(location.getLatitude());
+                    last_lng=String.valueOf(location.getLongitude());
+                    float distance = location.distanceTo(destLocation) /1000;
+                    Log.i("wherreeeeeeemyloc", "distance between "+ last_lat+" and  "+last_lng);
+                    //Log.i("wherreeeeeee lllllll", ""+ location.getLatitude()+"   "+location.getLongitude());
+
+                }
+
+            }
+        };
+        MyLocation myLocation = new MyLocation();
+        myLocation.getLocation(PassengerListActivity.this, locationResult);
+
+
 
 /*
         start.setOnClickListener(new View.OnClickListener() {
@@ -380,6 +434,7 @@ public class PassengerListActivity extends AppCompatActivity {
 
     public boolean isGoogleMapsInstalled()
     {
+
         try
         {
             ApplicationInfo info = getPackageManager().getApplicationInfo("com.google.android.apps.maps", 0 );
@@ -554,24 +609,24 @@ public class PassengerListActivity extends AppCompatActivity {
 
                                         if(!isGoogleMapsInstalled())
                                         {
-                                            Toast.makeText(PassengerListActivity.this, "not installed or is disabled", Toast.LENGTH_SHORT).show();
+                                            //Toast.makeText(PassengerListActivity.this, "not installed or is disabled", Toast.LENGTH_SHORT).show();
                                             Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                                                    Uri.parse("http://maps.google.com/maps/dir/"+23.0350+","+72.5293+"/"+23.0120+","+72.5108));//Uri.parse("http://maps.google.com/maps?saddr="+trip_lat+","+trip_lng+"&daddr="+trip_lat2+","+trip_lng2)
+                                                    Uri.parse("http://maps.google.com/maps/dir?saddr="+trip_lat+","+trip_lng+"&daddr="+trip_lat2+","+trip_lng2));//Uri.parse("http://maps.google.com/maps?saddr="+trip_lat+","+trip_lng+"&daddr="+trip_lat2+","+trip_lng2)
                                             startActivity(intent);
                                             finish();
                                         }
                                         else
                                         {
-                                            Toast.makeText(PassengerListActivity.this, "installed", Toast.LENGTH_SHORT).show();
+                                            //Toast.makeText(PassengerListActivity.this, "installed", Toast.LENGTH_SHORT).show();
 
-                                            /*Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                                            Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
                                                     Uri.parse("google.navigation:q="+trip_lat2+","+trip_lng2));//Uri.parse("http://maps.google.com/maps?saddr="+trip_lat+","+trip_lng+"&daddr="+trip_lat2+","+trip_lng2)
                                             startActivity(intent);
-                                            finish();*/
-                                            Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                                            finish();
+                                            /*Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
                                                     Uri.parse("http://maps.google.com/maps/dir/"+23.0350+","+72.5293+"/"+23.0120+","+72.5108));//Uri.parse("http://maps.google.com/maps?saddr="+trip_lat+","+trip_lng+"&daddr="+trip_lat2+","+trip_lng2)
                                             startActivity(intent);
-                                            finish();
+                                            finish();*/
                                         }
 
                                     }
@@ -613,6 +668,7 @@ public class PassengerListActivity extends AppCompatActivity {
 
                     }
 
+
                     @Override
                     public void failure(RetrofitError error) {
                         progressDialog.dismiss();
@@ -620,6 +676,26 @@ public class PassengerListActivity extends AppCompatActivity {
                         Toast.makeText(PassengerListActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private double distance(double lat1, double lng1, double lat2, double lng2) {
+
+        double earthRadius = 3958.75; // in miles, change to 6371 for kilometer output
+
+        double dLat = Math.toRadians(lat2-lat1);
+        double dLng = Math.toRadians(lng2-lng1);
+
+        double sindLat = Math.sin(dLat / 2);
+        double sindLng = Math.sin(dLng / 2);
+
+        double a = Math.pow(sindLat, 2) + Math.pow(sindLng, 2)
+                * Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2));
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+        double dist = earthRadius * c;
+
+        return dist; // output distance, in MILES
     }
 
     public void updateDeactiveStatus(String tstatus, final PassengerAdapter.MyViewHolder holder)
@@ -868,7 +944,7 @@ public class PassengerListActivity extends AppCompatActivity {
             @Override
             public void failure(RetrofitError error) {
                 progress.setVisibility(View.GONE);
-
+                reload_passengers.setVisibility(View.VISIBLE);
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
                 Toast.makeText(PassengerListActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.d("errorrrr",""+error.getMessage());
@@ -961,7 +1037,7 @@ public class PassengerListActivity extends AppCompatActivity {
             @Override
             public void failure(RetrofitError error) {
                 progress.setVisibility(View.GONE);
-
+                reload_onboard_passengers.setVisibility(View.VISIBLE);
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
                 Toast.makeText(PassengerListActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.d("errorrrr",""+error.getMessage());
@@ -1046,7 +1122,50 @@ public class PassengerListActivity extends AppCompatActivity {
             start.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    /*if (boolean_permission) {
+
+                    Geofence geofence = new Geofence.Builder()
+                            .setRequestId("1") // Geofence ID
+                            .setCircularRegion( Double.valueOf(last_lat), Double.valueOf(last_lng), 100) // defining fence region
+                            .setExpirationDuration( 5000 ) // expiring date
+                            // Transition types that it should look for
+                            .setTransitionTypes( Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT )
+                            .build();
+
+                    GeofencingRequest request = new GeofencingRequest.Builder()
+                            // Notification to trigger when the Geofence is created
+                            .setInitialTrigger( GeofencingRequest.INITIAL_TRIGGER_ENTER )
+                            .addGeofence( geofence ) // add a Geofence
+                            .build();
+
+                    MyLocation.LocationResult locationResult = new MyLocation.LocationResult(){
+                        @Override
+                        public void gotLocation(Location location){
+
+                            if(location==null)
+                            {
+
+                            }
+                            else
+                            {
+                                Location destLocation=new Location("newlocation");
+                                double lat=Double.parseDouble(pref.getString("dest_lat",""));
+                                double lng=Double.parseDouble(pref.getString("dest_lng",""));
+                                destLocation.setLatitude(lat);
+                                destLocation.setLongitude(lng);
+                                last_lat=String.valueOf(location.getLatitude());
+                                last_lng=String.valueOf(location.getLongitude());
+                                float distance = location.distanceTo(destLocation) /1000;
+                                Log.i("wherreeeeeeemyloc", "distance between "+ last_lat+" and  "+last_lng);
+                                //Log.i("wherreeeeeee lllllll", ""+ location.getLatitude()+"   "+location.getLongitude());
+
+                            }
+
+                        }
+                    };
+                    MyLocation myLocation = new MyLocation();
+                    myLocation.getLocation(PassengerListActivity.this, locationResult);
+
+                        /*if (boolean_permission) {
 
                         if (mPref.getString("service", "").matches("")) {
                             medit.putString("service", "service").commit();
@@ -1062,35 +1181,91 @@ public class PassengerListActivity extends AppCompatActivity {
                     }
                     Toast.makeText(PassengerListActivity.this, "click", Toast.LENGTH_SHORT).show();
 */
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(PassengerListActivity.this)) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(PassengerListActivity.this)) {
 
-                        //If the draw over permission is not available open the settings screen
-                        //to grant the permission.
-                        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                                Uri.parse("package:" + getPackageName()));
-                        startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION);
-                    } else {
-                        if(trip_text.getText().toString().equalsIgnoreCase("start trip"))
-                        {
-                            if(userslist.size()>0)
+                            //If the draw over permission is not available open the settings screen
+                            //to grant the permission.
+                            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                    Uri.parse("package:" + getPackageName()));
+                            startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION);
+                        } else {
+                            if(trip_text.getText().toString().equalsIgnoreCase("start trip"))
                             {
-                                addPassengers("active",holder);
+                                if(userslist.size()>0)
+                                {
+
+                                    if (distance(Double.valueOf(last_lat), Double.valueOf(last_lng), Double.valueOf(trip_lat2), Double.valueOf(trip_lng2)) < 0.1) { // if distance < 0.1 miles we take locations as equal
+                                        //do what you want to do...
+                                        addPassengers("active",holder);
+                                    }
+                                    else
+                                    {
+                                        new AlertDialog.Builder(context).setMessage("First reach at the pickup location!").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                dialogInterface.dismiss();
+                                            }
+                                        }).show();
+                                    }
+
+                                }
+                                else
+                                {
+                                    Toast.makeText(PassengerListActivity.this, "Please select passengers", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                        }
+
+
+                        if(trip_text.getText().toString().equalsIgnoreCase("end trip"))
+                        {
+
+                            locationResult = new MyLocation.LocationResult(){
+                                @Override
+                                public void gotLocation(Location location){
+
+                                    if(location==null)
+                                    {
+
+                                    }
+                                    else
+                                    {
+                                        Location destLocation=new Location("newlocation");
+                                        double lat=Double.parseDouble(pref.getString("dest_lat",""));
+                                        double lng=Double.parseDouble(pref.getString("dest_lng",""));
+                                        destLocation.setLatitude(lat);
+                                        destLocation.setLongitude(lng);
+                                        last_lat=String.valueOf(location.getLatitude());
+                                        last_lng=String.valueOf(location.getLongitude());
+                                        float distance = location.distanceTo(destLocation) /1000;
+                                        Log.i("wherreeeeeeemyloc", "distance between "+ last_lat+" and  "+last_lng);
+                                        //Log.i("wherreeeeeee lllllll", ""+ location.getLatitude()+"   "+location.getLongitude());
+
+                                    }
+
+                                }
+                            };
+                            myLocation = new MyLocation();
+                            myLocation.getLocation(PassengerListActivity.this, locationResult);
+
+                            if (distance(Double.valueOf(last_lat), Double.valueOf(last_lng), Double.valueOf(trip_lat2), Double.valueOf(trip_lng2)) < 0.1) {
+
+                                updateDeactiveStatus("deactive",null);
+                                p_editor.putBoolean("firstTime",false);
+                                p_editor.commit();
                             }
                             else
                             {
-                                Toast.makeText(PassengerListActivity.this, "Please select passengers", Toast.LENGTH_SHORT).show();
+                                new AlertDialog.Builder(context).setMessage("First reach at the pickup location!").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.dismiss();
+                                    }
+                                }).show();
                             }
+
                         }
-
-                    }
-
-
-                    if(trip_text.getText().toString().equalsIgnoreCase("end trip"))
-                    {
-                        updateDeactiveStatus("deactive",null);
-                        p_editor.putBoolean("firstTime",false);
-                        p_editor.commit();
-                    }
 
 
                 }

@@ -69,7 +69,7 @@ public class MyFirebaseMessagingService extends com.google.firebase.messaging.Fi
                 NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                 String id = "id_product";
                 // The user-visible name of the channel.
-                CharSequence name = "MSafiri User";
+                CharSequence name = "MSafiri Driver";
                 // The user-visible description of the channel.
                 String description = text;
                 int importance = NotificationManager.IMPORTANCE_MAX;
