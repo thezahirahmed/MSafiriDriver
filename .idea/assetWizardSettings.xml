@@ -73,9 +73,10 @@
                                   </option>
                                   <option name="values">
                                     <map>
+                                      <entry key="assetType" value="IMAGE" />
                                       <entry key="iconShape" value="NONE" />
-                                      <entry key="imageAsset" value="C:\Users\EleganzIT\Downloads\refresh(2).png" />
-                                      <entry key="outputName" value="ic_sort_white" />
+                                      <entry key="imageAsset" value="C:\Users\EleganzIT\Downloads\turyde_icon.png" />
+                                      <entry key="outputName" value="app_logo" />
                                     </map>
                                   </option>
                                 </PersistentState>

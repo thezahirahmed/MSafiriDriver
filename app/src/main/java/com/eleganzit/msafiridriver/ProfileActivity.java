@@ -187,7 +187,7 @@ public class ProfileActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    startActivity(new Intent(ProfileActivity.this, NavHomeActivity.class));
+                    startActivity(new Intent(ProfileActivity.this, NavHomeActivity.class).putExtra("from","profile"));
                     overridePendingTransition(android.R.anim.slide_in_left,android.R.anim.slide_in_left);
                     finish();
                 }
@@ -342,7 +342,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                                         if(approvel.equalsIgnoreCase("yes"))
                                         {
-                                            startActivity(new Intent(ProfileActivity.this, NavHomeActivity.class));
+                                            startActivity(new Intent(ProfileActivity.this, NavHomeActivity.class).putExtra("from","profile"));
                                             overridePendingTransition(android.R.anim.slide_in_left,android.R.anim.slide_in_left);
                                             finish();
                                         }

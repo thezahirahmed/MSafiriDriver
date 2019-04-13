@@ -94,9 +94,8 @@ public class SignInActivity extends AppCompatActivity {
         {
             if(pref.getString("approvel","").equalsIgnoreCase("yes"))
             {
-                startActivity(new Intent(SignInActivity.this,NavHomeActivity.class));
+                loggedinDriver();
 
-                finish();
             }
 
         }
@@ -427,7 +426,7 @@ public class SignInActivity extends AppCompatActivity {
                                 if(approvel.equalsIgnoreCase("yes"))
                                 {
 
-                                    startActivity(new Intent(SignInActivity.this,NavHomeActivity.class));
+                                    startActivity(new Intent(SignInActivity.this,NavHomeActivity.class).putExtra("from","signin"));
 
                                     finish();
                                 }
@@ -505,6 +504,77 @@ public class SignInActivity extends AppCompatActivity {
             }
         });
     }
+
+    public void loggedinDriver()
+    {
+
+        Log.d("devicetoken",""+devicetoken);
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
+        final MyInterface myInterface = restAdapter.create(MyInterface.class);
+        myInterface.loginDriver(pref.getString("email",""), pref.getString("password",""),devicetoken, new retrofit.Callback<retrofit.client.Response>() {
+            @Override
+            public void success(retrofit.client.Response response, retrofit.client.Response response2) {
+
+                final StringBuilder stringBuilder = new StringBuilder();
+                try {
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
+
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line);
+                    }
+                    Log.d("llllllstringBuilder", "" + stringBuilder);
+                    //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
+
+                    if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
+
+                        JSONObject jsonObject = new JSONObject("" + stringBuilder);
+                        String status = jsonObject.getString("status");
+                        JSONArray jsonArray = null;
+                        if(status.equalsIgnoreCase("1"))
+                        {
+                            startActivity(new Intent(SignInActivity.this,NavHomeActivity.class).putExtra("from","signin"));
+
+                            finish();
+                        }
+                        else
+                        {
+
+                        }
+
+                    }
+                    else
+                    {
+
+                        Toast.makeText(SignInActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                    }
+
+
+                } catch (IOException e) {
+                    Toast.makeText(SignInActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(SignInActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+
+                }
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SignInActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                /*
+                Intent i = new Intent(SplashActivity.this, SignInActivity.class).putExtra("from","this");
+                startActivity(i);
+                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                finish();*/
+            }
+        });
+    }
+
+
 
     @Override
     protected void onResume() {

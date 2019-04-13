@@ -234,7 +234,7 @@ public class HomeProfileActivity extends AppCompatActivity {
                                         editor.commit();
 
                                         if (approvel.equalsIgnoreCase("yes")) {
-                                            startActivity(new Intent(HomeProfileActivity.this, NavHomeActivity.class));
+                                            startActivity(new Intent(HomeProfileActivity.this, NavHomeActivity.class).putExtra("from","home"));
                                             overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_in_left);
                                             finish();
                                         } else {

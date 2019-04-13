@@ -4,12 +4,14 @@ import android.Manifest;
 import android.animation.Animator;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -120,6 +122,44 @@ public class NavHomeActivity  extends AppCompatActivity
         home_title=findViewById(R.id.home_title);
         SharedPreferences p_pref=getSharedPreferences("passenger_pref",Context.MODE_PRIVATE);
         SharedPreferences.Editor p_editor=p_pref.edit();
+
+
+        Log.d("frommmmm",getIntent().getStringExtra("from")+"   "+getIntent().getStringExtra("title"));
+
+        if(getIntent().getStringExtra("from").equalsIgnoreCase("notification"))
+        {
+
+            if(getIntent().getStringExtra("type").equalsIgnoreCase("go_online"))
+            {
+                final Dialog dialog=new Dialog(this);
+                dialog.setContentView(R.layout.go_online_dialog);
+                final TextView title,go_online;
+                final ProgressBar btn_progress;
+
+                title=dialog.findViewById(R.id.message);
+                go_online=dialog.findViewById(R.id.go_online);
+                btn_progress=dialog.findViewById(R.id.btn_progress);
+
+                title.setText(getIntent().getStringExtra("content"));
+
+                go_online.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        status="active";
+                        updateDriverstatus();
+                        dialog.dismiss();
+                        getIntent().removeExtra("from");
+                        getIntent().removeExtra("type");
+                    }
+                });
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                dialog.show();
+
+            }
+
+        }
+
 
         Log.d("trip_status","home activity   "+p_pref.getString("trip_status","")+"");
         active=findViewById(R.id.active);
@@ -260,6 +300,7 @@ public class NavHomeActivity  extends AppCompatActivity
     {
         active.setVisibility(View.GONE);
         toolbar_progress.setVisibility(View.VISIBLE);
+
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
         myInterface.updateDriverstatus(pref.getString("driver_id",""), status, new retrofit.Callback<retrofit.client.Response>() {
@@ -273,6 +314,7 @@ public class NavHomeActivity  extends AppCompatActivity
                             active.setCompoundDrawablesWithIntrinsicBounds(R.drawable.green_dot, 0, 0, 0);
 
                             active.setText("Go Offline");
+
                         }
                         else
                         {
@@ -338,6 +380,7 @@ public class NavHomeActivity  extends AppCompatActivity
                     public void failure(RetrofitError error) {
                         active.setVisibility(View.VISIBLE);
                         active.startAnimation(pop_out);
+
                         toolbar_progress.setVisibility(View.GONE);
                         //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
                         Toast.makeText(NavHomeActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
@@ -458,6 +501,7 @@ public class NavHomeActivity  extends AppCompatActivity
                     .with(this)
                     .load(photo).apply(new RequestOptions().placeholder(R.drawable.pr))
                     .into(profile_image);
+
 
     }
 

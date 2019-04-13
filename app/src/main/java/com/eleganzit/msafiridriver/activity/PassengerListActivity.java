@@ -194,8 +194,8 @@ public class PassengerListActivity extends AppCompatActivity {
                 else
                 {
                     Location destLocation=new Location("newlocation");
-                    double lat=Double.parseDouble(pref.getString("dest_lat",""));
-                    double lng=Double.parseDouble(pref.getString("dest_lng",""));
+                    double lat=Double.parseDouble(trip_lat2);
+                    double lng=Double.parseDouble(trip_lng2);
                     destLocation.setLatitude(lat);
                     destLocation.setLongitude(lng);
                     last_lat=String.valueOf(location.getLatitude());
@@ -210,7 +210,6 @@ public class PassengerListActivity extends AppCompatActivity {
         };
         MyLocation myLocation = new MyLocation();
         myLocation.getLocation(PassengerListActivity.this, locationResult);
-
 
 
 /*
@@ -360,7 +359,7 @@ public class PassengerListActivity extends AppCompatActivity {
             tv_latitude.setText(latitude+"");
             tv_longitude.setText(longitude+"");
             tv_address.getText();*/
-            Toast.makeText(context, "lat "+latitude+" lng "+longitude, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "lat "+latitude+" lng "+longitude, Toast.LENGTH_SHORT).show();
 
 
         }
@@ -412,6 +411,9 @@ public class PassengerListActivity extends AppCompatActivity {
         trip_lng=p_pref.getString("trip_lng","");
         trip_lat2=p_pref.getString("trip_lat2","");
         trip_lng2=p_pref.getString("trip_lng2","");
+        editor.putString("dest_lat",trip_lat2);
+        editor.putString("dest_lng",trip_lng2);
+        editor.commit();
         trip_status=p_pref.getString("trip_status","");
         Log.d("trip_status","activity on resume"+trip_status+"");
         if(trip_status.equalsIgnoreCase("ongoing"))
@@ -792,7 +794,7 @@ public class PassengerListActivity extends AppCompatActivity {
                                     mServiceIntent = new Intent(PassengerListActivity.this, mSensorService.getClass()).putExtra("click","second");
                                     stopService(mServiceIntent);
                                 }
-                                Intent intent=new Intent(PassengerListActivity.this,NavHomeActivity.class);
+                                Intent intent=new Intent(PassengerListActivity.this,NavHomeActivity.class).putExtra("from","passenger_list");
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
                                 //finish();
@@ -838,6 +840,8 @@ public class PassengerListActivity extends AppCompatActivity {
     {
         progress.setVisibility(View.VISIBLE);
         top.setVisibility(View.GONE);
+        reload_passengers.setVisibility(View.GONE);
+
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
 
@@ -956,6 +960,7 @@ public class PassengerListActivity extends AppCompatActivity {
     public void getOnBoardPassengers()
     {
         top.setVisibility(View.GONE);
+        reload_onboard_passengers.setVisibility(View.GONE);
 
         progress.setVisibility(View.VISIBLE);
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
@@ -1091,6 +1096,7 @@ public class PassengerListActivity extends AppCompatActivity {
                     }
                 }
             });
+
             if (!isSelectedAll) holder.select_radioButton.setChecked(false);
             else holder.select_radioButton.setChecked(true);
 
@@ -1116,14 +1122,14 @@ public class PassengerListActivity extends AppCompatActivity {
                     }
                 }
             });
-            Toast.makeText(PassengerListActivity.this, "here", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(PassengerListActivity.this, "here", Toast.LENGTH_SHORT).show();
 
 
             start.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
-                    Geofence geofence = new Geofence.Builder()
+                    /*Geofence geofence = new Geofence.Builder()
                             .setRequestId("1") // Geofence ID
                             .setCircularRegion( Double.valueOf(last_lat), Double.valueOf(last_lng), 100) // defining fence region
                             .setExpirationDuration( 5000 ) // expiring date
@@ -1136,7 +1142,7 @@ public class PassengerListActivity extends AppCompatActivity {
                             .setInitialTrigger( GeofencingRequest.INITIAL_TRIGGER_ENTER )
                             .addGeofence( geofence ) // add a Geofence
                             .build();
-
+*/
                     MyLocation.LocationResult locationResult = new MyLocation.LocationResult(){
                         @Override
                         public void gotLocation(Location location){
@@ -1148,8 +1154,8 @@ public class PassengerListActivity extends AppCompatActivity {
                             else
                             {
                                 Location destLocation=new Location("newlocation");
-                                double lat=Double.parseDouble(pref.getString("dest_lat",""));
-                                double lng=Double.parseDouble(pref.getString("dest_lng",""));
+                                double lat=Double.parseDouble(trip_lat2);
+                                double lng=Double.parseDouble(trip_lng2);
                                 destLocation.setLatitude(lat);
                                 destLocation.setLongitude(lng);
                                 last_lat=String.valueOf(location.getLatitude());
@@ -1164,6 +1170,7 @@ public class PassengerListActivity extends AppCompatActivity {
                     };
                     MyLocation myLocation = new MyLocation();
                     myLocation.getLocation(PassengerListActivity.this, locationResult);
+
 
                         /*if (boolean_permission) {
 
@@ -1194,10 +1201,10 @@ public class PassengerListActivity extends AppCompatActivity {
                                 if(userslist.size()>0)
                                 {
 
-                                    if (distance(Double.valueOf(last_lat), Double.valueOf(last_lng), Double.valueOf(trip_lat2), Double.valueOf(trip_lng2)) < 0.1) { // if distance < 0.1 miles we take locations as equal
+                                    /*if (distance(Double.valueOf(last_lat), Double.valueOf(last_lng), Double.valueOf(trip_lat2), Double.valueOf(trip_lng2)) < 0.1) { // if distance < 0.1 miles we take locations as equal*/
                                         //do what you want to do...
                                         addPassengers("active",holder);
-                                    }
+                                    /*}
                                     else
                                     {
                                         new AlertDialog.Builder(context).setMessage("First reach at the pickup location!").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -1206,7 +1213,7 @@ public class PassengerListActivity extends AppCompatActivity {
                                                 dialogInterface.dismiss();
                                             }
                                         }).show();
-                                    }
+                                    }*/
 
                                 }
                                 else
@@ -1221,7 +1228,7 @@ public class PassengerListActivity extends AppCompatActivity {
                         if(trip_text.getText().toString().equalsIgnoreCase("end trip"))
                         {
 
-                            locationResult = new MyLocation.LocationResult(){
+                           locationResult = new MyLocation.LocationResult(){
                                 @Override
                                 public void gotLocation(Location location){
 
@@ -1232,8 +1239,8 @@ public class PassengerListActivity extends AppCompatActivity {
                                     else
                                     {
                                         Location destLocation=new Location("newlocation");
-                                        double lat=Double.parseDouble(pref.getString("dest_lat",""));
-                                        double lng=Double.parseDouble(pref.getString("dest_lng",""));
+                                        double lat=Double.parseDouble(trip_lat2);
+                                        double lng=Double.parseDouble(trip_lng2);
                                         destLocation.setLatitude(lat);
                                         destLocation.setLongitude(lng);
                                         last_lat=String.valueOf(location.getLatitude());
@@ -1249,12 +1256,13 @@ public class PassengerListActivity extends AppCompatActivity {
                             myLocation = new MyLocation();
                             myLocation.getLocation(PassengerListActivity.this, locationResult);
 
-                            if (distance(Double.valueOf(last_lat), Double.valueOf(last_lng), Double.valueOf(trip_lat2), Double.valueOf(trip_lng2)) < 0.1) {
+
+                            /*if (distance(Double.valueOf(last_lat), Double.valueOf(last_lng), Double.valueOf(trip_lat2), Double.valueOf(trip_lng2)) < 0.1) {*/
 
                                 updateDeactiveStatus("deactive",null);
                                 p_editor.putBoolean("firstTime",false);
                                 p_editor.commit();
-                            }
+                           /* }
                             else
                             {
                                 new AlertDialog.Builder(context).setMessage("First reach at the pickup location!").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -1264,7 +1272,7 @@ public class PassengerListActivity extends AppCompatActivity {
                                     }
                                 }).show();
                             }
-
+*/
                         }
 
 

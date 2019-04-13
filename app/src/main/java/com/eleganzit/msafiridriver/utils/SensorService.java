@@ -13,6 +13,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -106,11 +107,18 @@ public class SensorService extends Service implements GoogleApiClient.Connection
 
         mChatHeadView = LayoutInflater.from(this).inflate(R.layout.layout_chat_head, null);
 
+        int LAYOUT_FLAG;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            LAYOUT_FLAG = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+        } else {
+            LAYOUT_FLAG = WindowManager.LayoutParams.TYPE_PHONE;
+        }
+
         //Add the view to the window.
         final WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_PHONE,
+                LAYOUT_FLAG,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT);
 
@@ -195,6 +203,9 @@ public class SensorService extends Service implements GoogleApiClient.Connection
                             //click event has occurred
                             //Toast.makeText(SensorService.this, "up", Toast.LENGTH_SHORT).show();
                             //Open the chat conversation click.
+                            Intent intent1 = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("google.navigation:q="+last_lat+","+last_lng));
+                            startActivity(intent1);
+
                             Intent intent = new Intent(SensorService.this, PassengerListActivity.class).putExtra("from","map");
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);

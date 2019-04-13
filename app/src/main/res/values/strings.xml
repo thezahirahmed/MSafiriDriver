@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MSafiriDriver</string>
+    <string name="app_name">TuRyde</string>
     <string name="hintemail">Email Address</string>
     <string name="hintpassword">Password</string>
     <string name="signuptxt">Enter your Email Address below to reset \n your Password.</string>

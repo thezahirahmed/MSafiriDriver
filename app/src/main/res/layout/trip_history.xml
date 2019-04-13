@@ -11,8 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:id="@+id/view"
-        android:background="@color/grey"
-        />
+        android:background="@color/grey" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,8 +29,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_weight=".8"
-        android:gravity="start"
-       >
+        android:gravity="start">
 
         <LinearLayout
             android:layout_height="wrap_content"
@@ -63,7 +61,6 @@
                 android:textColor="@color/uncompleted_text_color"
                 android:textStyle="bold"/>
 
-
         </LinearLayout>
 
         <LinearLayout
@@ -82,8 +79,6 @@
                 android:text="05/04/18 at 9:00 AM"
                 android:textColor="@color/uncompleted_text_color"/>
 
-
-
             <com.battleent.ribbonviews.RibbonTag
                 android:id="@+id/trip_status"
                 android:layout_width="wrap_content"
@@ -92,7 +87,6 @@
                 android:layout_marginRight="10dp"
                 app:tag_padding_right="6dp"
                 app:tag_padding_left="6dp" />
-
 
         </LinearLayout>
 
@@ -109,7 +103,6 @@
         android:gravity="center"
         android:textColor="#000"
         android:textStyle="bold"/>
-
 
 </LinearLayout>
     <View
