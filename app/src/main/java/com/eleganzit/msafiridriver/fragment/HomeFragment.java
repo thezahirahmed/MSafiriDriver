@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,6 +27,7 @@ import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -68,10 +70,11 @@ import static android.content.Context.MODE_PRIVATE;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener  {
     private ShimmerFrameLayout shimmerFrameLayout;
     Animation pop_anim;
     RecyclerView upcoming;
+    SwipeRefreshLayout mSwipeRefreshLayout;
     LinearLayout current, past;
     TextView active;
     SharedPreferences pref;
@@ -79,7 +82,8 @@ public class HomeFragment extends Fragment {
     TextView no_trips;
     ImageView reload;
     ArrayList<TripData> arrayList;
-    LinearLayout lcontent,sort;
+    LinearLayout sort;
+    RelativeLayout lcontent;
     TextView trip_title;
     CardView card,upcoming_card,past_card;
     String trip_type="current";
@@ -115,6 +119,30 @@ public class HomeFragment extends Fragment {
         upcoming_card = v.findViewById(R.id.upcoming_card);
         past_card = v.findViewById(R.id.past_card);
         upcoming = v.findViewById(R.id.upcoming);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_container);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
+                android.R.color.holo_green_dark,
+                android.R.color.holo_orange_dark,
+                android.R.color.holo_blue_dark);
+
+        /**
+         * Showing Swipe Refresh animation on activity create
+         * As animation won't start on onCreate, post runnable is used
+         */
+        mSwipeRefreshLayout.post(new Runnable() {
+
+            @Override
+            public void run() {
+
+                mSwipeRefreshLayout.setRefreshing(true);
+
+                // Fetching data from server
+                getDriverTrips(trip_type);
+            }
+        });
+
+
         lcontent = v.findViewById(R.id.lcontent);
         sort = v.findViewById(R.id.sort);
         no_trips = v.findViewById(R.id.no_trips);
@@ -324,7 +352,10 @@ public class HomeFragment extends Fragment {
 
     public void getDriverTrips(final String trip_type)
     {
+        no_trips.setVisibility(View.GONE);
+        upcoming.setVisibility(View.GONE);
         shimmerFrameLayout.setVisibility(View.VISIBLE);
+        mSwipeRefreshLayout.setRefreshing(true);
         YoYo.with(Techniques.SlideInLeft)
                 .duration(300)
                 .repeat(0)
@@ -343,6 +374,7 @@ public class HomeFragment extends Fragment {
                         .playOn(shimmerFrameLayout);
                 shimmerFrameLayout.stopShimmer();
                 shimmerFrameLayout.setVisibility(View.GONE);
+                mSwipeRefreshLayout.setRefreshing(false);
                 final StringBuilder stringBuilder = new StringBuilder();
                 try {
                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
@@ -454,7 +486,8 @@ public class HomeFragment extends Fragment {
             public void failure(RetrofitError error) {
                 shimmerFrameLayout.stopShimmer();
                 shimmerFrameLayout.setVisibility(View.GONE);
-                //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
+                mSwipeRefreshLayout.setRefreshing(false);
+//Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
                 //Toast.makeText(getActivity(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.d("errorrrr",""+error.getMessage());
                 Toast.makeText(getActivity(), "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
@@ -462,6 +495,12 @@ public class HomeFragment extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public void onRefresh() {
+        getDriverTrips(trip_type);
+
     }
 
    /* @SuppressLint("MissingPermission")

@@ -788,6 +788,8 @@ public class PassengerListActivity extends AppCompatActivity {
                             }
                             else
                             {
+                                p_editor.clear();
+                                p_editor.commit();
                                 if (isMyServiceRunning(mSensorService.getClass())) {
                                     editor.putString("action","stop");
                                     editor.commit();
@@ -810,7 +812,7 @@ public class PassengerListActivity extends AppCompatActivity {
                         }
                         else
                         {
-                            Toast.makeText(PassengerListActivity.this, "Trip already exist", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(PassengerListActivity.this, ""+message, Toast.LENGTH_SHORT).show();
                         }
 
                     }

@@ -3,8 +3,10 @@ package com.eleganzit.msafiridriver.utils;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.Service;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -201,18 +203,32 @@ public class SensorService extends Service implements GoogleApiClient.Connection
                         long clickDuration = Calendar.getInstance().getTimeInMillis() - startClickTime;
                         if(clickDuration < MAX_CLICK_DURATION) {
                             //click event has occurred
-                            //Toast.makeText(SensorService.this, "up", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(SensorService.this, "Ending trip", Toast.LENGTH_SHORT).show();
                             //Open the chat conversation click.
-                            Intent intent1 = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("google.navigation:q="+last_lat+","+last_lng));
-                            startActivity(intent1);
+                            AlertDialog.Builder builder=new AlertDialog.Builder(getApplicationContext()).setMessage("Do you want to end the trip?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                   /* Intent intent1 = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("google.navigation:q="+last_lat+","+last_lng));
+                                    startActivity(intent1);
+*/
+                                    Intent intent = new Intent(SensorService.this, PassengerListActivity.class).putExtra("from","map");
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                    //Toast.makeText(SensorService.this, "up", Toast.LENGTH_SHORT).show();
+                                    //close the service and remove the chat heads
+                                    mWindowManager.removeViewImmediate(mChatHeadView);
+                                    //stopSelf();
+                                }
+                            }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                }
+                            });
+                            final AlertDialog alertDialog = builder.create();
+                            alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+                            alertDialog.show();
 
-                            Intent intent = new Intent(SensorService.this, PassengerListActivity.class).putExtra("from","map");
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
-                            //Toast.makeText(SensorService.this, "up", Toast.LENGTH_SHORT).show();
-                            //close the service and remove the chat heads
-                            mWindowManager.removeViewImmediate(mChatHeadView);
-                            //stopSelf();
                         }
                         if (lastAction == MotionEvent.ACTION_DOWN) {
 
