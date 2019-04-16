@@ -88,7 +88,7 @@ public class PassengerListActivity extends AppCompatActivity {
 
     RelativeLayout top;
     RecyclerView passengers;
-    ProgressBar progress;
+    ProgressBar progressBar;
     TextView no_passenger;
     private String trip_id;
     SharedPreferences p_pref;
@@ -148,9 +148,10 @@ public class PassengerListActivity extends AppCompatActivity {
         Log.d("photoPathPP",""+photoPath);
         top=findViewById(R.id.top);
         passengers=findViewById(R.id.passengers);
+        progressBar=findViewById(R.id.progress);
+
         trip_text=findViewById(R.id.trip_text);
         start=findViewById(R.id.start);
-        progress=findViewById(R.id.progress);
         no_passenger=findViewById(R.id.no_passenger);
         select_allcheck=findViewById(R.id.select_allcheck);
         reload_passengers = findViewById(R.id.reload_passengers);
@@ -161,8 +162,9 @@ public class PassengerListActivity extends AppCompatActivity {
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.setMessage("Please wait...");
 
-        trip_id=getIntent().getStringExtra("trip_id");
-
+        //trip_id=getIntent().getStringExtra("trip_id");
+        /*p_editor.putString("trip_id",trip_id+"");
+        p_editor.commit();*/
         RecyclerView.LayoutManager layoutManager=new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false);
         passengers.setLayoutManager(layoutManager);
         geocoder = new Geocoder(this, Locale.getDefault());
@@ -840,7 +842,7 @@ public class PassengerListActivity extends AppCompatActivity {
 
     public void getPassengers()
     {
-        progress.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
         top.setVisibility(View.GONE);
         reload_passengers.setVisibility(View.GONE);
 
@@ -853,7 +855,7 @@ public class PassengerListActivity extends AppCompatActivity {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                 ArrayList<PassengerData> arrayList = new ArrayList<>();
-                progress.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
 
                 final StringBuilder stringBuilder = new StringBuilder();
                 try {
@@ -949,7 +951,7 @@ public class PassengerListActivity extends AppCompatActivity {
 
             @Override
             public void failure(RetrofitError error) {
-                progress.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
                 reload_passengers.setVisibility(View.VISIBLE);
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
                 Toast.makeText(PassengerListActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
@@ -961,17 +963,18 @@ public class PassengerListActivity extends AppCompatActivity {
 
     public void getOnBoardPassengers()
     {
+
         top.setVisibility(View.GONE);
         reload_onboard_passengers.setVisibility(View.GONE);
 
-        progress.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
         myInterface.getOnBoardPassengers(trip_id, new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                 ArrayList<PassengerData> arrayList = new ArrayList<>();
-                progress.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
 
                 final StringBuilder stringBuilder = new StringBuilder();
                 try {
@@ -1043,7 +1046,7 @@ public class PassengerListActivity extends AppCompatActivity {
 
             @Override
             public void failure(RetrofitError error) {
-                progress.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
                 reload_onboard_passengers.setVisibility(View.VISIBLE);
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
                 Toast.makeText(PassengerListActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();

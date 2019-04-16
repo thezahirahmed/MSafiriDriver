@@ -435,7 +435,7 @@ public class AccountFragment extends Fragment {
         });
 
 
-        drivercam.setOnClickListener(new View.OnClickListener() {
+        driverimg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 i = 0;
@@ -479,7 +479,7 @@ public class AccountFragment extends Fragment {
             }
         });
 
-        vehiclecam.setOnClickListener(new View.OnClickListener() {
+        vehicleimg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
             {
@@ -574,7 +574,7 @@ public class AccountFragment extends Fragment {
             selector.showCamera(false);
 
             selector.origin(mSelectPath1);
-            selector.start(getActivity(), REQUEST_IMAGE1);
+            selector.start(AccountFragment.this, REQUEST_IMAGE1);
         }
     }
 
@@ -592,7 +592,7 @@ public class AccountFragment extends Fragment {
             selector.showCamera(false);
 
             selector.origin(mSelectPath2);
-            selector.start(getActivity(), REQUEST_IMAGE2);
+            selector.start(AccountFragment.this, REQUEST_IMAGE2);
         }
     }
 
@@ -770,6 +770,7 @@ public class AccountFragment extends Fragment {
                 onCaptureImageResult(data);
         }
     }
+
     private void uploadProfile() {
 
         //progressDialog.show();
@@ -803,7 +804,15 @@ public class AccountFragment extends Fragment {
                                 .load(photo).apply(new RequestOptions().placeholder(R.drawable.pr))
                                 .into(NavHomeActivity.profile_image);
 
-                        Toast.makeText(getActivity(), "Profile picture updated", Toast.LENGTH_SHORT).show();
+                        if(photo==null || photo.equalsIgnoreCase("null"))
+                        {
+                            Toast.makeText(getActivity(), "Image format doesn't support", Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                        {
+                            Toast.makeText(getActivity(), "Profile picture updated", Toast.LENGTH_SHORT).show();
+                        }
+
                     }
 
                 }
@@ -850,7 +859,15 @@ public class AccountFragment extends Fragment {
                                 .load(mediapath)
                                 .into(vehicleimg);
 
-                        Toast.makeText(getActivity(), "Profile picture updated", Toast.LENGTH_SHORT).show();
+                        if(photo==null || photo.equalsIgnoreCase("null"))
+                        {
+                            Toast.makeText(getActivity(), "Image format doesn't support", Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                        {
+                            Toast.makeText(getActivity(), "Profile picture updated", Toast.LENGTH_SHORT).show();
+                        }
+
                     }
 
                 }
@@ -918,26 +935,6 @@ public class AccountFragment extends Fragment {
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

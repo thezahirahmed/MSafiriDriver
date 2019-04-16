@@ -106,7 +106,7 @@ public class HomePassengerListActivity extends AppCompatActivity {
         super.onResume();
         p_pref=getSharedPreferences("passenger_pref",Context.MODE_PRIVATE);
         p_editor=p_pref.edit();
-        trip_id=p_pref.getString("trip_id","");
+        //trip_id=p_pref.getString("trip_id","");
 
 
         getPassengers();

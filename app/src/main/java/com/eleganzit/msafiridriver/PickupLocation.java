@@ -6,6 +6,7 @@ import com.eleganzit.msafiridriver.utils.ContactSearchDialogCompat;
 import com.eleganzit.msafiridriver.utils.CustomDateTimePicker;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
+import android.animation.ValueAnimator;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
@@ -16,6 +17,7 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 
+import android.os.Build;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,6 +26,9 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -111,6 +116,8 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
     private double dmiles;
     private String distance;
     LinearLayout layoutBottom;
+    int layoutBottomHeight;
+    boolean isOpen=false;
     RelativeLayout content;
     private String id;
     ProgressBar progress;
@@ -236,6 +243,21 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
         progressDialog.setCancelable(false);
         progressDialog.setCanceledOnTouchOutside(false);
         layoutBottom= findViewById(R.id.layoutBottom);
+        final LinearLayout layout = (LinearLayout)findViewById(R.id.layoutBottom);
+        ViewTreeObserver vto = layout.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                    layout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                } else {
+                    layout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+                int width  = layout.getMeasuredWidth();
+                layoutBottomHeight = layout.getMeasuredHeight();
+
+            }
+        });
         /*YoYo.with(Techniques.SlideInRight)
                 .duration(1000)
                 .repeat(0)
@@ -288,6 +310,45 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
         pickupcontinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+/*
+                if(isOpen)
+                {
+                    isOpen=false;
+                    View content = getWindow().findViewById(Window.ID_ANDROID_CONTENT);
+
+                    ValueAnimator anim = ValueAnimator.ofInt(layoutBottom.getMeasuredHeight(), layoutBottomHeight);
+                    anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                            int val = (Integer) valueAnimator.getAnimatedValue();
+                            ViewGroup.LayoutParams layoutParams = layoutBottom.getLayoutParams();
+                            layoutParams.height = val;
+                            layoutBottom.setLayoutParams(layoutParams);
+                        }
+                    });
+                    anim.setDuration(400);
+                    anim.start();
+
+                }
+                else
+                {
+                    isOpen=true;
+                    View content = getWindow().findViewById(Window.ID_ANDROID_CONTENT);
+
+                    ValueAnimator anim = ValueAnimator.ofInt(layoutBottom.getMeasuredHeight(), content.getHeight());
+                    anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                            int val = (Integer) valueAnimator.getAnimatedValue();
+                            ViewGroup.LayoutParams layoutParams = layoutBottom.getLayoutParams();
+                            layoutParams.height = val;
+                            layoutBottom.setLayoutParams(layoutParams);
+                        }
+                    });
+                    anim.setDuration(400);
+                    anim.start();
+
+                }*/
 
                 if(pickup_location.getText().toString().equalsIgnoreCase(""))
                 {
@@ -313,7 +374,6 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
                     timeline.setImageResource(R.drawable.wizard2);
                     pickupcontinue.setEnabled(false);
                 }
-
             }
         });
         pickupcontinue1.setOnClickListener(new View.OnClickListener() {

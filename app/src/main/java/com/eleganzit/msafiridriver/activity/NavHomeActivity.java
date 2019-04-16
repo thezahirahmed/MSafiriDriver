@@ -59,6 +59,7 @@ import com.eleganzit.msafiridriver.PersonalInfoActivity;
 import com.eleganzit.msafiridriver.PickupLocation;
 import com.eleganzit.msafiridriver.ProfileActivity;
 import com.eleganzit.msafiridriver.R;
+import com.eleganzit.msafiridriver.SignInActivity;
 import com.eleganzit.msafiridriver.SplashActivity;
 import com.eleganzit.msafiridriver.fragment.AccountFragment;
 import com.eleganzit.msafiridriver.fragment.HistoryFragment;
@@ -92,60 +93,58 @@ import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import spencerstudios.com.bungeelib.Bungee;
 
-public class NavHomeActivity  extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener{
+public class NavHomeActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     RobotoMediumTextView user_name;
     public static CircleImageView profile_image;
     SharedPreferences pref;
     SharedPreferences.Editor editor;
-    public static TextView home_title,active;
-    private String photo,name;
-    Animation pop_anim,pop_in,pop_out;
+    public static TextView home_title, active;
+    private String photo, name;
+    Animation pop_anim, pop_in, pop_out;
     public static ImageView fab;
     AdvanceDrawerLayout drawer;
-    private String status="deactive";
+    private String status = "deactive";
     ProgressBar toolbar_progress;
     RelativeLayout prog_rel;
 
-    public static float convertPixelsToDp(float px, Context context){
+    public static float convertPixelsToDp(float px, Context context) {
         return px / ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityCompat.requestPermissions(NavHomeActivity.this,new String[]{android.Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
+        ActivityCompat.requestPermissions(NavHomeActivity.this, new String[]{android.Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
 
         setContentView(R.layout.activity_main2);
 
-        home_title=findViewById(R.id.home_title);
-        SharedPreferences p_pref=getSharedPreferences("passenger_pref",Context.MODE_PRIVATE);
-        SharedPreferences.Editor p_editor=p_pref.edit();
+        home_title = findViewById(R.id.home_title);
+        SharedPreferences p_pref = getSharedPreferences("passenger_pref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor p_editor = p_pref.edit();
 
 
-        Log.d("frommmmm",getIntent().getStringExtra("from")+"   "+getIntent().getStringExtra("title"));
+        Log.d("frommmmm", getIntent().getStringExtra("from") + "   " + getIntent().getStringExtra("title"));
 
-        if(getIntent().getStringExtra("from").equalsIgnoreCase("notification"))
-        {
+        if (getIntent().getStringExtra("from").equalsIgnoreCase("notification")) {
 
-            if(getIntent().getStringExtra("type").equalsIgnoreCase("go_online"))
-            {
-                final Dialog dialog=new Dialog(this);
+            if (getIntent().getStringExtra("type").equalsIgnoreCase("go_online")) {
+                final Dialog dialog = new Dialog(this);
                 dialog.setContentView(R.layout.go_online_dialog);
-                final TextView title,go_online;
+                final TextView title, go_online;
                 final ProgressBar btn_progress;
 
-                title=dialog.findViewById(R.id.message);
-                go_online=dialog.findViewById(R.id.go_online);
-                btn_progress=dialog.findViewById(R.id.btn_progress);
+                title = dialog.findViewById(R.id.message);
+                go_online = dialog.findViewById(R.id.go_online);
+                btn_progress = dialog.findViewById(R.id.btn_progress);
 
                 title.setText(getIntent().getStringExtra("content"));
 
                 go_online.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        status="active";
+                        status = "active";
                         updateDriverstatus();
                         dialog.dismiss();
                         getIntent().removeExtra("from");
@@ -161,9 +160,9 @@ public class NavHomeActivity  extends AppCompatActivity
         }
 
 
-        Log.d("trip_status","home activity   "+p_pref.getString("trip_status","")+"");
-        active=findViewById(R.id.active);
-        prog_rel=findViewById(R.id.prog_rel);
+        Log.d("trip_status", "home activity   " + p_pref.getString("trip_status", "") + "");
+        active = findViewById(R.id.active);
+        prog_rel = findViewById(R.id.prog_rel);
         pop_anim = AnimationUtils.loadAnimation(this, R.anim.pop_anim);
         pop_in = AnimationUtils.loadAnimation(this, R.anim.pop_in);
         pop_out = AnimationUtils.loadAnimation(this, R.anim.pop_out);
@@ -177,48 +176,44 @@ public class NavHomeActivity  extends AppCompatActivity
                 } else {
                     active.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 }
-                int width  = active.getMeasuredWidth()+10;
+                int width = active.getMeasuredWidth() + 10;
                 int height = active.getMeasuredHeight();
-                Log.d("wwwwwhhhhh",""+width+" - "+convertPixelsToDp(width,NavHomeActivity.this)+"     "+height+" - "+convertPixelsToDp(height,NavHomeActivity.this));
+                Log.d("wwwwwhhhhh", "" + width + " - " + convertPixelsToDp(width, NavHomeActivity.this) + "     " + height + " - " + convertPixelsToDp(height, NavHomeActivity.this));
                 prog_rel.getLayoutParams().width = width;
                 prog_rel.getLayoutParams().height = height;
                 prog_rel.requestLayout();
             }
         });
-        fab=findViewById(R.id.fab);
+        fab = findViewById(R.id.fab);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar_progress=findViewById(R.id.toolbar_progress);
+        toolbar_progress = findViewById(R.id.toolbar_progress);
         Drawable progressDrawable = toolbar_progress.getIndeterminateDrawable().mutate();
-        progressDrawable.setColorFilter(Color.WHITE , android.graphics.PorterDuff.Mode.SRC_IN);
+        progressDrawable.setColorFilter(Color.WHITE, android.graphics.PorterDuff.Mode.SRC_IN);
         toolbar_progress.setProgressDrawable(progressDrawable);
         pref = getSharedPreferences("mysession", MODE_PRIVATE);
-        editor=pref.edit();
+        editor = pref.edit();
 
-
-        Log.d("preffff",name+"");
+        Log.d("preffff", name + "");
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(NavHomeActivity.this,PickupLocation.class).putExtra("from","add"));
+                startActivity(new Intent(NavHomeActivity.this, PickupLocation.class).putExtra("from", "add"));
                 Bungee.slideLeft(NavHomeActivity.this);
 
             }
         });
-        Log.d("statusssss",""+pref.getString("dstatus",""));
-        if(pref.getString("dstatus","").equalsIgnoreCase("active"))
-        {
+        Log.d("statusssss", "" + pref.getString("dstatus", ""));
+        if (pref.getString("dstatus", "").equalsIgnoreCase("active")) {
             active.setCompoundDrawablesWithIntrinsicBounds(R.drawable.green_dot, 0, 0, 0);
             active.setText("Go Offline");
-            status="active";
-        }
-        else
-        {
+            status = "active";
+        } else {
             active.setCompoundDrawablesWithIntrinsicBounds(R.drawable.red_dot, 0, 0, 0);
             active.setText("Go Online");
-            status="deactive";
+            status = "deactive";
         }
 
         active.setOnClickListener(new View.OnClickListener() {
@@ -228,11 +223,11 @@ public class NavHomeActivity  extends AppCompatActivity
                 active.startAnimation(pop_in);
                 if (active.getText().toString().equalsIgnoreCase("Go Online")) {
 
-                    status="active";
+                    status = "active";
                     updateDriverstatus();
 
                 } else if (active.getText().toString().equalsIgnoreCase("Go Offline")) {
-                    status="deactive";
+                    status = "deactive";
                     updateDriverstatus();
 
                 }
@@ -268,10 +263,10 @@ public class NavHomeActivity  extends AppCompatActivity
         headerview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(NavHomeActivity.this,HomeProfileActivity.class).putExtra("from","home");
+                Intent intent = new Intent(NavHomeActivity.this, HomeProfileActivity.class).putExtra("from", "home");
                 ActivityOptionsCompat options = ActivityOptionsCompat.
                         makeSceneTransitionAnimation(NavHomeActivity.this,
-                                    profile_image,
+                                profile_image,
                                 ViewCompat.getTransitionName(profile_image));
                 startActivity(intent, options.toBundle());
 
@@ -279,14 +274,14 @@ public class NavHomeActivity  extends AppCompatActivity
             }
         });
 
-        profile_image=headerview.findViewById(R.id.profile_image);
+        profile_image = headerview.findViewById(R.id.profile_image);
 
 
-        user_name=headerview.findViewById(R.id.user_name);
+        user_name = headerview.findViewById(R.id.user_name);
 
-        HomeFragment homeFrag= new HomeFragment();
+        HomeFragment homeFrag = new HomeFragment();
         getSupportFragmentManager().beginTransaction()//.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
-                .replace(R.id.container, homeFrag,"TAG")
+                .replace(R.id.container, homeFrag, "TAG")
                 .commit();
         navigationView.setNavigationItemSelectedListener(this);
         drawer.setViewScale(Gravity.START, 0.9f);
@@ -295,105 +290,96 @@ public class NavHomeActivity  extends AppCompatActivity
 
     }
 
-
-    public void updateDriverstatus()
-    {
+    public void updateDriverstatus() {
         active.setVisibility(View.GONE);
         toolbar_progress.setVisibility(View.VISIBLE);
 
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.updateDriverstatus(pref.getString("driver_id",""), status, new retrofit.Callback<retrofit.client.Response>() {
-                    @Override
-                    public void success(retrofit.client.Response response, retrofit.client.Response response2) {
-                        toolbar_progress.setVisibility(View.GONE);
-                        active.setVisibility(View.VISIBLE);
-                        active.startAnimation(pop_out);
-                        if(status.equalsIgnoreCase("active"))
-                        {
-                            active.setCompoundDrawablesWithIntrinsicBounds(R.drawable.green_dot, 0, 0, 0);
+        myInterface.updateDriverstatus(pref.getString("driver_id", ""), status, new retrofit.Callback<retrofit.client.Response>() {
+            @Override
+            public void success(retrofit.client.Response response, retrofit.client.Response response2) {
+                toolbar_progress.setVisibility(View.GONE);
+                active.setVisibility(View.VISIBLE);
+                active.startAnimation(pop_out);
+                if (status.equalsIgnoreCase("active")) {
+                    active.setCompoundDrawablesWithIntrinsicBounds(R.drawable.green_dot, 0, 0, 0);
 
-                            active.setText("Go Offline");
+                    active.setText("Go Offline");
 
-                        }
-                        else
-                        {
-                            active.setCompoundDrawablesWithIntrinsicBounds(R.drawable.red_dot, 0, 0, 0);
+                } else {
+                    active.setCompoundDrawablesWithIntrinsicBounds(R.drawable.red_dot, 0, 0, 0);
 
-                            active.setText("Go Online");
-                        }
-                        final StringBuilder stringBuilder = new StringBuilder();
-                        try {
-                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
+                    active.setText("Go Online");
+                }
+                final StringBuilder stringBuilder = new StringBuilder();
+                try {
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
 
-                            String line;
-                            while ((line = bufferedReader.readLine()) != null) {
-                                stringBuilder.append(line);
-                            }
-                            Log.d("stringBuilder", "" + stringBuilder);
-                            //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line);
+                    }
+                    Log.d("stringBuilder", "" + stringBuilder);
+                    //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
 
-                            if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
+                    if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
 
-                                JSONObject jsonObject = new JSONObject("" + stringBuilder);
-                                String status = jsonObject.getString("status");
-                                JSONArray jsonArray = null;
-                                if(status.equalsIgnoreCase("1"))
-                                {
-                                    jsonArray = jsonObject.getJSONArray("data");
-                                    for(int i=0;i<jsonArray.length();i++)
-                                    {
-                                        JSONObject jsonObject1=jsonArray.getJSONObject(i);
+                        JSONObject jsonObject = new JSONObject("" + stringBuilder);
+                        String status = jsonObject.getString("status");
+                        JSONArray jsonArray = null;
+                        if (status.equalsIgnoreCase("1")) {
+                            jsonArray = jsonObject.getJSONArray("data");
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObject1 = jsonArray.getJSONObject(i);
 
-                                        String dstatus = jsonObject1.getString("status");
-                                        //Toast.makeText(NavHomeActivity.this, ""+dstatus, Toast.LENGTH_SHORT).show();
-                                        editor.putString("dstatus", dstatus);
+                                String dstatus = jsonObject1.getString("status");
+                                //Toast.makeText(NavHomeActivity.this, ""+dstatus, Toast.LENGTH_SHORT).show();
+                                editor.putString("dstatus", dstatus);
 
-                                        editor.commit();
-                                    }
-
-                                }
-                                else
-                                {
-
-                                }
-
-                                // Toast.makeText(RegistrationActivity.this, "scc "+Token, Toast.LENGTH_SHORT).show();
-
-                            }
-                            else
-                            {
-
-                                Toast.makeText(NavHomeActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                                editor.commit();
                             }
 
+                        } else {
 
-                        } catch (IOException e) {
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
 
+                        // Toast.makeText(RegistrationActivity.this, "scc "+Token, Toast.LENGTH_SHORT).show();
+
+                    } else {
+
+                        Toast.makeText(NavHomeActivity.this, "" + stringBuilder, Toast.LENGTH_SHORT).show();
                     }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        active.setVisibility(View.VISIBLE);
-                        active.startAnimation(pop_out);
 
-                        toolbar_progress.setVisibility(View.GONE);
-                        //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                        Toast.makeText(NavHomeActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                } catch (IOException e) {
 
-                    }
-                });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                active.setVisibility(View.VISIBLE);
+                active.startAnimation(pop_out);
+
+                toolbar_progress.setVisibility(View.GONE);
+                //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
+                Toast.makeText(NavHomeActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
     }
 
-    public void getDriverdata()
-    {
+    public void getDriverdata() {
+       /* active.setVisibility(View.GONE);
+        toolbar_progress.setVisibility(View.VISIBLE);
+*/
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.getDriverdata(pref.getString("driver_id",""), new retrofit.Callback<retrofit.client.Response>() {
+        myInterface.getDriverdata(pref.getString("driver_id", ""), new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                 final StringBuilder stringBuilder = new StringBuilder();
@@ -412,12 +398,11 @@ public class NavHomeActivity  extends AppCompatActivity
                         JSONObject jsonObject = new JSONObject("" + stringBuilder);
                         String status = jsonObject.getString("status");
                         JSONArray jsonArray = null;
-                        if(status.equalsIgnoreCase("1"))
-                        {
+                        String dstatus = "";
+                        if (status.equalsIgnoreCase("1")) {
                             jsonArray = jsonObject.getJSONArray("data");
-                            for(int i=0;i<jsonArray.length();i++)
-                            {
-                                JSONObject jsonObject1=jsonArray.getJSONObject(i);
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObject1 = jsonArray.getJSONObject(i);
 
                                 String fullname = jsonObject1.getString("fullname");
                                 editor.putString("fullname", fullname);
@@ -431,6 +416,8 @@ public class NavHomeActivity  extends AppCompatActivity
                                 editor.putString("vehicle_profile", vehicle_profile);
                                 String vehicle_name = jsonObject1.getString("vehicle_name");
                                 editor.putString("vehicle_name", vehicle_name);
+                                dstatus = jsonObject1.getString("status");
+                                editor.putString("dstatus", dstatus);
                                 /*String street = jsonObject1.getString("street");
                                 editor.putString("street", street);
                                 String city = jsonObject1.getString("city");
@@ -450,24 +437,36 @@ public class NavHomeActivity  extends AppCompatActivity
                                 editor.commit();
 
                             }
+                            /*toolbar_progress.setVisibility(View.GONE);
+                            active.setVisibility(View.VISIBLE);
+                            active.startAnimation(pop_out);
+                            if(dstatus.equalsIgnoreCase("active"))
+                            {
+                                active.setCompoundDrawablesWithIntrinsicBounds(R.drawable.green_dot, 0, 0, 0);
+
+                                active.setText("Go Offline");
+
+                            }
+                            else
+                            {
+                                active.setCompoundDrawablesWithIntrinsicBounds(R.drawable.red_dot, 0, 0, 0);
+
+                                active.setText("Go Online");
+                            }*/
                             Glide
                                     .with(getApplicationContext())
                                     .load(photo)
                                     .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop())
                                     .into(profile_image);
-                        }
-                        else
-                        {
+                        } else {
 
                         }
 
                         // Toast.makeText(RegistrationActivity.this, "scc "+Token, Toast.LENGTH_SHORT).show();
 
-                    }
-                    else
-                    {
+                    } else {
 
-                        Toast.makeText(NavHomeActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(NavHomeActivity.this, "" + stringBuilder, Toast.LENGTH_SHORT).show();
                     }
 
 
@@ -492,15 +491,15 @@ public class NavHomeActivity  extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         getDriverdata();
-        photo=pref.getString("photo","");
-        name=pref.getString("fullname","");
+        photo = pref.getString("photo", "");
+        name = pref.getString("fullname", "");
+        Log.d("idddddddd", pref.getString("driver_id", "") + "");
+        user_name.setText("" + name);
 
-        user_name.setText(""+name);
-
-            Glide
-                    .with(this)
-                    .load(photo).apply(new RequestOptions().placeholder(R.drawable.pr))
-                    .into(profile_image);
+        Glide
+                .with(this)
+                .load(photo).apply(new RequestOptions().placeholder(R.drawable.pr))
+                .into(profile_image);
 
 
     }
@@ -516,15 +515,14 @@ public class NavHomeActivity  extends AppCompatActivity
     }
 
 
-
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.nav_home) {
             // Handle the camera action
-            HomeFragment homeFrag= new HomeFragment();
+            HomeFragment homeFrag = new HomeFragment();
             getSupportFragmentManager().beginTransaction()//.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
-                    .replace(R.id.container, homeFrag,"TAG")
+                    .replace(R.id.container, homeFrag, "TAG")
                     .commit();
         } else if (id == R.id.nav_trip) {
 
@@ -541,9 +539,9 @@ public class NavHomeActivity  extends AppCompatActivity
                             // check if all permissions are granted
                             if (report.areAllPermissionsGranted()) {
 
-                                TripFragment tripFrag= new TripFragment();
+                                TripFragment tripFrag = new TripFragment();
                                 getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
-                                        .replace(R.id.container, tripFrag,"TAG")
+                                        .replace(R.id.container, tripFrag, "TAG")
                                         .addToBackStack(null)
                                         .commit();
 
@@ -572,16 +570,15 @@ public class NavHomeActivity  extends AppCompatActivity
 
 
         } else if (id == R.id.nav_history) {
-            HistoryFragment historyFrag= new HistoryFragment();
+            HistoryFragment historyFrag = new HistoryFragment();
             getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
-                    .replace(R.id.container, historyFrag,"TAG")
+                    .replace(R.id.container, historyFrag, "TAG")
                     .addToBackStack(null)
                     .commit();
-        }
-        else if (id == R.id.nav_account) {
+        } else if (id == R.id.nav_account) {
             AccountFragment accountFrag = new AccountFragment();
             getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
-                    .replace(R.id.container, accountFrag,"TAG")
+                    .replace(R.id.container, accountFrag, "TAG")
                     .addToBackStack(null)
                     .commit();
         }
@@ -611,6 +608,7 @@ public class NavHomeActivity  extends AppCompatActivity
         builder.show();
 
     }
+
     private void openSettings() {
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         Uri uri = Uri.fromParts("package", getPackageName(), null);

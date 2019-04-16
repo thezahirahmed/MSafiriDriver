@@ -37,6 +37,8 @@ public class MyFirebaseMessagingService extends com.google.firebase.messaging.Fi
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
+        Log.d("mssgggggggg", "" + remoteMessage.getData().toString());
+
         try {
             JSONObject jsonObject=new JSONObject(remoteMessage.getData().get("message")+"");
             message=jsonObject.getString("message");
@@ -44,7 +46,6 @@ public class MyFirebaseMessagingService extends com.google.firebase.messaging.Fi
             if(notification_type.equalsIgnoreCase("go_online"))
             {
                 showGoOnlineNotification(remoteMessage.getData().get("title"), message);
-                Log.d("mssgggggggg", "" + remoteMessage.getData().toString());
             }
             else if(notification_type.equalsIgnoreCase("driver_approvel"))
             {
@@ -54,9 +55,9 @@ public class MyFirebaseMessagingService extends com.google.firebase.messaging.Fi
             {
                 String trip_id=jsonObject.getString("trip_id");
 
+                Log.d("tripiididddd",""+jsonObject.getString("trip_id"));
                 showTripBookedNotification(remoteMessage.getData().get("title"), message,trip_id);
             }
-
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -135,7 +136,7 @@ public class MyFirebaseMessagingService extends com.google.firebase.messaging.Fi
         sharedPreferences= PreferenceManager.getDefaultSharedPreferences(this);
 
         Intent i = new Intent(this, NavHomeActivity.class);
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         i.putExtra("from","notification");
         i.putExtra("type","approve");
         i.putExtra("title",title);

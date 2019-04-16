@@ -347,7 +347,8 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
     Context context;
     ProgressDialog progressDialog;
     String type;
-
+    String iid,from_title,from_lat,from_lng,from_address,to_title,to_lat,to_lng,to_address,pickup_time,
+            destination_time, statuss,trip_price;
     public UpcomingTripAdapter(String type,ArrayList<TripData> arrayList, Context context) {
         this.arrayList = arrayList;
         this.context = context;
@@ -615,6 +616,7 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
 
     public void delayTrip(String id, final int position, final MyViewHolder holder)
     {
+
         if(context!=null) {
             progressDialog.show();
         }
@@ -638,48 +640,54 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
                             //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
 
                             if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
-
+                                TripData tripData = null;
                                 JSONObject jsonObject = new JSONObject("" + stringBuilder);
                                 String status = jsonObject.getString("status");
                                 String message = jsonObject.getString("message");
                                 if(status.equalsIgnoreCase("1"))
                                 {
+                                    Log.d("wwwwwwwwwww", "status 1" );
+
                                     JSONArray jsonArray = jsonObject.getJSONArray("data");
                                     for(int i=0;i<jsonArray.length();i++)
                                     {
+                                        Log.d("wwwwwwwwwww", "forrr" );
+
                                         JSONObject jsonObject1=jsonArray.getJSONObject(i);
 
-                                        String id = jsonObject1.getString("id");
-                                        String from_title = jsonObject1.getString("from_title");
-                                        String from_lat = jsonObject1.getString("from_lat");
-                                        String from_lng = jsonObject1.getString("from_lng");
-                                        String from_address = jsonObject1.getString("from_address");
-                                        String to_title = jsonObject1.getString("to_title");
-                                        String to_lat = jsonObject1.getString("to_lat");
-                                        String to_lng = jsonObject1.getString("to_lng");
-                                        String to_address = jsonObject1.getString("to_address");
-                                        String pickup_time = jsonObject1.getString("datetime");
-                                        String destination_time = jsonObject1.getString("end_datetime");
-                                        String statuss = jsonObject1.getString("status");
-                                        String trip_price = jsonObject1.getString("trip_price");
+                                        iid = jsonObject1.getString("id");
+                                        from_title = jsonObject1.getString("from_title");
+                                        from_lat = jsonObject1.getString("from_lat");
+                                        from_lng = jsonObject1.getString("from_lng");
+                                        from_address = jsonObject1.getString("from_address");
+                                        to_title = jsonObject1.getString("to_title");
+                                        to_lat = jsonObject1.getString("to_lat");
+                                        to_lng = jsonObject1.getString("to_lng");
+                                        to_address = jsonObject1.getString("to_address");
+                                        pickup_time = jsonObject1.getString("datetime");
+                                        destination_time = jsonObject1.getString("end_datetime");
+                                        statuss = jsonObject1.getString("status");
+                                        /*if(jsonObject1.getString("trip_price")!=null)
+                                        {
+                                            trip_price = jsonObject1.getString("trip_price");
+                                        }*/
 
-                                        Date date = null;
+                                        /*Date date = null;
                                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                                         try {
                                             date = format.parse(pickup_time);
                                             System.out.println(date);
                                         } catch (ParseException e) {
                                             e.printStackTrace();
-                                        }
-
-
-                                        TripData tripData=new TripData("upcoming",id,from_title,from_lat,from_lng,from_address,to_title,to_lat,to_lng,to_address,pickup_time,null,destination_time,statuss,trip_price);
-
-                                        Toast.makeText(context, "Trip delayed by 30 min", Toast.LENGTH_SHORT).show();
-                                        arrayList.set(position, tripData);
-                                        notifyItemChanged(position);
+                                        }*/
+                                        tripData=new TripData("upcoming",iid,from_title,from_lat,from_lng,from_address,to_title,to_lat,to_lng,to_address,pickup_time,null,destination_time,statuss,trip_price);
 
                                     }
+                                    Toast.makeText(context, "Trip delayed by 30 min", Toast.LENGTH_SHORT).show();
+
+                                    arrayList.set(position, tripData);
+                                    notifyItemChanged(position);
+
                                 }
                                 else
                                 {

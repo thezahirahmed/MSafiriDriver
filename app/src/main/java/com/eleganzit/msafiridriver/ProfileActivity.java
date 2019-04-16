@@ -30,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.eleganzit.msafiridriver.activities_from_register.RegisterBankAccountActivity;
@@ -61,6 +62,8 @@ import java.util.List;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import spencerstudios.com.bungeelib.Bungee;
+
+import static com.bumptech.glide.load.DecodeFormat.PREFER_ARGB_8888;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -447,7 +450,8 @@ public class ProfileActivity extends AppCompatActivity {
                             Glide
                                     .with(ProfileActivity.this)
                                     .load(photo)
-                                    .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop()).into(profile_pic);
+                                    .thumbnail(.1f)
+                                    .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop().format(PREFER_ARGB_8888).diskCacheStrategy(DiskCacheStrategy.ALL)).into(profile_pic);
                         }
                         else
                         {

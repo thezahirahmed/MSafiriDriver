@@ -36,6 +36,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.bumptech.glide.request.RequestListener;
@@ -110,7 +111,9 @@ public class ChoosePictureActivity extends AppCompatActivity {
         Glide
                 .with(this)
                 .load(photo)
-                .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop()).into(profile_pic);
+                .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop().diskCacheStrategy(DiskCacheStrategy.ALL))
+                .thumbnail(.1f)
+                .into(profile_pic);
 
     }
 
@@ -334,7 +337,6 @@ public class ChoosePictureActivity extends AppCompatActivity {
         });
     }
 
-
     private void showSettingsDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Need Permissions");
@@ -355,6 +357,7 @@ public class ChoosePictureActivity extends AppCompatActivity {
         builder.show();
 
     }
+
     private void openSettings() {
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         Uri uri = Uri.fromParts("package", getPackageName(), null);
@@ -469,6 +472,7 @@ public class ChoosePictureActivity extends AppCompatActivity {
         }
 
     }
+
     private void uploadProfile() {
 
         //progressDialog.show();
@@ -497,9 +501,19 @@ public class ChoosePictureActivity extends AppCompatActivity {
                         Glide
                                 .with(ChoosePictureActivity.this)
                                 .load(photo)
-                                .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop())
+                                .thumbnail(.1f)
+                                .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop().diskCacheStrategy(DiskCacheStrategy.ALL))
                                 .into(profile_pic);
-                        Toast.makeText(ChoosePictureActivity.this, "Profile picture updated", Toast.LENGTH_SHORT).show();
+                        if(photo==null || photo.equalsIgnoreCase("null"))
+                        {
+                            Toast.makeText(ChoosePictureActivity.this, "Image format doesn't support", Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                        {
+                            Toast.makeText(ChoosePictureActivity.this, "Profile picture updated", Toast.LENGTH_SHORT).show();
+                        }
+
+
                     }
 
                 }

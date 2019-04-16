@@ -46,7 +46,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:background="@drawable/active_status_bg"
-                                android:text="Go Online"
+                                android:text="Go Offline"
                                 android:paddingLeft="12dp"
                                 android:paddingRight="12dp"
                                 android:paddingBottom="8dp"
@@ -54,7 +54,7 @@
                                 android:textColor="#fff"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                                 android:drawablePadding="8dp"
-                                android:drawableLeft="@drawable/red_dot"
+                                android:drawableLeft="@drawable/green_dot"
                                 android:layout_gravity="right|center"/>
                             <ProgressBar
                                 android:id="@+id/toolbar_progress"
