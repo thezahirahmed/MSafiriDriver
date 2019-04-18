@@ -29,13 +29,26 @@
                                           </PersistentState>
                                         </value>
                                       </entry>
+                                      <entry key="image">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="paddingPercent" value="15" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
                                     </map>
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="outputName" value="ic_sort" />
+                                      <entry key="assetType" value="IMAGE" />
+                                      <entry key="imageAsset" value="C:\Users\EleganzIT\Downloads\empty.png" />
+                                      <entry key="outputName" value="uncheck_bg2" />
                                       <entry key="theme" value="CUSTOM" />
-                                      <entry key="themeColor" value="ffffff" />
+                                      <entry key="themeColor" value="283e4f" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -76,7 +89,7 @@
                                       <entry key="assetType" value="IMAGE" />
                                       <entry key="iconShape" value="NONE" />
                                       <entry key="imageAsset" value="C:\Users\EleganzIT\Downloads\turyde_icon.png" />
-                                      <entry key="outputName" value="app_logo" />
+                                      <entry key="outputName" value="uncheck_bg2" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -86,7 +99,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputIconType" value="LAUNCHER_LEGACY" />
+                            <entry key="outputIconType" value="ACTIONBAR" />
                           </map>
                         </option>
                       </PersistentState>
@@ -109,8 +122,8 @@
                           <map>
                             <entry key="assetSourceType" value="FILE" />
                             <entry key="autoMirrored" value="true" />
-                            <entry key="outputName" value="ic_paper_plane" />
-                            <entry key="sourceFile" value="C:\Users\EleganzIT\Downloads\paper-plane.svg" />
+                            <entry key="outputName" value="ic_car_seat_red" />
+                            <entry key="sourceFile" value="C:\Users\EleganzIT\Downloads\car_seat_red.svg" />
                           </map>
                         </option>
                       </PersistentState>

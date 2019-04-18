@@ -28,24 +28,30 @@
 
         <TextView
             android:id="@+id/date"
-            android:layout_margin="10dp"
+            android:padding="15dp"
             android:text="Sort by Date"
-            android:textStyle="bold"
             android:background="?android:selectableItemBackground"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
             android:layout_width="match_parent"
+            android:foreground="?android:selectableItemBackground"
+            android:textColor="#333333"
             android:layout_height="wrap_content" />
+
+        <View
+            android:id="@+id/divider_delete"
+            android:layout_width="match_parent"
+            android:layout_height="0.7dp"
+            android:background="#c9c9c9"/>
+
 
         <TextView
             android:id="@+id/location"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:text="Sort by location"
+            android:text="Sort by Location"
             android:background="?android:selectableItemBackground"
-            android:textStyle="bold"
+            android:foreground="?android:selectableItemBackground"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-            android:layout_marginTop="15dp"
-            android:layout_margin="10dp"
+            android:padding="15dp"
+            android:textColor="#333333"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 <!--

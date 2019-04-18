@@ -32,16 +32,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.eleganzit.msafiridriver.MapActivity;
 import com.eleganzit.msafiridriver.R;
+import com.eleganzit.msafiridriver.activity.OnboardPassengerListActivity;
 import com.eleganzit.msafiridriver.activity.PassengerListActivity;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.maps.model.Marker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -72,20 +76,55 @@ public class SensorService extends Service implements GoogleApiClient.Connection
     SharedPreferences pref;
     SharedPreferences.Editor editor;
     String intent_action;
-
+    private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 5445;
+    Activity activity;
     private Handler handler; // Handler used to execute code on the UI thread
     private String trip_id,last_lat,last_lng;
 
-    public SensorService(Handler handler, SharedPreferences pref) {
+    public SensorService(Handler handler, SharedPreferences pref, Activity activity) {
         super();
         Log.i("wherreeeeeee", "here I am!");
         this.handler = handler;
         this.pref = pref;
+        this.activity = activity;
     }
 
-    public SensorService() {
+    public SensorService()
+    {
 
     }
+
+
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private Marker currentLocationMarker;
+    private Location currentLocation;
+    private boolean firstTimeFlag = true;
+
+    private final LocationCallback mLocationCallback = new LocationCallback() {
+
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            super.onLocationResult(locationResult);
+            if (locationResult.getLastLocation() == null)
+            {
+                Log.d("where","locationResult.getLastLocation() == null");
+
+                return;
+            }
+            currentLocation = locationResult.getLastLocation();
+            last_lat=String.valueOf(currentLocation.getLatitude());
+            last_lng=String.valueOf(currentLocation.getLongitude());
+            Log.d("wherelll","onLocationResult   "+last_lat+"     "+last_lng);
+
+            if (firstTimeFlag) {
+                Log.d("where","firstTimeFlag && googleMap != null   "+currentLocation);
+
+                firstTimeFlag = false;
+            }
+        }
+    };
+
+
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -96,13 +135,31 @@ public class SensorService extends Service implements GoogleApiClient.Connection
 
     }
 
+    private void startCurrentLocationUpdates() {
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(3000);
+        Log.d("where","startCurrentLocationUpdates");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(activity,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+                return;
+            }
+        }
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest, mLocationCallback, Looper.myLooper());
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         pref = getSharedPreferences("location_pref", MODE_PRIVATE);
 
-
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        startCurrentLocationUpdates();
         intent_action = pref.getString("action", "");
         trip_id = pref.getString("trip_id", "");
 
@@ -211,7 +268,7 @@ public class SensorService extends Service implements GoogleApiClient.Connection
                                    /* Intent intent1 = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("google.navigation:q="+last_lat+","+last_lng));
                                     startActivity(intent1);
 */
-                                    Intent intent = new Intent(SensorService.this, PassengerListActivity.class).putExtra("from","map");
+                                    Intent intent = new Intent(SensorService.this, OnboardPassengerListActivity.class).putExtra("from","map");
                                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                     startActivity(intent);
                                     //Toast.makeText(SensorService.this, "up", Toast.LENGTH_SHORT).show();
@@ -275,6 +332,11 @@ public class SensorService extends Service implements GoogleApiClient.Connection
         Intent broadcastIntent = new Intent(this, MyLocationReceiver.class);
         sendBroadcast(broadcastIntent);
         stoptimertask();
+        if (fusedLocationProviderClient != null)
+            fusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
+
+        fusedLocationProviderClient = null;
+
     }
 
     private Timer timer;
@@ -323,8 +385,8 @@ public class SensorService extends Service implements GoogleApiClient.Connection
                                     double lng=Double.parseDouble(pref.getString("dest_lng",""));
                                     destLocation.setLatitude(lat);
                                     destLocation.setLongitude(lng);
-                                    last_lat=String.valueOf(location.getLatitude());
-                                    last_lng=String.valueOf(location.getLongitude());
+                                    /*last_lat=String.valueOf(location.getLatitude());
+                                    last_lng=String.valueOf(location.getLongitude());*/
                                     updatelastLocation();
                                     float distance = location.distanceTo(destLocation) /1000;
                                     Log.i("wherreeeeeee lllllll", "distance between "+ location.getLatitude()+" and  "+location.getLongitude()+" is "+ distance);

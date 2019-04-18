@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableRow;
@@ -429,7 +430,7 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
                     p_editor=p_pref.edit();
                     p_editor.putString("trip_id",tripData.getId()+"");
                     p_editor.commit();
-                    context.startActivity(new Intent(context,HomePassengerListActivity.class));
+                    context.startActivity(new Intent(context,HomePassengerListActivity.class).putExtra("trip_id",tripData.getId()+""));
                     Bungee.slideLeft(context);
                 }
                 else
@@ -491,18 +492,54 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
                     delete.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            dialog.dismiss();
+
+                            final Dialog dialog2=new Dialog(context,
+                                    R.style.Theme_Dialog);
+                            dialog2.setContentView(R.layout.reason_dialog);
+                            final EditText edreason=dialog2.findViewById(R.id.ed_reason);
+                            TextView ok=dialog2.findViewById(R.id.ok);
+                            TextView cancel=dialog2.findViewById(R.id.cancel);
+
+                            ok.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                    if(edreason.getText().toString().isEmpty())
+                                    {
+                                        Toast.makeText(context, "Please give the reason", Toast.LENGTH_SHORT).show();
+                                    }
+                                    else
+                                    {
+                                        removeDrivertrip(tripData.getId(),holder.getAdapterPosition(),edreason.getText().toString());
+                                        dialog.dismiss();
+                                        dialog2.dismiss();
+                                    }
+
+                                }
+                            });
+
+                            cancel.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    dialog2.dismiss();
+                                    dialog.dismiss();
+                                }
+                            });
+
+                            dialog2.show();
+                            /*dialog.dismiss();
                             new AlertDialog.Builder(context).setMessage("Cancel this trip?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    removeDrivertrip(tripData.getId(),holder.getAdapterPosition());
+
                                 }
                             }).setNegativeButton("No", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     dialogInterface.dismiss();
                                 }
-                            }).show();
+                            }).show();*/
+
                         }
                     });
 
@@ -516,7 +553,7 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
                             p_editor=p_pref.edit();
                             p_editor.putString("trip_id",tripData.getId()+"");
                             p_editor.commit();
-                            context.startActivity(new Intent(context,HomePassengerListActivity.class));
+                            context.startActivity(new Intent(context,HomePassengerListActivity.class).putExtra("trip_id",tripData.getId()+""));
                             Bungee.slideLeft(context);
 
                             dialog.dismiss();
@@ -722,14 +759,14 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
     }
 
 
-    public void removeDrivertrip(String id, final int position)
+    public void removeDrivertrip(String id, final int position,String reason)
     {
         if(context!=null) {
             progressDialog.show();
         }
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.updateTripStatus(id,"cancel", new retrofit.Callback<retrofit.client.Response>() {
+        myInterface.cancelTrip(id,"cancel",reason, new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                 if(context!=null) {
@@ -757,6 +794,7 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
                         {
                             removeAt(position);
                             Toast.makeText(context, "Trip cancelled", Toast.LENGTH_SHORT).show();
+                            notifyDataSetChanged();
                         }
                         else
                         {

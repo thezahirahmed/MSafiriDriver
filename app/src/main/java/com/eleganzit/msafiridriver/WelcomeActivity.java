@@ -33,6 +33,7 @@ import java.util.Iterator;
 
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
+import spencerstudios.com.bungeelib.Bungee;
 
 public class WelcomeActivity extends AppCompatActivity {
 
@@ -116,6 +117,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 public void onFailureResult(String message) {
                     //progressDialog.dismiss();
                     uploadVehicleProfileSuccess=false;
+                    removeDriver();
                     Toast.makeText(WelcomeActivity.this, ""+message, Toast.LENGTH_SHORT).show();
                     Log.d("messageeeeeeeeeee",message);
 
@@ -187,6 +189,75 @@ public class WelcomeActivity extends AppCompatActivity {
 
     }
 
+    public void removeDriver() {
+
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
+        final MyInterface myInterface = restAdapter.create(MyInterface.class);
+        myInterface.removeDriver(pref.getString("driver_id", ""), new retrofit.Callback<retrofit.client.Response>() {
+            @Override
+            public void success(retrofit.client.Response response, retrofit.client.Response response2) {
+                final StringBuilder stringBuilder = new StringBuilder();
+                try {
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
+
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line);
+                    }
+                    Log.d("dddddddstringBuilder", "" + stringBuilder);
+
+                    if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
+
+                        JSONObject jsonObject = new JSONObject("" + stringBuilder);
+                        String status = jsonObject.getString("status");
+                        String message = jsonObject.getString("message");
+                        JSONArray jsonArray = null;
+                        if (status.equalsIgnoreCase("1")) {
+                            jsonArray = jsonObject.getJSONArray("data");
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+
+
+                            }
+                            Intent intent = new Intent(WelcomeActivity.this, SignInActivity.class).putExtra("from","account");
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            Bungee.slideLeft(WelcomeActivity.this);
+
+                            editor.clear();
+                            editor.commit();
+                            editor.apply();
+
+                        } else {
+                            Toast.makeText(WelcomeActivity.this, ""+message, Toast.LENGTH_SHORT).show();
+
+                        }
+
+                    } else {
+
+                        Toast.makeText(WelcomeActivity.this, "" + stringBuilder, Toast.LENGTH_SHORT).show();
+                    }
+
+
+                } catch (IOException e) {
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
+                Toast.makeText(WelcomeActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+    }
+
+
+
     private void uploadVehicle() {
 
         progressDialog.show();
@@ -235,7 +306,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 else
                 {
                     Toast.makeText(WelcomeActivity.this, ""+message, Toast.LENGTH_SHORT).show();
-
+                    removeDriver();
                     Log.d("messageeeeeeeeeee","veh 4"+message);
                 }
                 Log.d("messageeeeeeeeeee","veh 5"+message);

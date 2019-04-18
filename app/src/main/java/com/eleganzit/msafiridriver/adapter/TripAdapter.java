@@ -69,7 +69,14 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.MyViewHolder>
         holder.to.setSelected(true);
         holder.to.setText(tripData.getTo_title());
         holder.trip_price.setSelected(true);
-        holder.trip_price.setText("KSh "+tripData.getTrip_price());
+        if(tripData.getTrip_price().equalsIgnoreCase("null") || tripData.getTrip_price()==null)
+        {
+            holder.trip_price.setText("KSh 0");
+        }
+        else
+        {
+            holder.trip_price.setText("KSh "+tripData.getTrip_price());
+        }
 
         if(tripData.getStatuss().equalsIgnoreCase("deactive"))
         {

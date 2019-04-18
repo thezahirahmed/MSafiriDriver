@@ -25,8 +25,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+import com.eleganzit.msafiridriver.activity.NavHomeActivity;
 import com.eleganzit.msafiridriver.utils.MyInterface;
 import com.github.gfranks.minimal.notification.GFMinimalNotification;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -44,6 +47,7 @@ import java.util.regex.Pattern;
 
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
+import spencerstudios.com.bungeelib.Bungee;
 
 public class RegisterationActivity extends AppCompatActivity {
 
@@ -428,6 +432,7 @@ public class RegisterationActivity extends AppCompatActivity {
                     @Override
                     public void failure(RetrofitError error) {
                         progressDialog.dismiss();
+                        removeDriver();
                         //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
                         Toast.makeText(RegisterationActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
 
@@ -487,6 +492,7 @@ public class RegisterationActivity extends AppCompatActivity {
                 }
                 else
                 {
+                    removeDriver();
                     Toast.makeText(RegisterationActivity.this, ""+message, Toast.LENGTH_SHORT).show();
                 }
                 Log.d("messageeeeeeeeeee",message);
@@ -495,6 +501,73 @@ public class RegisterationActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    public void removeDriver() {
+
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
+        final MyInterface myInterface = restAdapter.create(MyInterface.class);
+        myInterface.removeDriver(pref.getString("driver_id", ""), new retrofit.Callback<retrofit.client.Response>() {
+            @Override
+            public void success(retrofit.client.Response response, retrofit.client.Response response2) {
+                final StringBuilder stringBuilder = new StringBuilder();
+                try {
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
+
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line);
+                    }
+                    Log.d("dddddddstringBuilder", "" + stringBuilder);
+
+                    if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
+
+                        JSONObject jsonObject = new JSONObject("" + stringBuilder);
+                        String status = jsonObject.getString("status");
+                        String message = jsonObject.getString("message");
+                        JSONArray jsonArray = null;
+                        if (status.equalsIgnoreCase("1")) {
+                            jsonArray = jsonObject.getJSONArray("data");
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+
+
+                            }
+                            Intent intent = new Intent(RegisterationActivity.this, SignInActivity.class).putExtra("from","account");
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            Bungee.slideLeft(RegisterationActivity.this);
+
+                            editor.clear();
+                            editor.commit();
+                            editor.apply();
+
+                        } else {
+                            Toast.makeText(RegisterationActivity.this, ""+message, Toast.LENGTH_SHORT).show();
+
+                        }
+
+                    } else {
+
+                        Toast.makeText(RegisterationActivity.this, "" + stringBuilder, Toast.LENGTH_SHORT).show();
+                    }
+
+
+                } catch (IOException e) {
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterationActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
     }
 
 

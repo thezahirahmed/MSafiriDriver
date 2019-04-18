@@ -732,10 +732,10 @@ public class AccountFragment extends Fragment {
                     mediapath=""+sb.toString().trim();
 
                 /*Glide
-                        .with(RegisterChoosePictureActivity.this)
+                        .with(getActivity())
                         .load(mediapath.trim())
                         .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop())
-                        .into(profile_pic);*/
+                        .into(driverimg);*/
                     uploadProfile();
 
 
@@ -756,10 +756,10 @@ public class AccountFragment extends Fragment {
                     mediapath=""+sb.toString().trim();
 
                 /*Glide
-                        .with(RegisterChoosePictureActivity.this)
+                        .with(getActivity())
                         .load(mediapath.trim())
                         .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop())
-                        .into(profile_pic);*/
+                        .into(vehicleimg);*/
                     uploadVehicleProfile();
 
 
@@ -797,11 +797,11 @@ public class AccountFragment extends Fragment {
                         editor.commit();
                         Glide
                                 .with(getActivity())
-                                .load(photo).apply(new RequestOptions().placeholder(R.drawable.pr))
+                                .load(mediapath).apply(new RequestOptions().placeholder(R.drawable.pr))
                                 .into(driverimg);
                         Glide
                                 .with(getActivity())
-                                .load(photo).apply(new RequestOptions().placeholder(R.drawable.pr))
+                                .load(mediapath).apply(new RequestOptions().placeholder(R.drawable.pr))
                                 .into(NavHomeActivity.profile_image);
 
                         if(photo==null || photo.equalsIgnoreCase("null"))

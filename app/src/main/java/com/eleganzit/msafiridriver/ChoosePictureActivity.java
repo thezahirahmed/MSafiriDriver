@@ -454,11 +454,11 @@ public class ChoosePictureActivity extends AppCompatActivity {
 
                     mediapath=""+sb.toString().trim();
 
-                /*Glide
-                        .with(RegisterChoosePictureActivity.this)
+                Glide
+                        .with(ChoosePictureActivity.this)
                         .load(mediapath.trim())
                         .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop())
-                        .into(profile_pic);*/
+                        .into(profile_pic);
                     uploadProfile();
 
 
@@ -498,12 +498,12 @@ public class ChoosePictureActivity extends AppCompatActivity {
                         editor.putString("photo", photo);
                         editor.commit();
 
-                        Glide
+                        /*Glide
                                 .with(ChoosePictureActivity.this)
-                                .load(photo)
+                                .load(mediapath)
                                 .thumbnail(.1f)
                                 .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop().diskCacheStrategy(DiskCacheStrategy.ALL))
-                                .into(profile_pic);
+                                .into(profile_pic);*/
                         if(photo==null || photo.equalsIgnoreCase("null"))
                         {
                             Toast.makeText(ChoosePictureActivity.this, "Image format doesn't support", Toast.LENGTH_SHORT).show();

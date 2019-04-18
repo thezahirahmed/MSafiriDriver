@@ -365,6 +365,13 @@ public class HomeProfileActivity extends AppCompatActivity {
     }
 
     public void getApprovalStatus() {
+
+        Glide
+                .with(HomeProfileActivity.this)
+                .load(pref.getString("photo",""))
+                .thumbnail(.1f)
+                .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop().format(PREFER_ARGB_8888).diskCacheStrategy(DiskCacheStrategy.ALL)).into(profile_pic);
+
         progressDialog.show();
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
@@ -464,6 +471,12 @@ public class HomeProfileActivity extends AppCompatActivity {
         super.onResume();
         pref = getSharedPreferences("mysession", MODE_PRIVATE);
         editor = pref.edit();
+
+        Glide
+                .with(HomeProfileActivity.this)
+                .load(pref.getString("photo",""))
+                .thumbnail(.1f)
+                .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop().format(PREFER_ARGB_8888).diskCacheStrategy(DiskCacheStrategy.ALL)).into(profile_pic);
 
         if (pref.getString("type", "").equalsIgnoreCase("individual")) {
             vehicle_detail.setVisibility(View.VISIBLE);

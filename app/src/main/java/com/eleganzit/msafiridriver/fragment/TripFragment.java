@@ -44,6 +44,7 @@ import com.eleganzit.msafiridriver.ProfileActivity;
 import com.eleganzit.msafiridriver.R;
 import com.eleganzit.msafiridriver.activity.Home;
 import com.eleganzit.msafiridriver.activity.NavHomeActivity;
+import com.eleganzit.msafiridriver.activity.OnboardPassengerListActivity;
 import com.eleganzit.msafiridriver.activity.PassengerListActivity;
 import com.eleganzit.msafiridriver.adapter.PassengerAdapter;
 import com.eleganzit.msafiridriver.adapter.UpcomingTripAdapter;
@@ -121,6 +122,7 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
     CircleImageView profile;
     String id,vehicle_name;
     RobotoMediumTextView txtvehicle_name;
+    
 
     @SuppressLint("RestrictedApi")
     @Override
@@ -144,10 +146,12 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
         main_content= v.findViewById(R.id.main_content);
         content= v.findViewById(R.id.content);
         no_trip= v.findViewById(R.id.no_trip);
+
         Glide
                 .with(getActivity())
                 .load(photo).apply(new RequestOptions().placeholder(R.drawable.pr))
                 .into(profile);
+
         txtvehicle_name.setText("Vehicle Name: "+vehicle_name);
 
         btn_list=v.findViewById(R.id.passenger_list);
@@ -162,7 +166,7 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
     public void onResume() {
         super.onResume();
 
-        getUpcomingTrip();
+
 
     }
 
@@ -191,7 +195,7 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
             mapView.onResume();
             mapView.getMapAsync(this);
         }
-
+        getUpcomingTrip();
         btn_list.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -204,21 +208,31 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
                 p_editor.putString("trip_lng2",lng2+"");
                 p_editor.putString("trip_status",trip_status+"");
 
-                if(p_pref.getBoolean("firstTime",false))
+                Log.d("trip_statusssss",""+trip_status);
+                if(trip_status.equalsIgnoreCase("ongoing"))
                 {
-                    //Toast.makeText(getActivity(), p_pref.getBoolean("firstTime",false)+" already captured", Toast.LENGTH_SHORT).show();
-                    getActivity().startActivity(new Intent(getActivity(),PassengerListActivity.class).putExtra("from","trip"));
+                    getActivity().startActivity(new Intent(getActivity(),OnboardPassengerListActivity.class).putExtra("from","trip"));
                     Bungee.slideLeft(getActivity());
                 }
                 else
                 {
-                    //Toast.makeText(getActivity(), p_pref.getBoolean("firstTime",false)+" captured now", Toast.LENGTH_SHORT).show();
-                    p_editor.putBoolean("firstTime",true);
+                    if(p_pref.getBoolean("firstTime",false))
+                    {
+                        //Toast.makeText(getActivity(), p_pref.getBoolean("firstTime",false)+" already captured", Toast.LENGTH_SHORT).show();
+                        getActivity().startActivity(new Intent(getActivity(),PassengerListActivity.class).putExtra("from","trip"));
+                        Bungee.slideLeft(getActivity());
+                    }
+                    else
+                    {
+                        //Toast.makeText(getActivity(), p_pref.getBoolean("firstTime",false)+" captured now", Toast.LENGTH_SHORT).show();
+                        p_editor.putBoolean("firstTime",true);
 
-                    CaptureMapScreen();
+                        CaptureMapScreen();
+                    }
+                    p_editor.commit();
+
+
                 }
-                p_editor.commit();
-
 
 /*
                 dialog.getWindow().requestFeature(FEATURE_NO_TITLE);
@@ -271,7 +285,7 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
         map=googleMap;
         MapsInitializer.initialize(getContext().getApplicationContext());
         map.getUiSettings().setAllGesturesEnabled(false);
-        map.setMapStyle(MapStyleOptions.loadRawResourceStyle(getContext(),R.raw.style_json));
+        //map.setMapStyle(MapStyleOptions.loadRawResourceStyle(getContext(),R.raw.style_json));
         map.getUiSettings().setZoomGesturesEnabled(true);
         map.getUiSettings().setAllGesturesEnabled(true);
         LatLng loc2=new LatLng(23.0262,72.5242);
@@ -345,37 +359,22 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
             Log.d("photoPath",photoPath);
 
             dialog.dismiss();
-            getActivity().startActivity(new Intent(getActivity(),PassengerListActivity.class).putExtra("from","trip").putExtra("photoPath",photoPath+""));
+            startActivity(new Intent(getActivity(),PassengerListActivity.class).putExtra("from","trip").putExtra("photoPath",photoPath+""));
 
             p_editor.putString("photoPath",""+photoPath);
             p_editor.commit();
 
             Bungee.slideLeft(getActivity());
-            //confirmTrip(id);
-            //Toast.makeText(getActivity(), "Saved!!", Toast.LENGTH_SHORT).show();
+
         } catch (Exception e) {
             e.printStackTrace();
             Log.d("eeeeeeeeeeeeeeeeee",e.getMessage()+"");
             dialog.dismiss();
-            //Toast.makeText(getActivity(), e.getMessage()+"   Failed!!", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    protected Marker createMarker(double latitude, double longitude, String title, String snippet, Bitmap iconResID) {
-
-        return map.addMarker(new MarkerOptions()
-                .position(new LatLng(latitude, longitude))
-                .anchor(0.5f, 0.5f)
-                .title(title)
-                .snippet(snippet)
-                .icon(BitmapDescriptorFactory.fromBitmap(iconResID)));
     }
 
     public void getUpcomingTrip()
     {
-        //main_content.setVisibility(View.GONE);
-
-        //progress_bar.setVisibility(View.VISIBLE);
 
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
@@ -406,11 +405,7 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
 
                             main_content.setVisibility(View.VISIBLE);
                             content.setVisibility(View.VISIBLE);
-                           /* YoYo.with(Techniques.SlideInUp)
-                                    .duration(700)
-                                    .repeat(0)
-                                    .playOn(content);
-*/
+
                             jsonArray = jsonObject.getJSONArray("data");
                             for(int i=0;i<jsonArray.length();i++)
                             {
@@ -444,32 +439,6 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
                                     }
                                 });
 
-                                /*LatLng loc=new LatLng(Double.parseDouble(from_lat),Double.parseDouble(from_lng));
-                                BitmapDrawable bitmapdraw=(BitmapDrawable)getActivity().getResources().getDrawable(R.drawable.location_green);
-                                Bitmap b=bitmapdraw.getBitmap();
-                                Bitmap smallMarker = Bitmap.createScaledBitmap(b, 70, 70, false);
-                                map.moveCamera(CameraUpdateFactory.newLatLng(loc));
-                                map.animateCamera(CameraUpdateFactory.zoomTo(13.0f));
-                                //DrawMarker.getInstance(this).draw(googleMap, loc2, BitmapDescriptorFactory.fromBitmap(smallMarker), "Pickup Location");
-                                map.addMarker(new MarkerOptions().position(loc).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)).title("Pickup Location"));
-
-                                LatLng loc2=new LatLng(Double.parseDouble(to_lat),Double.parseDouble(to_lng));
-                                BitmapDrawable bitmapdraw2=(BitmapDrawable)getResources().getDrawable(R.drawable.location_red);
-                                Bitmap b2=bitmapdraw2.getBitmap();
-                                Bitmap smallMarker2 = Bitmap.createScaledBitmap(b2, 70, 70, false);
-
-                                map.animateCamera(CameraUpdateFactory.zoomTo(13.0f));
-                                //DrawMarker.getInstance(this).draw(googleMap, loc2, BitmapDescriptorFactory.fromBitmap(smallMarker), "Pickup Location");
-                                map.addMarker(new MarkerOptions().position(loc2).icon(BitmapDescriptorFactory.fromBitmap(smallMarker2)).title("Destination Location"));
-
-                                String url = getDirectionsUrl(loc, loc2);
-                                *//*Polyline linee = googleMap.addPolyline(new PolylineOptions()
-                                    .add(new LatLng(Double.parseDouble(lat),Double.parseDouble(lng)), new LatLng(Double.parseDouble(lat2),Double.parseDouble(lng2)))
-                                    .width(5)
-                                    .color(Color.RED));*//*
-                                DownloadTask downloadTask = new DownloadTask();
-                                // Start downloading json data from Google Directions API
-                                downloadTask.execute(url);*/
                             }
                             no_trip.setVisibility(View.GONE);
                         }
@@ -481,18 +450,22 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
                             progressDialog.dismiss();
                         }
 
-                        // Toast.makeText(RegistrationActivity.this, "scc "+Token, Toast.LENGTH_SHORT).show();
-
                     }
                     else
                     {
+                        progressDialog.dismiss();
+
                         Toast.makeText(getActivity(), ""+stringBuilder, Toast.LENGTH_SHORT).show();
                     }
 
                 } catch (IOException e) {
+                    progressDialog.dismiss();
+
 
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    progressDialog.dismiss();
+
                 }
 
             }
@@ -502,9 +475,10 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
                 progress_bar.setVisibility(View.GONE);
                 no_trip.setVisibility(View.VISIBLE);
                 content.setVisibility(View.VISIBLE);
+                progressDialog.dismiss();
 
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(getActivity(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
 
             }
         });

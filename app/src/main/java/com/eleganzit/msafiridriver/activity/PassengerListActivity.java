@@ -1,5 +1,7 @@
 package com.eleganzit.msafiridriver.activity;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -22,6 +24,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.speech.RecognitionListener;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -58,6 +61,8 @@ import com.eleganzit.msafiridriver.utils.GoogleService;
 import com.eleganzit.msafiridriver.utils.MyInterface;
 import com.eleganzit.msafiridriver.utils.MyLocation;
 import com.eleganzit.msafiridriver.utils.SensorService;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -65,7 +70,12 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.sachinvarma.easylocation.EasyLocationInit;
+import com.sachinvarma.easylocation.event.Event;
+import com.sachinvarma.easylocation.event.LocationEvent;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -79,6 +89,7 @@ import java.util.List;
 import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.mime.TypedFile;
@@ -86,10 +97,9 @@ import spencerstudios.com.bungeelib.Bungee;
 
 public class PassengerListActivity extends AppCompatActivity {
 
-    RelativeLayout top;
     RecyclerView passengers;
     ProgressBar progressBar;
-    TextView no_passenger;
+    TextView no_passenger,available_seats;
     private String trip_id;
     SharedPreferences p_pref;
     SharedPreferences.Editor p_editor;
@@ -97,7 +107,6 @@ public class PassengerListActivity extends AppCompatActivity {
     SharedPreferences.Editor editor;
     LinearLayout start;
     ProgressDialog progressDialog;
-    TextView trip_text;
     Intent mServiceIntent;
     private SensorService mSensorService;
     Handler handler;
@@ -115,12 +124,67 @@ public class PassengerListActivity extends AppCompatActivity {
     Double latitude,longitude;
     Geocoder geocoder;
     private String last_lat,last_lng;
-    ImageView reload_passengers,reload_onboard_passengers;
+    ImageView reload_passengers;
+    private int timeInterval = 1000;
+    private int fastestTimeInterval = 1000;
+    private boolean runAsBackgroundService = false;
+    private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 5445;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @SuppressLint("SetTextI18n")
+    @Subscribe
+    public void getEvent(final Event event) {
+
+        if (event instanceof LocationEvent) {
+            if (((LocationEvent) event).location != null) {
+                Log.d("dddddddddddd","The Latitude is "
+                        + ((LocationEvent) event).location.getLatitude()
+                        + " and the Longitude is "
+                        + ((LocationEvent) event).location.getLongitude());
+            }
+        }
+    }
+
+    private boolean isGooglePlayServicesAvailable() {
+        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
+        int status = googleApiAvailability.isGooglePlayServicesAvailable(this);
+        if (ConnectionResult.SUCCESS == status)
+        {
+            Log.d("where","ConnectionResult.SUCCESS");
+            return true;
+        }
+        else {
+            if (googleApiAvailability.isUserResolvableError(status))
+                Toast.makeText(this, "Please Install google play services to use this application", Toast.LENGTH_LONG).show();
+        }
+        return false;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_passenger_list);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // reuqest for permission
+            //Toast.makeText(this, "not granted", Toast.LENGTH_SHORT).show();
+
+        } else {
+            // already permission granted
+            //Toast.makeText(this, "granted", Toast.LENGTH_SHORT).show();
+        }
 
         p_pref=getSharedPreferences("passenger_pref",Context.MODE_PRIVATE);
         p_editor=p_pref.edit();
@@ -128,11 +192,12 @@ public class PassengerListActivity extends AppCompatActivity {
         editor=pref.edit();
         mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         medit = mPref.edit();
-
+        new EasyLocationInit(PassengerListActivity.this, timeInterval, fastestTimeInterval, runAsBackgroundService);
+        getEvent(new LocationEvent());
         trip_status=p_pref.getString("trip_status","");
         Log.d("trip_status","activity on create"+trip_status+"");
         handler=new Handler();
-        mSensorService = new SensorService(handler,pref);
+        mSensorService = new SensorService(handler,pref,this);
         mServiceIntent = new Intent(PassengerListActivity.this, mSensorService.getClass());
 
         ImageView back=findViewById(R.id.back);
@@ -146,16 +211,14 @@ public class PassengerListActivity extends AppCompatActivity {
 
         photoPath=p_pref.getString("photoPath","").trim();
         Log.d("photoPathPP",""+photoPath);
-        top=findViewById(R.id.top);
         passengers=findViewById(R.id.passengers);
-        progressBar=findViewById(R.id.progress);
+        progressBar=findViewById(R.id.progressBar);
 
-        trip_text=findViewById(R.id.trip_text);
         start=findViewById(R.id.start);
         no_passenger=findViewById(R.id.no_passenger);
+        available_seats=findViewById(R.id.available_seats);
         select_allcheck=findViewById(R.id.select_allcheck);
         reload_passengers = findViewById(R.id.reload_passengers);
-        reload_onboard_passengers = findViewById(R.id.reload_onboard_passengers);
 
         progressDialog=new ProgressDialog(this);
         progressDialog.setCancelable(false);
@@ -175,13 +238,6 @@ public class PassengerListActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 getPassengers();
-            }
-        });
-
-        reload_onboard_passengers.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getOnBoardPassengers();
             }
         });
 
@@ -334,6 +390,15 @@ public class PassengerListActivity extends AppCompatActivity {
                 }
             }
         }
+
+        if (requestCode == MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION) {
+            if (grantResults[0] == PackageManager.PERMISSION_DENIED)
+                Toast.makeText(this, "Permission denied by user", Toast.LENGTH_SHORT).show();
+            else if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                Log.d("where","permission granted");
+            Toast.makeText(this, "Permission granted by user", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
 
@@ -418,18 +483,9 @@ public class PassengerListActivity extends AppCompatActivity {
         editor.commit();
         trip_status=p_pref.getString("trip_status","");
         Log.d("trip_status","activity on resume"+trip_status+"");
-        if(trip_status.equalsIgnoreCase("ongoing"))
-        {
-            getOnBoardPassengers();
-            //Toast.makeText(PassengerListActivity.this, ""+trip_status, Toast.LENGTH_SHORT).show();
-            trip_text.setText("End Trip");
-            passengers.setVisibility(View.GONE);
-        }
-        else {
+
             getPassengers();
             //Toast.makeText(PassengerListActivity.this, ""+trip_status, Toast.LENGTH_SHORT).show();
-            trip_text.setText("Start Trip");
-        }
 
         from=getIntent().getStringExtra("from");
         Log.d("fromwhereee",""+from+"");
@@ -582,7 +638,6 @@ public class PassengerListActivity extends AppCompatActivity {
                                         Log.d("trip_latsss","lnggggggg  "+trip_lat+"   "+trip_lng);
 
                                         holder.select_radioButton.setVisibility(View.GONE);
-                                        trip_text.setText("End Trip");
                                         p_editor.putString("trip_status","ongoing");
                                         p_editor.commit();
 
@@ -613,20 +668,45 @@ public class PassengerListActivity extends AppCompatActivity {
 
                                         if(!isGoogleMapsInstalled())
                                         {
-                                            //Toast.makeText(PassengerListActivity.this, "not installed or is disabled", Toast.LENGTH_SHORT).show();
-                                            Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                                                    Uri.parse("http://maps.google.com/maps/dir?saddr="+trip_lat+","+trip_lng+"&daddr="+trip_lat2+","+trip_lng2));//Uri.parse("http://maps.google.com/maps?saddr="+trip_lat+","+trip_lng+"&daddr="+trip_lat2+","+trip_lng2)
-                                            startActivity(intent);
-                                            finish();
+                                            if (isGooglePlayServicesAvailable()) {
+                                                //Toast.makeText(PassengerListActivity.this, "not installed or is disabled", Toast.LENGTH_SHORT).show();
+                                                Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                                                        Uri.parse("http://maps.google.com/maps/dir?saddr=" + trip_lat + "," + trip_lng + "&daddr=" + trip_lat2 + "," + trip_lng2));//Uri.parse("http://maps.google.com/maps?saddr="+trip_lat+","+trip_lng+"&daddr="+trip_lat2+","+trip_lng2)
+                                                startActivity(intent);
+                                                finish();
+                                            }
+                                            else
+                                            {
+                                                new AlertDialog.Builder(PassengerListActivity.this).setMessage("Please install Google Play Services")
+                                                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                                dialogInterface.dismiss();
+                                                            }
+                                                        })
+                                                        .show();
+                                            }
                                         }
                                         else
                                         {
                                             //Toast.makeText(PassengerListActivity.this, "installed", Toast.LENGTH_SHORT).show();
-
-                                            Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                                                    Uri.parse("google.navigation:q="+trip_lat2+","+trip_lng2));//Uri.parse("http://maps.google.com/maps?saddr="+trip_lat+","+trip_lng+"&daddr="+trip_lat2+","+trip_lng2)
-                                            startActivity(intent);
-                                            finish();
+                                            if (isGooglePlayServicesAvailable()) {
+                                                Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                                                        Uri.parse("google.navigation:q=" + trip_lat2 + "," + trip_lng2));//Uri.parse("http://maps.google.com/maps?saddr="+trip_lat+","+trip_lng+"&daddr="+trip_lat2+","+trip_lng2)
+                                                startActivity(intent);
+                                                finish();
+                                            }
+                                            else
+                                            {
+                                                new AlertDialog.Builder(PassengerListActivity.this).setMessage("Please install Google Play Services")
+                                                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                                dialogInterface.dismiss();
+                                                            }
+                                                        })
+                                                        .show();
+                                            }
                                             /*Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
                                                     Uri.parse("http://maps.google.com/maps/dir/"+23.0350+","+72.5293+"/"+23.0120+","+72.5108));//Uri.parse("http://maps.google.com/maps?saddr="+trip_lat+","+trip_lng+"&daddr="+trip_lat2+","+trip_lng2)
                                             startActivity(intent);
@@ -702,150 +782,12 @@ public class PassengerListActivity extends AppCompatActivity {
         return dist; // output distance, in MILES
     }
 
-    public void updateDeactiveStatus(String tstatus, final PassengerAdapter.MyViewHolder holder)
-    {
-        if(tstatus.equalsIgnoreCase("active"))
-        {
-            tstatus="ongoing";
-        }
-        final String finalTstatus = tstatus;
-
-        progressDialog.show();
-        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
-        final MyInterface myInterface = restAdapter.create(MyInterface.class);
-
-        myInterface.updateTripStatus(trip_id, tstatus,new retrofit.Callback<retrofit.client.Response>() {
-            @Override
-            public void success(retrofit.client.Response response, retrofit.client.Response response2) {
-                progressDialog.dismiss();
-                final StringBuilder stringBuilder = new StringBuilder();
-                try {
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
-
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        stringBuilder.append(line);
-                    }
-                    Log.d("trrrrstringBuilder", "" + stringBuilder);
-                    //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
-
-                    if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
-
-                        JSONObject jsonObject = new JSONObject("" + stringBuilder);
-                        String status = jsonObject.getString("status");
-                        String message = jsonObject.getString("message");
-                        JSONArray jsonArray = null;
-                        if(status.equalsIgnoreCase("1"))
-                        {
-                            if(finalTstatus.equalsIgnoreCase("ongoing"))
-                            {
-                                holder.select_radioButton.setVisibility(View.GONE);
-                                trip_text.setText("End Trip");
-                                p_editor.putString("trip_status","ongoing");
-                                p_editor.commit();
-
-                                if (!isMyServiceRunning(mSensorService.getClass())) {
-                                    editor.putString("action","start");
-                                    editor.putString("dest_lat",trip_lat2);
-                                    editor.putString("dest_lng",trip_lng2);
-                                    editor.commit();
-                                    mServiceIntent = new Intent(PassengerListActivity.this, mSensorService.getClass()).putExtra("click","first");
-                                    //Check if the application has draw over other apps permission or not?
-                                    //This permission is by default available for API<23. But for API > 23
-                                    //you have to ask for the permission in runtime.
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(PassengerListActivity.this)) {
-
-                                        //If the draw over permission is not available open the settings screen
-                                        //to grant the permission.
-                                        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                                                Uri.parse("package:" + getPackageName()));
-                                        startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION);
-                                    } else {
-
-                                        startService(mServiceIntent);
-
-                                    }
-
-
-                                }
-
-                                if(!isGoogleMapsInstalled())
-                                {
-                                    //Toast.makeText(PassengerListActivity.this, "not installed or is disabled", Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                                            Uri.parse("http://maps.google.com/maps/dir/"+trip_lat+","+trip_lng+"/"+trip_lat2+","+trip_lng2));//Uri.parse("http://maps.google.com/maps?saddr="+trip_lat+","+trip_lng+"&daddr="+trip_lat2+","+trip_lng2)
-                                    startActivity(intent);
-                                    finish();
-                                }
-                                else
-                                {
-                                    //Toast.makeText(PassengerListActivity.this, "installed", Toast.LENGTH_SHORT).show();
-
-                                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                                            Uri.parse("google.navigation:q="+trip_lat2+","+trip_lng2));//Uri.parse("http://maps.google.com/maps?saddr="+trip_lat+","+trip_lng+"&daddr="+trip_lat2+","+trip_lng2)
-                                    startActivity(intent);
-                                    finish();
-                                }
-
-                            }
-                            else
-                            {
-                                p_editor.clear();
-                                p_editor.commit();
-                                if (isMyServiceRunning(mSensorService.getClass())) {
-                                    editor.putString("action","stop");
-                                    editor.commit();
-                                    mServiceIntent = new Intent(PassengerListActivity.this, mSensorService.getClass()).putExtra("click","second");
-                                    stopService(mServiceIntent);
-                                }
-                                Intent intent=new Intent(PassengerListActivity.this,NavHomeActivity.class).putExtra("from","passenger_list");
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(intent);
-                                //finish();
-                            }
-
-                            jsonArray = jsonObject.getJSONArray("data");
-                            for(int i=0;i<jsonArray.length();i++)
-                            {
-                                JSONObject jsonObject1=jsonArray.getJSONObject(i);
-                                //String sfrom_date=jsonObject1.getString("datetime");
-                            }
-
-                        }
-                        else
-                        {
-                            Toast.makeText(PassengerListActivity.this, ""+message, Toast.LENGTH_SHORT).show();
-                        }
-
-                    }
-                    else
-                    {
-                        Toast.makeText(PassengerListActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
-                    }
-
-                } catch (IOException e) {
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                progressDialog.dismiss();
-                //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(PassengerListActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
     public void getPassengers()
     {
         progressBar.setVisibility(View.VISIBLE);
-        top.setVisibility(View.GONE);
         reload_passengers.setVisibility(View.GONE);
 
+        progressDialog.show();
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
 
@@ -856,6 +798,7 @@ public class PassengerListActivity extends AppCompatActivity {
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                 ArrayList<PassengerData> arrayList = new ArrayList<>();
                 progressBar.setVisibility(View.GONE);
+                progressDialog.dismiss();
 
                 final StringBuilder stringBuilder = new StringBuilder();
                 try {
@@ -872,25 +815,15 @@ public class PassengerListActivity extends AppCompatActivity {
 
                         JSONObject jsonObject = new JSONObject("" + stringBuilder);
                         String status = jsonObject.getString("status");
+                        String countBookedseats = jsonObject.getString("countBookedseats");
+                        String countRemainingseats = jsonObject.getString("countRemainingseats");
+                        int booked=Integer.valueOf(countBookedseats+"");
+                        int remain=Integer.valueOf(countRemainingseats+"");
+                        int total_seats=booked+remain;
+                        available_seats.setText(countBookedseats+"/"+total_seats);
                         JSONArray jsonArray = null;
                         if(status.equalsIgnoreCase("1"))
                         {
-                            if(from.equalsIgnoreCase("trip"))
-                            {
-                                if(trip_status.equalsIgnoreCase("ongoing"))
-                                {
-                                    top.setVisibility(View.GONE);
-                                }
-                                else
-                                {
-                                    top.setVisibility(View.VISIBLE);
-                                }
-                            }
-                            else
-                            {
-                                top.setVisibility(View.GONE);
-                            }
-
                             passengers.setVisibility(View.VISIBLE);
                             /*if(from.equalsIgnoreCase("home"))
                             {
@@ -915,9 +848,24 @@ public class PassengerListActivity extends AppCompatActivity {
                                 String fname = jsonObject1.getString("fname");
                                 String lname = jsonObject1.getString("lname");
                                 String photo = jsonObject1.getString("photo");
+                                String name;
+                                name=fname+" "+lname;
+                                JSONObject jsonObject2=jsonObject1.getJSONObject("passanger");
+                                JSONArray jsonArray1=jsonObject2.getJSONArray("data");
 
-                                PassengerData passengerData=new PassengerData(id,user_id,rating,rstatus,fname,lname,photo);
-                                arrayList.add(passengerData);
+                                for (int j=0;j<jsonArray1.length();j++)
+                                {
+                                    JSONObject jsonObject3=jsonArray1.getJSONObject(j);
+                                    String passanger_id = jsonObject3.getString("passanger_id");
+                                    String passanger_name = jsonObject3.getString("passanger_name");
+                                    String book_id = jsonObject3.getString("book_id");
+
+                                    PassengerData passengerData=new PassengerData(id,passanger_id,rating,rstatus,passanger_name,lname,photo);
+                                    arrayList.add(passengerData);
+                                }
+
+
+
                             }
                             passengers.setAdapter(new PassengerAdapter(arrayList,PassengerListActivity.this));
                         }
@@ -953,6 +901,7 @@ public class PassengerListActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressBar.setVisibility(View.GONE);
                 reload_passengers.setVisibility(View.VISIBLE);
+                progressDialog.dismiss();
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
                 Toast.makeText(PassengerListActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.d("errorrrr",""+error.getMessage());
@@ -961,106 +910,13 @@ public class PassengerListActivity extends AppCompatActivity {
         });
     }
 
-    public void getOnBoardPassengers()
-    {
-
-        top.setVisibility(View.GONE);
-        reload_onboard_passengers.setVisibility(View.GONE);
-
-        progressBar.setVisibility(View.VISIBLE);
-        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
-        final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.getOnBoardPassengers(trip_id, new retrofit.Callback<retrofit.client.Response>() {
-            @Override
-            public void success(retrofit.client.Response response, retrofit.client.Response response2) {
-                ArrayList<PassengerData> arrayList = new ArrayList<>();
-                progressBar.setVisibility(View.GONE);
-
-                final StringBuilder stringBuilder = new StringBuilder();
-                try {
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
-
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        stringBuilder.append(line);
-                    }
-                    Log.d("ppppppppstringBuilder", "" + stringBuilder);
-                    //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
-
-                    if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
-
-                        JSONObject jsonObject = new JSONObject("" + stringBuilder);
-                        String status = jsonObject.getString("status");
-                        JSONArray jsonArray = null;
-                        if(status.equalsIgnoreCase("1"))
-                        {
-                            passengers.setVisibility(View.VISIBLE);
-
-                                start.setVisibility(View.VISIBLE);
-
-                            jsonArray = jsonObject.getJSONArray("data");
-                            for(int i=0;i<jsonArray.length();i++)
-                            {
-                                JSONObject jsonObject1=jsonArray.getJSONObject(i);
-
-                                String id = jsonObject1.getString("id");
-                                String user_id = jsonObject1.getString("user_id");
-                                String rating = jsonObject1.getString("rating");
-                                String rstatus = jsonObject1.getString("status");
-                                String fname = jsonObject1.getString("fname");
-                                String lname = jsonObject1.getString("lname");
-                                String photo = jsonObject1.getString("photo");
-
-                                PassengerData passengerData=new PassengerData(id,user_id,rating,rstatus,fname,lname,photo);
-                                arrayList.add(passengerData);
-                            }
-                            passengers.setAdapter(new PassengerAdapter(arrayList,PassengerListActivity.this));
-                        }
-                        else
-                        {
-
-                            no_passenger.setVisibility(View.VISIBLE);
-
-                            passengers.setVisibility(View.GONE);
-                            start.setVisibility(View.GONE);
-
-                        }
-
-                        // Toast.makeText(RegistrationActivity.this, "scc "+Token, Toast.LENGTH_SHORT).show();
-
-                    }
-                    else
-                    {
-
-                        Toast.makeText(PassengerListActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
-                    }
-
-
-                } catch (IOException e) {
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                progressBar.setVisibility(View.GONE);
-                reload_onboard_passengers.setVisibility(View.VISIBLE);
-                //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(PassengerListActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
-                Log.d("errorrrr",""+error.getMessage());
-
-            }
-        });
-    }
 
     public class PassengerAdapter extends RecyclerView.Adapter<PassengerAdapter.MyViewHolder>
     {
         ArrayList<PassengerData> arrayList;
         Context context;
         boolean isSelectedAll;
+        boolean isChecked=false;
 
         public PassengerAdapter(ArrayList<PassengerData> arrayList, Context context)
         {
@@ -1080,23 +936,26 @@ public class PassengerListActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final MyViewHolder holder, final int position) {
 
+
             final PassengerData passengerData=arrayList.get(position);
             Glide
                     .with(context)
                     .load(passengerData.getPhoto()).apply(new RequestOptions().placeholder(R.drawable.pr))
                     .into(holder.p_photo);
 
-            holder.p_name.setText(passengerData.getFname()+" "+passengerData.getLname());
+            holder.p_name.setText(passengerData.getFname()+"");
 
-            select_allcheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            select_allcheck.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                public void onClick(View view) {
                     if(isChecked)
                     {
+                        isChecked=false;
                         selectAll(true);
                     }
                     else
                     {
+                        isChecked=true;
                         selectAll(false);
                     }
                 }
@@ -1110,7 +969,19 @@ public class PassengerListActivity extends AppCompatActivity {
                 holder.select_radioButton.setVisibility(View.GONE);
             }
 
-            int total_passengers=Integer.parseInt(passengerData.getId());
+            holder.radio.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(holder.select_radioButton.isChecked())
+                    {
+                        holder.select_radioButton.setChecked(false);
+                    }
+                    else
+                    {
+                        holder.select_radioButton.setChecked(true);
+                    }
+                }
+            });
 
             holder.select_radioButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -1118,23 +989,50 @@ public class PassengerListActivity extends AppCompatActivity {
                     if(isChecked)
                     {
                         userslist.add(passengerData.getUser_id());
-                        //Toast.makeText(context, "added "+passengerData.getFname()+" "+passengerData.getLname()+" passengers", Toast.LENGTH_SHORT).show();
+                        if(userslist.size()==arrayList.size())
+                        {
+                            select_allcheck.setChecked(true);
+                        }
+                        else
+                        {
+                            select_allcheck.setChecked(false);
+                        }
+                        if(userslist.size()==0)
+                        {
+                            select_allcheck.setChecked(false);
+                        }
                     }
                     else
                     {
                         userslist.remove(passengerData.getUser_id());
-                        //Toast.makeText(context, "removed "+passengerData.getFname()+" "+passengerData.getLname()+" passengers", Toast.LENGTH_SHORT).show();
+
+                        Log.d("sizeeeeee",userslist.size()+"    "+arrayList.size());
+                        if(userslist.size()==arrayList.size())
+                        {
+                            select_allcheck.setChecked(true);
+                        }
+                        else
+                        {
+                            select_allcheck.setChecked(false);
+
+                        }
+                        if(userslist.size()==0)
+                        {
+                            select_allcheck.setChecked(false);
+                        }
                     }
                 }
             });
-            //Toast.makeText(PassengerListActivity.this, "here", Toast.LENGTH_SHORT).show();
-
 
             start.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
-                    /*Geofence geofence = new Geofence.Builder()
+
+                    new AlertDialog.Builder(PassengerListActivity.this).setMessage("Do you want to start the trip?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            /*Geofence geofence = new Geofence.Builder()
                             .setRequestId("1") // Geofence ID
                             .setCircularRegion( Double.valueOf(last_lat), Double.valueOf(last_lng), 100) // defining fence region
                             .setExpirationDuration( 5000 ) // expiring date
@@ -1148,92 +1046,7 @@ public class PassengerListActivity extends AppCompatActivity {
                             .addGeofence( geofence ) // add a Geofence
                             .build();
 */
-                    MyLocation.LocationResult locationResult = new MyLocation.LocationResult(){
-                        @Override
-                        public void gotLocation(Location location){
-
-                            if(location==null)
-                            {
-
-                            }
-                            else
-                            {
-                                Location destLocation=new Location("newlocation");
-                                double lat=Double.parseDouble(trip_lat2);
-                                double lng=Double.parseDouble(trip_lng2);
-                                destLocation.setLatitude(lat);
-                                destLocation.setLongitude(lng);
-                                last_lat=String.valueOf(location.getLatitude());
-                                last_lng=String.valueOf(location.getLongitude());
-                                float distance = location.distanceTo(destLocation) /1000;
-                                Log.i("wherreeeeeeemyloc", "distance between "+ last_lat+" and  "+last_lng);
-                                //Log.i("wherreeeeeee lllllll", ""+ location.getLatitude()+"   "+location.getLongitude());
-
-                            }
-
-                        }
-                    };
-                    MyLocation myLocation = new MyLocation();
-                    myLocation.getLocation(PassengerListActivity.this, locationResult);
-
-
-                        /*if (boolean_permission) {
-
-                        if (mPref.getString("service", "").matches("")) {
-                            medit.putString("service", "service").commit();
-
-                            Intent intent = new Intent(getApplicationContext(), GoogleService.class);
-                            startService(intent);
-
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Service is already running", Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Please enable the gps", Toast.LENGTH_SHORT).show();
-                    }
-                    Toast.makeText(PassengerListActivity.this, "click", Toast.LENGTH_SHORT).show();
-*/
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(PassengerListActivity.this)) {
-
-                            //If the draw over permission is not available open the settings screen
-                            //to grant the permission.
-                            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                                    Uri.parse("package:" + getPackageName()));
-                            startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION);
-                        } else {
-                            if(trip_text.getText().toString().equalsIgnoreCase("start trip"))
-                            {
-                                if(userslist.size()>0)
-                                {
-
-                                    /*if (distance(Double.valueOf(last_lat), Double.valueOf(last_lng), Double.valueOf(trip_lat2), Double.valueOf(trip_lng2)) < 0.1) { // if distance < 0.1 miles we take locations as equal*/
-                                        //do what you want to do...
-                                        addPassengers("active",holder);
-                                    /*}
-                                    else
-                                    {
-                                        new AlertDialog.Builder(context).setMessage("First reach at the pickup location!").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                dialogInterface.dismiss();
-                                            }
-                                        }).show();
-                                    }*/
-
-                                }
-                                else
-                                {
-                                    Toast.makeText(PassengerListActivity.this, "Please select passengers", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-
-                        }
-
-
-                        if(trip_text.getText().toString().equalsIgnoreCase("end trip"))
-                        {
-
-                           locationResult = new MyLocation.LocationResult(){
+                            MyLocation.LocationResult locationResult = new MyLocation.LocationResult(){
                                 @Override
                                 public void gotLocation(Location location){
 
@@ -1252,33 +1065,73 @@ public class PassengerListActivity extends AppCompatActivity {
                                         last_lng=String.valueOf(location.getLongitude());
                                         float distance = location.distanceTo(destLocation) /1000;
                                         Log.i("wherreeeeeeemyloc", "distance between "+ last_lat+" and  "+last_lng);
-                                        //Log.i("wherreeeeeee lllllll", ""+ location.getLatitude()+"   "+location.getLongitude());
 
                                     }
 
                                 }
                             };
-                            myLocation = new MyLocation();
+                            MyLocation myLocation = new MyLocation();
                             myLocation.getLocation(PassengerListActivity.this, locationResult);
 
 
-                            /*if (distance(Double.valueOf(last_lat), Double.valueOf(last_lng), Double.valueOf(trip_lat2), Double.valueOf(trip_lng2)) < 0.1) {*/
+                        /*if (boolean_permission) {
 
-                                updateDeactiveStatus("deactive",null);
-                                p_editor.putBoolean("firstTime",false);
-                                p_editor.commit();
-                           /* }
-                            else
-                            {
-                                new AlertDialog.Builder(context).setMessage("First reach at the pickup location!").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        dialogInterface.dismiss();
-                                    }
-                                }).show();
-                            }
-*/
+                        if (mPref.getString("service", "").matches("")) {
+                            medit.putString("service", "service").commit();
+
+                            Intent intent = new Intent(getApplicationContext(), GoogleService.class);
+                            startService(intent);
+
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Service is already running", Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Please enable the gps", Toast.LENGTH_SHORT).show();
+                    }
+                    Toast.makeText(PassengerListActivity.this, "click", Toast.LENGTH_SHORT).show();
+*/
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(PassengerListActivity.this)) {
+
+                                //If the draw over permission is not available open the settings screen
+                                //to grant the permission.
+                                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                        Uri.parse("package:" + getPackageName()));
+                                startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION);
+                            } else {
+
+                                if(userslist.size()>0)
+                                {
+
+                                    /*if (distance(Double.valueOf(last_lat), Double.valueOf(last_lng), Double.valueOf(trip_lat2), Double.valueOf(trip_lng2)) < 0.1) { // if distance < 0.1 miles we take locations as equal*/
+                                    //do what you want to do...
+                                    addPassengers("active",holder);
+                                    /*}
+                                    else
+                                    {
+                                        new AlertDialog.Builder(context).setMessage("First reach at the pickup location!").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                dialogInterface.dismiss();
+                                            }
+                                        }).show();
+                                    }*/
+
+                                }
+                                else
+                                {
+                                    Toast.makeText(PassengerListActivity.this, "Please select passengers", Toast.LENGTH_SHORT).show();
+                                }
+
+
+                            }
+
+                        }
+                    }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    }).show();
 
 
                 }

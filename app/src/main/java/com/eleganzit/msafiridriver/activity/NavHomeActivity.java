@@ -373,6 +373,115 @@ public class NavHomeActivity extends AppCompatActivity
         });
     }
 
+    public void logoutOfflineDriver() {
+        active.setVisibility(View.GONE);
+        toolbar_progress.setVisibility(View.VISIBLE);
+
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
+        final MyInterface myInterface = restAdapter.create(MyInterface.class);
+        myInterface.updateDriverstatus(pref.getString("driver_id", ""), status, new retrofit.Callback<retrofit.client.Response>() {
+            @Override
+            public void success(retrofit.client.Response response, retrofit.client.Response response2) {
+                toolbar_progress.setVisibility(View.GONE);
+                active.setVisibility(View.VISIBLE);
+                active.startAnimation(pop_out);
+                if (status.equalsIgnoreCase("active")) {
+                    active.setCompoundDrawablesWithIntrinsicBounds(R.drawable.green_dot, 0, 0, 0);
+
+                    active.setText("Go Offline");
+
+                } else {
+                    active.setCompoundDrawablesWithIntrinsicBounds(R.drawable.red_dot, 0, 0, 0);
+
+                    active.setText("Go Online");
+                }
+                final StringBuilder stringBuilder = new StringBuilder();
+                try {
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
+
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line);
+                    }
+                    Log.d("stringBuilder", "" + stringBuilder);
+                    //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
+
+                    if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
+
+                        JSONObject jsonObject = new JSONObject("" + stringBuilder);
+                        String status = jsonObject.getString("status");
+                        JSONArray jsonArray = null;
+                        if (status.equalsIgnoreCase("1")) {
+                            jsonArray = jsonObject.getJSONArray("data");
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+
+                                String dstatus = jsonObject1.getString("status");
+                                //Toast.makeText(NavHomeActivity.this, ""+dstatus, Toast.LENGTH_SHORT).show();
+
+                            }
+
+                            editor.clear();
+                            editor.commit();
+                            editor.apply();
+                            SharedPreferences p_pref=getSharedPreferences("passenger_pref", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor p_editor=p_pref.edit();
+                            SharedPreferences pref=getSharedPreferences("location_pref",MODE_PRIVATE);
+                            SharedPreferences.Editor editor=pref.edit();
+
+                            p_editor.clear();
+                            p_editor.commit();
+                            p_editor.apply();
+
+                            editor.clear();
+                            editor.commit();
+                            editor.apply();
+
+                            Intent intent = new Intent(NavHomeActivity.this, SignInActivity.class).putExtra("from","account");
+                            startActivity(intent);
+                            Bungee.slideLeft(NavHomeActivity.this);
+
+
+                            finish();
+                            Bungee.slideRight(NavHomeActivity.this);
+
+
+
+                        } else {
+
+                            Toast.makeText(NavHomeActivity.this, "Please try again", Toast.LENGTH_SHORT).show();
+
+                        }
+
+                        // Toast.makeText(RegistrationActivity.this, "scc "+Token, Toast.LENGTH_SHORT).show();
+
+                    } else {
+
+                        Toast.makeText(NavHomeActivity.this, "" + stringBuilder, Toast.LENGTH_SHORT).show();
+                    }
+
+
+                } catch (IOException e) {
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                active.setVisibility(View.VISIBLE);
+                active.startAnimation(pop_out);
+
+                toolbar_progress.setVisibility(View.GONE);
+                //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
+                Toast.makeText(NavHomeActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+    }
+
     public void getDriverdata() {
        /* active.setVisibility(View.GONE);
         toolbar_progress.setVisibility(View.VISIBLE);
@@ -581,6 +690,25 @@ public class NavHomeActivity extends AppCompatActivity
                     .replace(R.id.container, accountFrag, "TAG")
                     .addToBackStack(null)
                     .commit();
+        } else if(id == R.id.nav_logout) {
+            new android.app.AlertDialog.Builder(NavHomeActivity.this).setTitle("Logout").setMessage("Are you sure you want to logout?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            dialog.dismiss();
+                            status = "deactive";
+
+                            logoutOfflineDriver();
+
+                        }
+                    }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            }).show();
+
         }
 
         drawer.closeDrawer(GravityCompat.START);

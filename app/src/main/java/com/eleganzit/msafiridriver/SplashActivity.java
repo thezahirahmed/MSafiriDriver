@@ -23,6 +23,7 @@ import com.eleganzit.msafiridriver.utils.MyInterface;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import io.fabric.sdk.android.Fabric;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,7 +40,7 @@ public class SplashActivity extends AppCompatActivity {
     ImageView logo;
     SharedPreferences pref;
     SharedPreferences.Editor editor;
-    Animation flyout1,flyin1;
+    Animation flyout1, flyin1;
     String devicetoken;
 
 
@@ -53,19 +54,18 @@ public class SplashActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_splash);
 
-        Thread t=new Thread(new Runnable() {
+        Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                String Token= FirebaseInstanceId.getInstance().getToken();
-                if (Token!=null)
-                {
+                String Token = FirebaseInstanceId.getInstance().getToken();
+                if (Token != null) {
                     Log.d("Rrrrrmytokenn", Token);
 
-                    devicetoken=Token;
+                    devicetoken = Token;
                     StrictMode.ThreadPolicy threadPolicy = new StrictMode.ThreadPolicy.Builder().build();
                     StrictMode.setThreadPolicy(threadPolicy);
                     try {
-                        JSONObject jsonObject=new JSONObject(Token);
+                        JSONObject jsonObject = new JSONObject(Token);
                         Log.d("mytoken", jsonObject.getString("token"));
                         //devicetoken=jsonObject.getString("token");
 
@@ -74,11 +74,9 @@ public class SplashActivity extends AppCompatActivity {
                     }
                     //getLoginBoth(Token);
 
-                }
-                else
-                {
+                } else {
                     Looper.prepare();
-                    Log.d("No token","No token");
+                    Log.d("No token", "No token");
                     //Toast.makeText(SignInActivity.this, "No token", Toast.LENGTH_SHORT).show();
                 }
                 try {
@@ -87,18 +85,18 @@ public class SplashActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-        });t.start();
+        });
+        t.start();
 
 
         pref = getSharedPreferences("mysession", MODE_PRIVATE);
-        editor=pref.edit();
+        editor = pref.edit();
         flyin1 = AnimationUtils.loadAnimation(SplashActivity.this, R.anim.flyin1);
         flyout1 = AnimationUtils.loadAnimation(SplashActivity.this, R.anim.flyout1);
 
-        logo=findViewById(R.id.logo);
+        logo = findViewById(R.id.logo);
 
-        if(pref.getString("status","").equalsIgnoreCase("loggedin"))
-        {
+        if (pref.getString("status", "").equalsIgnoreCase("loggedin")) {
             logo.startAnimation(flyin1);
 
             flyin1.setAnimationListener(new Animation.AnimationListener() {
@@ -117,9 +115,7 @@ public class SplashActivity extends AppCompatActivity {
 
                 }
             });
-        }
-        else
-        {
+        } else {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -135,10 +131,10 @@ public class SplashActivity extends AppCompatActivity {
                         @Override
                         public void onAnimationEnd(Animation animation) {
 
-                            Intent i = new Intent(SplashActivity.this, SignInActivity.class).putExtra("from","splash");
+                            Intent i = new Intent(SplashActivity.this, SignInActivity.class).putExtra("from", "splash");
 
                             startActivity(i);
-                            overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 
                             finish();
                         }
@@ -150,7 +146,7 @@ public class SplashActivity extends AppCompatActivity {
                     });
 
                 }
-            },3200);
+            }, 3200);
         }
 
         /*new Handler().postDelayed(new Runnable() {
@@ -187,11 +183,10 @@ public class SplashActivity extends AppCompatActivity {
 
     }
 
-    public void getDriverdata()
-    {
+    public void getDriverdata() {
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.loginDriver(pref.getString("email",""), pref.getString("password",""),"" ,new retrofit.Callback<retrofit.client.Response>() {
+        myInterface.loginDriver(pref.getString("email", ""), pref.getString("password", ""), "", new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                 final StringBuilder stringBuilder = new StringBuilder();
@@ -202,7 +197,7 @@ public class SplashActivity extends AppCompatActivity {
                     while ((line = bufferedReader.readLine()) != null) {
                         stringBuilder.append(line);
                     }
-                    Log.d("dddddddstringBuilder", "" + stringBuilder);
+                    Log.d("dddddddstringBuilder", "sssss " + stringBuilder);
                     //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
 
                     if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
@@ -211,75 +206,34 @@ public class SplashActivity extends AppCompatActivity {
                         String status = jsonObject.getString("status");
                         String message = jsonObject.getString("message");
                         JSONArray jsonArray = null;
-                        if(status.equalsIgnoreCase("1"))
-                        {
+                        if (status.equalsIgnoreCase("1")) {
                             jsonArray = jsonObject.getJSONArray("data");
-                            for(int i=0;i<jsonArray.length();i++)
-                            {
-                                JSONObject jsonObject1=jsonArray.getJSONObject(i);
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObject1 = jsonArray.getJSONObject(i);
 
                                 String approvel = jsonObject1.getString("approvel");
 
-                                if(approvel.equalsIgnoreCase("yes"))
-                                {
-                                    logo.startAnimation(flyout1);
+                                if (approvel.equalsIgnoreCase("yes")) {
 
-                                    flyout1.setAnimationListener(new Animation.AnimationListener() {
-                                        @Override
-                                        public void onAnimationStart(Animation animation) {
+                                    loggedinDriver();
+                                     /*
+                                     Intent i = new Intent(SplashActivity.this, SignInActivity.class).putExtra("from","splash");
 
-                                        }
+                                     startActivity(i);
+                                     overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
 
-                                        @Override
-                                        public void onAnimationEnd(Animation animation) {
+                                     finish();*/
 
-                                            loggedinDriver();
-                                            /*
-                                            Intent i = new Intent(SplashActivity.this, SignInActivity.class).putExtra("from","splash");
+                                } else {
 
-                                            startActivity(i);
-                                            overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                                    updateToken();
 
-                                            finish();*/
-                                        }
-
-                                        @Override
-                                        public void onAnimationRepeat(Animation animation) {
-
-                                        }
-                                    });
-
-                                }
-                                else
-                                {
-                                    logo.startAnimation(flyout1);
-
-                                    flyout1.setAnimationListener(new Animation.AnimationListener() {
-                                        @Override
-                                        public void onAnimationStart(Animation animation) {
-
-                                        }
-
-                                        @Override
-                                        public void onAnimationEnd(Animation animation) {
-
-                                            updateToken();
-
-                                        }
-
-                                        @Override
-                                        public void onAnimationRepeat(Animation animation) {
-
-                                        }
-                                    });
                                 }
                                 editor.putString("approvel", approvel);
                                 editor.commit();
 
                             }
-                        }
-                        else
-                        {
+                        } else {
                             logo.startAnimation(flyout1);
 
                             flyout1.setAnimationListener(new Animation.AnimationListener() {
@@ -291,10 +245,10 @@ public class SplashActivity extends AppCompatActivity {
                                 @Override
                                 public void onAnimationEnd(Animation animation) {
 
-                                    Intent i = new Intent(SplashActivity.this, SignInActivity.class).putExtra("from","splash");
+                                    Intent i = new Intent(SplashActivity.this, SignInActivity.class).putExtra("from", "splash");
 
                                     startActivity(i);
-                                    overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 
                                     finish();
                                 }
@@ -304,14 +258,12 @@ public class SplashActivity extends AppCompatActivity {
 
                                 }
                             });
-                            Toast.makeText(SplashActivity.this, ""+message, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SplashActivity.this, "" + message, Toast.LENGTH_SHORT).show();
                         }
 
                         // Toast.makeText(RegistrationActivity.this, "scc "+Token, Toast.LENGTH_SHORT).show();
 
-                    }
-                    else
-                    {
+                    } else {
 
                         logo.startAnimation(flyout1);
 
@@ -324,10 +276,10 @@ public class SplashActivity extends AppCompatActivity {
                             @Override
                             public void onAnimationEnd(Animation animation) {
 
-                                Intent i = new Intent(SplashActivity.this, SignInActivity.class).putExtra("from","splash");
+                                Intent i = new Intent(SplashActivity.this, SignInActivity.class).putExtra("from", "splash");
 
                                 startActivity(i);
-                                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 
                                 finish();
                             }
@@ -337,7 +289,12 @@ public class SplashActivity extends AppCompatActivity {
 
                             }
                         });
-                        Toast.makeText(SplashActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                        if (stringBuilder.toString().equalsIgnoreCase("null") || stringBuilder == null) {
+                            Toast.makeText(SplashActivity.this, "Please try again", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(SplashActivity.this, "" + stringBuilder, Toast.LENGTH_SHORT).show();
+                        }
+
                     }
 
 
@@ -362,10 +319,10 @@ public class SplashActivity extends AppCompatActivity {
                     @Override
                     public void onAnimationEnd(Animation animation) {
 
-                        Intent i = new Intent(SplashActivity.this, SignInActivity.class).putExtra("from","splash");
+                        Intent i = new Intent(SplashActivity.this, SignInActivity.class).putExtra("from", "splash");
 
                         startActivity(i);
-                        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 
                         finish();
                     }
@@ -382,13 +339,12 @@ public class SplashActivity extends AppCompatActivity {
         });
     }
 
-    public void loggedinDriver()
-    {
+    public void loggedinDriver() {
 
-        Log.d("devicetoken",""+devicetoken);
+        Log.d("devicetoken", "" + devicetoken);
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.loginDriver(pref.getString("email",""), pref.getString("password",""),devicetoken, new retrofit.Callback<retrofit.client.Response>() {
+        myInterface.loginDriver(pref.getString("email", ""), pref.getString("password", ""), devicetoken, new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
 
@@ -408,32 +364,50 @@ public class SplashActivity extends AppCompatActivity {
                         JSONObject jsonObject = new JSONObject("" + stringBuilder);
                         String status = jsonObject.getString("status");
                         JSONArray jsonArray = null;
-                        if(status.equalsIgnoreCase("1"))
-                        {
-                            startActivity(new Intent(SplashActivity.this,NavHomeActivity.class).putExtra("from","splash"));
-                            overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                        if (status.equalsIgnoreCase("1")) {
+                            logo.startAnimation(flyout1);
 
-                            finish();
+                            flyout1.setAnimationListener(new Animation.AnimationListener() {
+                                @Override
+                                public void onAnimationStart(Animation animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animation animation) {
+
+                                    startActivity(new Intent(SplashActivity.this, NavHomeActivity.class).putExtra("from", "splash"));
+                                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+
+                                    finish();
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animation animation) {
+
+                                }
+                            });
+
+                        } else {
+
                         }
-                        else
-                        {
 
+                    } else {
+                        if (stringBuilder.toString().equalsIgnoreCase("null") || stringBuilder == null) {
+                            Toast.makeText(SplashActivity.this, "Please try again", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(SplashActivity.this, "" + stringBuilder, Toast.LENGTH_SHORT).show();
                         }
 
-                    }
-                    else
-                    {
-
-                        Toast.makeText(SplashActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
                     }
 
 
                 } catch (IOException e) {
-                    Toast.makeText(SplashActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SplashActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
 
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Toast.makeText(SplashActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SplashActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
 
                 }
 
@@ -452,13 +426,12 @@ public class SplashActivity extends AppCompatActivity {
         });
     }
 
-    public void updateToken()
-    {
+    public void updateToken() {
 
-        Log.d("devicetoken",""+devicetoken);
+        Log.d("devicetoken", "" + devicetoken);
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.loginDriver(pref.getString("email",""), pref.getString("password",""),devicetoken, new retrofit.Callback<retrofit.client.Response>() {
+        myInterface.loginDriver(pref.getString("email", ""), pref.getString("password", ""), devicetoken, new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
 
@@ -478,34 +451,51 @@ public class SplashActivity extends AppCompatActivity {
                         JSONObject jsonObject = new JSONObject("" + stringBuilder);
                         String status = jsonObject.getString("status");
                         JSONArray jsonArray = null;
-                        if(status.equalsIgnoreCase("1"))
-                        {
-                            Intent i = new Intent(SplashActivity.this, ProfileActivity.class).putExtra("from","splash");
+                        if (status.equalsIgnoreCase("1")) {
+                            logo.startAnimation(flyout1);
 
-                            startActivity(i);
-                            overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                            flyout1.setAnimationListener(new Animation.AnimationListener() {
+                                @Override
+                                public void onAnimationStart(Animation animation) {
 
-                            finish();
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animation animation) {
+
+                                    Intent i = new Intent(SplashActivity.this, ProfileActivity.class).putExtra("from", "splash");
+
+                                    startActivity(i);
+                                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+
+                                    finish();
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animation animation) {
+
+                                }
+                            });
+                        } else {
+
                         }
-                        else
-                        {
 
+                    } else {
+                        if (stringBuilder.toString().equalsIgnoreCase("null") || stringBuilder == null) {
+                            Toast.makeText(SplashActivity.this, "Please try again", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(SplashActivity.this, "" + stringBuilder, Toast.LENGTH_SHORT).show();
                         }
 
-                    }
-                    else
-                    {
-
-                        Toast.makeText(SplashActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
                     }
 
 
                 } catch (IOException e) {
-                    Toast.makeText(SplashActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SplashActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
 
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Toast.makeText(SplashActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SplashActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
 
                 }
 

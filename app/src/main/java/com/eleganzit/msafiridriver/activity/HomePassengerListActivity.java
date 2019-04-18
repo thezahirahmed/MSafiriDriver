@@ -118,6 +118,7 @@ public class HomePassengerListActivity extends AppCompatActivity {
         progress.setVisibility(View.VISIBLE);
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
+        progressDialog.show();
 
         Log.d("ppppppppstringBuilder", "" + trip_id);
 
@@ -126,6 +127,7 @@ public class HomePassengerListActivity extends AppCompatActivity {
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                 ArrayList<PassengerData> arrayList = new ArrayList<>();
                 progress.setVisibility(View.GONE);
+                progressDialog.dismiss();
 
                 final StringBuilder stringBuilder = new StringBuilder();
                 try {
@@ -170,9 +172,23 @@ public class HomePassengerListActivity extends AppCompatActivity {
                                 String fname = jsonObject1.getString("fname");
                                 String lname = jsonObject1.getString("lname");
                                 String photo = jsonObject1.getString("photo");
+                                String name;
+                                name=fname+" "+lname;
+                                JSONObject jsonObject2=jsonObject1.getJSONObject("passanger");
+                                JSONArray jsonArray1=jsonObject2.getJSONArray("data");
 
-                                PassengerData passengerData=new PassengerData(id,user_id,rating,rstatus,fname,lname,photo);
-                                arrayList.add(passengerData);
+                                for (int j=0;j<jsonArray1.length();j++)
+                                {
+                                    JSONObject jsonObject3=jsonArray1.getJSONObject(j);
+                                    String passanger_id = jsonObject3.getString("passanger_id");
+                                    String passanger_name = jsonObject3.getString("passanger_name");
+                                    String book_id = jsonObject3.getString("book_id");
+
+                                    PassengerData passengerData=new PassengerData(id,passanger_id,rating,rstatus,passanger_name,lname,photo);
+                                    arrayList.add(passengerData);
+                                }
+
+
                             }
                             passengers.setAdapter(new PassengerAdapter(arrayList,HomePassengerListActivity.this));
                         }
@@ -206,6 +222,7 @@ public class HomePassengerListActivity extends AppCompatActivity {
             @Override
             public void failure(RetrofitError error) {
                 progress.setVisibility(View.GONE);
+                progressDialog.dismiss();
 
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
                 Toast.makeText(HomePassengerListActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
@@ -246,7 +263,7 @@ public class HomePassengerListActivity extends AppCompatActivity {
                     .load(passengerData.getPhoto()).apply(new RequestOptions().placeholder(R.drawable.pr))
                     .into(holder.p_photo);
 
-            holder.p_name.setText(passengerData.getFname()+" "+passengerData.getLname());
+            holder.p_name.setText(passengerData.getFname()+"");
 
         }
 

@@ -34,6 +34,13 @@ public interface MyInterface
     );
 
     @retrofit.http.FormUrlEncoded
+    @retrofit.http.POST("/driverRemove")
+    public void removeDriver(@retrofit.http.Field("driver_id") String driver_id,
+                                Callback<Response> callback
+    );
+
+
+    @retrofit.http.FormUrlEncoded
     @retrofit.http.POST("/driverLogin")
     public void loginDriver(@retrofit.http.Field("email") String email,
                             @retrofit.http.Field("password") String password,
@@ -194,6 +201,15 @@ public interface MyInterface
     @retrofit.http.POST("/updateDrivertrip")
     public void updateTripStatus(@retrofit.http.Field("id") String id,
                                  @retrofit.http.Field("status") String status,
+                                 Callback<Response> callback
+    );
+
+
+    @retrofit.http.FormUrlEncoded
+    @retrofit.http.POST("/updateDrivertrip")
+    public void cancelTrip(@retrofit.http.Field("id") String id,
+                                 @retrofit.http.Field("status") String status,
+                                 @retrofit.http.Field("cancel_reason") String cancel_reason,
                                  Callback<Response> callback
     );
 
