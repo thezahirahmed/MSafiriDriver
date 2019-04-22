@@ -5,6 +5,7 @@ import android.animation.Animator;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -106,9 +107,9 @@ public class NavHomeActivity extends AppCompatActivity
     public static ImageView fab;
     AdvanceDrawerLayout drawer;
     private String status = "deactive";
-    ProgressBar toolbar_progress;
+    public static ProgressBar toolbar_progress;
     RelativeLayout prog_rel;
-
+    ProgressDialog progressDialog;
     public static float convertPixelsToDp(float px, Context context) {
         return px / ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
     }
@@ -123,8 +124,10 @@ public class NavHomeActivity extends AppCompatActivity
         home_title = findViewById(R.id.home_title);
         SharedPreferences p_pref = getSharedPreferences("passenger_pref", Context.MODE_PRIVATE);
         SharedPreferences.Editor p_editor = p_pref.edit();
-
-
+        progressDialog=new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setMessage("Please wait");
         Log.d("frommmmm", getIntent().getStringExtra("from") + "   " + getIntent().getStringExtra("title"));
 
         if (getIntent().getStringExtra("from").equalsIgnoreCase("notification")) {
@@ -376,7 +379,7 @@ public class NavHomeActivity extends AppCompatActivity
     public void logoutOfflineDriver() {
         active.setVisibility(View.GONE);
         toolbar_progress.setVisibility(View.VISIBLE);
-
+        progressDialog.show();
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
         myInterface.updateDriverstatus(pref.getString("driver_id", ""), status, new retrofit.Callback<retrofit.client.Response>() {
@@ -384,6 +387,7 @@ public class NavHomeActivity extends AppCompatActivity
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                 toolbar_progress.setVisibility(View.GONE);
                 active.setVisibility(View.VISIBLE);
+                progressDialog.dismiss();
                 active.startAnimation(pop_out);
                 if (status.equalsIgnoreCase("active")) {
                     active.setCompoundDrawablesWithIntrinsicBounds(R.drawable.green_dot, 0, 0, 0);
@@ -473,7 +477,7 @@ public class NavHomeActivity extends AppCompatActivity
             public void failure(RetrofitError error) {
                 active.setVisibility(View.VISIBLE);
                 active.startAnimation(pop_out);
-
+                progressDialog.dismiss();
                 toolbar_progress.setVisibility(View.GONE);
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
                 Toast.makeText(NavHomeActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
@@ -527,22 +531,7 @@ public class NavHomeActivity extends AppCompatActivity
                                 editor.putString("vehicle_name", vehicle_name);
                                 dstatus = jsonObject1.getString("status");
                                 editor.putString("dstatus", dstatus);
-                                /*String street = jsonObject1.getString("street");
-                                editor.putString("street", street);
-                                String city = jsonObject1.getString("city");
-                                editor.putString("city", city);
-                                String state = jsonObject1.getString("state");
-                                editor.putString("state", state);
-                                String postal_code = jsonObject1.getString("postal_code");
-                                editor.putString("postal_code", postal_code);
-                                String country = jsonObject1.getString("country");
-                                editor.putString("country", country);
-                                String mobile_number = jsonObject1.getString("mobile_number");
-                                editor.putString("mobile_number", mobile_number);
-                                String dob = jsonObject1.getString("dob");
-                                editor.putString("dob", dob);
-                                String gender = jsonObject1.getString("gender");
-                                editor.putString("gender", gender);*/
+
                                 editor.commit();
 
                             }

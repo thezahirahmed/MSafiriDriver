@@ -393,6 +393,7 @@
                     android:paddingLeft="10dp"
                     android:paddingTop="6dp"
                     android:paddingBottom="6dp"
+                    android:visibility="gone"
                     android:layout_marginTop="5dp"
                     android:drawableRight="@drawable/calender"
                     android:layout_width="match_parent"

@@ -175,19 +175,31 @@ public class HomePassengerListActivity extends AppCompatActivity {
                                 String name;
                                 name=fname+" "+lname;
                                 JSONObject jsonObject2=jsonObject1.getJSONObject("passanger");
-                                JSONArray jsonArray1=jsonObject2.getJSONArray("data");
-
-                                for (int j=0;j<jsonArray1.length();j++)
+                                if(jsonObject2!=null || !jsonObject2.toString().equalsIgnoreCase(""))
                                 {
-                                    JSONObject jsonObject3=jsonArray1.getJSONObject(j);
-                                    String passanger_id = jsonObject3.getString("passanger_id");
-                                    String passanger_name = jsonObject3.getString("passanger_name");
-                                    String book_id = jsonObject3.getString("book_id");
+                                    Log.d("tttttttttt","passenger not null");
+                                    JSONArray jsonArray1=jsonObject2.getJSONArray("data");
 
-                                    PassengerData passengerData=new PassengerData(id,passanger_id,rating,rstatus,passanger_name,lname,photo);
+                                    for (int j=0;j<jsonArray1.length();j++)
+                                    {
+                                        Log.d("tttttttttt","second for");
+                                        JSONObject jsonObject3=jsonArray1.getJSONObject(j);
+                                        String passanger_id = jsonObject3.getString("passanger_id");
+                                        String passanger_name = jsonObject3.getString("passanger_name");
+                                        String book_id = jsonObject3.getString("book_id");
+
+                                        PassengerData passengerData=new PassengerData(id,passanger_id,rating,rstatus,passanger_name,lname,photo);
+                                        arrayList.add(passengerData);
+                                    }
+
+
+                                }
+                                else
+                                {
+                                    Log.d("tttttttttt","pass null");
+                                    PassengerData passengerData=new PassengerData(id,user_id,rating,rstatus,fname,lname,photo);
                                     arrayList.add(passengerData);
                                 }
-
 
                             }
                             passengers.setAdapter(new PassengerAdapter(arrayList,HomePassengerListActivity.this));

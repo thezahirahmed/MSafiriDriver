@@ -237,7 +237,7 @@ public class BankAccountActivity extends AppCompatActivity {
                     edcountry.setError("Country cannot be empty");
                     edcountry.requestFocus();
                 }
-                else if(edbirth.getText().toString().isEmpty() || edbirth.getText().toString().equalsIgnoreCase("0000-00-00"))
+                /*else if(edbirth.getText().toString().isEmpty() || edbirth.getText().toString().equalsIgnoreCase("0000-00-00"))
                 {
                     YoYo.with(Techniques.Shake)
                             .duration(700)
@@ -245,7 +245,7 @@ public class BankAccountActivity extends AppCompatActivity {
                             .playOn(edbirth);
                     edbirth.setError("Birth date cannot be empty");
                     edbirth.requestFocus();
-                }
+                }*/
                 else
                 {
                     /*if(data.equalsIgnoreCase("0"))

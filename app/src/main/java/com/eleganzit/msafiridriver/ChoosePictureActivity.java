@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -63,12 +64,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import me.nereo.multi_image_selector.MultiImageSelector;
@@ -98,6 +106,8 @@ public class ChoosePictureActivity extends AppCompatActivity {
     private static final int REQUEST_IMAGE = 101;
     protected static final int REQUEST_STORAGE_READ_ACCESS_PERMISSION = 102;
     private ArrayList<String> mSelectPath;
+    private SimpleDateFormat dateFormatter;
+    public static final String DATE_FORMAT = "yyyyMMdd_HHmmss";
 
     @Override
     protected void onResume() {
@@ -126,6 +136,8 @@ public class ChoosePictureActivity extends AppCompatActivity {
         final ImageView back=findViewById(R.id.back);
         back.setEnabled(true);
         back.setClickable(true);
+        dateFormatter = new SimpleDateFormat(
+                DATE_FORMAT, Locale.US);
         long transitionDuration = 400;
         EasyTransition.enter(
                 this,
@@ -453,6 +465,36 @@ public class ChoosePictureActivity extends AppCompatActivity {
 
 
                     mediapath=""+sb.toString().trim();
+                    file = new File(mediapath);
+                    int file_size = Integer.parseInt(String.valueOf(file.length() / 1024));
+                    Log.d("file_size", "mediapath1111 : " + mediapath + " ---- " + file_size);
+                    file=new File(mediapath);
+
+                    File f = new File(getCacheDir(), "ztestttt");
+                    try {
+                        f.createNewFile();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+//Convert bitmap to byte array
+                    Bitmap bitmap = decodeFile(file);
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
+                    byte[] bitmapdata = bos.toByteArray();
+
+//write the bytes in file
+                    try {
+                        FileOutputStream fos = new FileOutputStream(f);
+
+                        fos.write(bitmapdata);
+                        fos.flush();
+                        fos.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    int file_size2 = Integer.parseInt(String.valueOf(f.length() / 1024));
+                    Log.d("file_size", "mediapath2222 : " + mediapath + " ---- " + file_size2);
 
                 Glide
                         .with(ChoosePictureActivity.this)
@@ -472,6 +514,61 @@ public class ChoosePictureActivity extends AppCompatActivity {
         }
 
     }
+
+    private Bitmap decodeFile(File f) {
+        Bitmap b = null;
+
+        //Decode image size
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(f);
+            BitmapFactory.decodeStream(fis, null, o);
+            fis.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        int IMAGE_MAX_SIZE = 1024;
+        int scale = 1;
+        if (o.outHeight > IMAGE_MAX_SIZE || o.outWidth > IMAGE_MAX_SIZE) {
+            scale = (int) Math.pow(2, (int) Math.ceil(Math.log(IMAGE_MAX_SIZE /
+                    (double) Math.max(o.outHeight, o.outWidth)) / Math.log(0.5)));
+        }
+
+        //Decode with inSampleSize
+        BitmapFactory.Options o2 = new BitmapFactory.Options();
+        o2.inSampleSize = scale;
+        try {
+            fis = new FileInputStream(f);
+            b = BitmapFactory.decodeStream(fis, null, o2);
+            fis.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Log.d("ffffffffff", "Width :" + b.getWidth() + " Height :" + b.getHeight());
+
+        File destFile = new File(file, "img_"
+                + dateFormatter.format(new Date()).toString() + ".png");
+        try {
+            FileOutputStream out = new FileOutputStream(destFile);
+            b.compress(Bitmap.CompressFormat.PNG, 100, out);
+            out.flush();
+            out.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return b;
+    }
+
 
     private void uploadProfile() {
 
@@ -510,6 +607,11 @@ public class ChoosePictureActivity extends AppCompatActivity {
                         }
                         else
                         {
+                            Glide
+                                    .with(ChoosePictureActivity.this)
+                                    .load(photo)
+                                    .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop())
+                                    .into(profile_pic);
                             Toast.makeText(ChoosePictureActivity.this, "Profile picture updated", Toast.LENGTH_SHORT).show();
                         }
 

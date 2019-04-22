@@ -250,6 +250,7 @@ public class RegisterationActivity extends AppCompatActivity {
 
             }
         });
+
         company.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -292,6 +293,7 @@ public class RegisterationActivity extends AppCompatActivity {
 
                         JSONObject jsonObject = new JSONObject("" + stringBuilder);
                         String status = jsonObject.getString("status");
+                        String message = jsonObject.getString("message");
                         JSONArray jsonArray = null;
                         if(status.equalsIgnoreCase("1"))
                         {
@@ -318,22 +320,39 @@ public class RegisterationActivity extends AppCompatActivity {
                                 editor.commit();
                             }
 
-                            addBankdetails();
+                            if(type.equalsIgnoreCase("company"))
+                            {
+                                editor.putString("status", "loggedin");
+                                editor.commit();
+                                startActivity(new Intent(RegisterationActivity.this,NavHomeActivity.class).putExtra("from","register"));
+                                finish();
+                            }
+                            else
+                            {
+                                addBankdetails();
+                            }
                             //Toast.makeText(RegistrationActivity.this, "" + jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
                             /*startActivity(new Intent(RegisterationActivity.this, WelcomeActivity.class));
                             overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                             finish();*/
                         }
+                        else
+                        {
+                            progressDialog.dismiss();
+
+                        }
 
                         // Toast.makeText(RegistrationActivity.this, "scc "+Token, Toast.LENGTH_SHORT).show();
 
                         if (jsonObject.getString("status").equalsIgnoreCase("0")) {
-                            GFMinimalNotification mCurrentNotification = GFMinimalNotification.make(main, "User already exist", GFMinimalNotification.LENGTH_LONG, GFMinimalNotification.TYPE_ERROR);
+                            progressDialog.dismiss();
+                            GFMinimalNotification mCurrentNotification = GFMinimalNotification.make(main, ""+message, GFMinimalNotification.LENGTH_LONG, GFMinimalNotification.TYPE_ERROR);
                             mCurrentNotification.setDirection(GFMinimalNotification.DIRECTION_TOP);
                             mCurrentNotification.setHelperImage(R.drawable.group_40);
                             mCurrentNotification.show();
                         }
                         if (jsonObject.getString("status").equalsIgnoreCase("2")) {
+                            progressDialog.dismiss();
                             //Toast.makeText(RegistrationActivity.this, "" + jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
                             GFMinimalNotification mCurrentNotification = GFMinimalNotification.make(main, jsonObject.getString("message"), GFMinimalNotification.LENGTH_LONG, GFMinimalNotification.TYPE_ERROR);
                             mCurrentNotification.setDirection(GFMinimalNotification.DIRECTION_TOP);
@@ -343,14 +362,15 @@ public class RegisterationActivity extends AppCompatActivity {
                     }
                     else
                     {
-
+                        progressDialog.dismiss();
                         Toast.makeText(RegisterationActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
                     }
 
 
                 } catch (IOException e) {
-
+                    progressDialog.dismiss();
                 } catch (JSONException e) {
+                    progressDialog.dismiss();
                     e.printStackTrace();
                 }
 
@@ -407,6 +427,8 @@ public class RegisterationActivity extends AppCompatActivity {
                                 }
                                 else
                                 {
+                                    progressDialog.dismiss();
+
                                     Toast.makeText(RegisterationActivity.this, ""+jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
                                 }
 
@@ -415,15 +437,18 @@ public class RegisterationActivity extends AppCompatActivity {
                             }
                             else
                             {
+                                progressDialog.dismiss();
 
                                 Toast.makeText(RegisterationActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
                             }
 
                         } catch (IOException e) {
                             Toast.makeText(RegisterationActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                            progressDialog.dismiss();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            progressDialog.dismiss();
                             Toast.makeText(RegisterationActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
 

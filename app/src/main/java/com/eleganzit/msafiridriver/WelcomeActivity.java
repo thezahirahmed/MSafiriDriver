@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.eleganzit.msafiridriver.uploadImage.CallAPiActivity;
 import com.eleganzit.msafiridriver.uploadImage.GetResponse;
 import com.eleganzit.msafiridriver.utils.MyInterface;
+import com.github.gfranks.minimal.notification.GFMinimalNotification;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -76,7 +77,7 @@ public class WelcomeActivity extends AppCompatActivity {
             }
         });
 
-        uploadVehicle();
+        blankaddVehicledetail();
 
     }
 
@@ -257,6 +258,91 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
 
+
+    public void blankaddVehicledetail()
+    {
+        progressDialog.show();
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
+        final MyInterface myInterface = restAdapter.create(MyInterface.class);
+        myInterface.blankaddVehicledetail(pref.getString("driver_id", ""), "1", "", "","", "", "", "",new retrofit.Callback<retrofit.client.Response>() {
+            @Override
+            public void success(retrofit.client.Response response, retrofit.client.Response response2) {
+
+                //progressDialog.dismiss();
+                final StringBuilder stringBuilder = new StringBuilder();
+                try {
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
+
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line);
+                    }
+                    Log.d("stringBuilder", "" + stringBuilder);
+                    //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
+
+                    if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
+
+                        JSONObject jsonObject = new JSONObject("" + stringBuilder);
+                        String status = jsonObject.getString("status");
+                        String message = jsonObject.getString("message");
+                        JSONArray jsonArray = null;
+                        if(status.equalsIgnoreCase("1"))
+                        {
+
+                            uploadVehicleProfile();
+
+                            //addBankdetails();
+                            //Toast.makeText(RegistrationActivity.this, "" + jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+                            /*startActivity(new Intent(RegisterationActivity.this, WelcomeActivity.class));
+                            overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                            finish();*/
+                        }
+                        else
+                        {
+                            progressDialog.dismiss();
+                            Toast.makeText(WelcomeActivity.this, "" + jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+
+                        }
+
+                        // Toast.makeText(RegistrationActivity.this, "scc "+Token, Toast.LENGTH_SHORT).show();
+
+                        if (jsonObject.getString("status").equalsIgnoreCase("0")) {
+                            Toast.makeText(WelcomeActivity.this, "" + jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+                            progressDialog.dismiss();
+
+                        }
+                        if (jsonObject.getString("status").equalsIgnoreCase("2")) {
+                            Toast.makeText(WelcomeActivity.this, "" + jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+                            progressDialog.dismiss();
+
+                        }
+                    }
+                    else
+                    {
+                        progressDialog.dismiss();
+
+                        Toast.makeText(WelcomeActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                    }
+
+
+                } catch (IOException e) {
+                    progressDialog.dismiss();
+
+                } catch (JSONException e) {
+                    progressDialog.dismiss();
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                progressDialog.dismiss();
+                //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
+                Toast.makeText(WelcomeActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     private void uploadVehicle() {
 

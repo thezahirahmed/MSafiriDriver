@@ -145,7 +145,7 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
 
 
-                Log.d("apprdataaaa",""+profile_status+"    "+docs_status+"    "+vechicle_status+"   "+bank_status);
+                Log.d("apprdataaaa",photo+"    "+profile_status+"    "+docs_status+"    "+vechicle_status+"   "+bank_status);
 
                 if(txtsubmit.getText().toString().equalsIgnoreCase("Submit for Approval"))
                 {

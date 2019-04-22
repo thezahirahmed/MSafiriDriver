@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.eleganzit.msafiridriver.ChoosePictureActivity;
 import com.eleganzit.msafiridriver.R;
 import com.eleganzit.msafiridriver.uploadImage.CallAPiActivity;
 import com.eleganzit.msafiridriver.uploadImage.GetResponse;
@@ -494,15 +495,17 @@ public class RegisterChoosePictureActivity extends AppCompatActivity {
 
                         if(photo==null || photo.equalsIgnoreCase("null"))
                         {
-                            Toast.makeText(RegisterChoosePictureActivity.this, "Please select another picture", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterChoosePictureActivity.this, "Image format doesn't support", Toast.LENGTH_SHORT).show();
                         }
-
-                        Glide
-                                .with(RegisterChoosePictureActivity.this)
-                                .load(photo)
-                                .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop())
-                                .into(profile_pic);
-                        Toast.makeText(RegisterChoosePictureActivity.this, "Profile picture updated", Toast.LENGTH_SHORT).show();
+                        else
+                        {
+                            Glide
+                                    .with(RegisterChoosePictureActivity.this)
+                                    .load(photo)
+                                    .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop())
+                                    .into(profile_pic);
+                            Toast.makeText(RegisterChoosePictureActivity.this, "Profile picture updated", Toast.LENGTH_SHORT).show();
+                        }
                     }
 
                 }

@@ -3,6 +3,7 @@ package com.eleganzit.msafiridriver.fragment;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -31,6 +32,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.eleganzit.msafiridriver.PersonalInfoActivity;
@@ -87,7 +90,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     TextView trip_title;
     CardView card,upcoming_card,past_card;
     String trip_type="current";
-
+    ProgressDialog progressDialog;
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -114,6 +117,11 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         {
             NavHomeActivity.fab.setVisibility(View.GONE);
         }
+        progressDialog=new ProgressDialog(getActivity());
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setMessage("Please wait...");
+
         trip_title = v.findViewById(R.id.trip_title);
         card = v.findViewById(R.id.card);
         upcoming_card = v.findViewById(R.id.upcoming_card);
@@ -166,7 +174,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onResume() {
         super.onResume();
-
+        getDriverdata();
         current.setBackgroundResource(R.drawable.tab_left_light_bg);
         past.setBackgroundResource(R.drawable.tab_right_dark_bg);
         no_trips.setVisibility(View.GONE);
@@ -349,6 +357,91 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         });
 
     }
+
+    public void getDriverdata() {
+        /*NavHomeActivity.active.setVisibility(View.GONE);
+        NavHomeActivity.toolbar_progress.setVisibility(View.VISIBLE);*/
+        progressDialog.show();
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
+        final MyInterface myInterface = restAdapter.create(MyInterface.class);
+        myInterface.getDriverdata(pref.getString("driver_id", ""), new retrofit.Callback<retrofit.client.Response>() {
+            @Override
+            public void success(retrofit.client.Response response, retrofit.client.Response response2) {
+                /*NavHomeActivity.active.setVisibility(View.VISIBLE);
+                NavHomeActivity.toolbar_progress.setVisibility(View.GONE);*/
+                progressDialog.dismiss();
+                final StringBuilder stringBuilder = new StringBuilder();
+                try {
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
+
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line);
+                    }
+                    Log.d("dddddddstringBuilder", "" + stringBuilder);
+                    //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
+
+                    if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
+
+                        JSONObject jsonObject = new JSONObject("" + stringBuilder);
+                        String status = jsonObject.getString("status");
+                        JSONArray jsonArray = null;
+                        String dstatus = "";
+                        if (status.equalsIgnoreCase("1")) {
+                            jsonArray = jsonObject.getJSONArray("data");
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+
+                                dstatus = jsonObject1.getString("status");
+                                editor.putString("dstatus", dstatus);
+
+                                editor.commit();
+
+                            }
+
+                            if (pref.getString("dstatus", "").equalsIgnoreCase("active")) {
+                                NavHomeActivity.active.setCompoundDrawablesWithIntrinsicBounds(R.drawable.green_dot, 0, 0, 0);
+                                NavHomeActivity.active.setText("Go Offline");
+                                status = "active";
+                            } else {
+                                NavHomeActivity.active.setCompoundDrawablesWithIntrinsicBounds(R.drawable.red_dot, 0, 0, 0);
+                                NavHomeActivity.active.setText("Go Online");
+                                status = "deactive";
+                            }
+
+
+                        } else {
+
+                        }
+
+                        // Toast.makeText(RegistrationActivity.this, "scc "+Token, Toast.LENGTH_SHORT).show();
+
+                    } else {
+
+                        Toast.makeText(getActivity(), "" + stringBuilder, Toast.LENGTH_SHORT).show();
+                    }
+
+
+                } catch (IOException e) {
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                /*NavHomeActivity.active.setVisibility(View.VISIBLE);
+                NavHomeActivity.toolbar_progress.setVisibility(View.GONE);*/
+                progressDialog.dismiss();
+//Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+    }
+
 
     public void getDriverTrips(final String trip_type)
     {

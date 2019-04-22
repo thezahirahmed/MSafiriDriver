@@ -96,6 +96,7 @@ public class RatingActivity extends Fragment {
         //progress_bar.setVisibility(View.VISIBLE);
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
+        Log.d("lodfjhfdgsdf",pref.getString("driver_id","")+"");
         myInterface.getratingDetails(pref.getString("driver_id",""), new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
@@ -145,7 +146,7 @@ public class RatingActivity extends Fragment {
                                     jsonArray2 = ratedusers.getJSONArray("datauser");
                                     for(int j=0;j<jsonArray2.length();j++)
                                     {
-                                        JSONObject injsonObject=jsonArray2.getJSONObject(i);
+                                        JSONObject injsonObject=jsonArray2.getJSONObject(j);
                                         trip_id=injsonObject.getString("trip_id");
                                         user_id=injsonObject.getString("user_id");
                                         rating=injsonObject.getString("rating");
@@ -154,6 +155,9 @@ public class RatingActivity extends Fragment {
                                         fname=injsonObject.getString("fname");
                                         lname=injsonObject.getString("lname");
                                         photo=injsonObject.getString("photo");
+
+                                        Log.d("datanameeee",fname+"    "+lname);
+
                                         RatingsData ratingsData=new RatingsData(trip_id,user_id,rating,trip_status,datetime,fname,lname,photo,"");
                                         getTenantses.add(ratingsData);
                                     }
@@ -248,7 +252,7 @@ public class RatingActivity extends Fragment {
 
             holder.username.setText(ratingsData.getFname()+" "+ratingsData.getLname());
            // holder.user_ratingbar.setNumStars(Integer.parseInt(ratingsData.getRating()));
-            holder.user_ratingbar.setRating(Integer.parseInt(ratingsData.getRating()));
+            holder.user_ratingbar.setRating(Float.parseFloat(ratingsData.getRating()+""));
             holder.main.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

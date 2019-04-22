@@ -369,8 +369,9 @@ public class SensorService extends Service implements GoogleApiClient.Connection
                 //Toast.makeText(SensorService.this, "location update", Toast.LENGTH_SHORT).show();
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     public void run() {
+                        updatelastLocation();
 
-                        MyLocation.LocationResult locationResult = new MyLocation.LocationResult(){
+                        /*MyLocation.LocationResult locationResult = new MyLocation.LocationResult(){
                             @Override
                             public void gotLocation(Location location){
 
@@ -385,9 +386,8 @@ public class SensorService extends Service implements GoogleApiClient.Connection
                                     double lng=Double.parseDouble(pref.getString("dest_lng",""));
                                     destLocation.setLatitude(lat);
                                     destLocation.setLongitude(lng);
-                                    /*last_lat=String.valueOf(location.getLatitude());
-                                    last_lng=String.valueOf(location.getLongitude());*/
-                                    updatelastLocation();
+                                    *//*last_lat=String.valueOf(location.getLatitude());
+                                    last_lng=String.valueOf(location.getLongitude());*//*
                                     float distance = location.distanceTo(destLocation) /1000;
                                     Log.i("wherreeeeeee lllllll", "distance between "+ location.getLatitude()+" and  "+location.getLongitude()+" is "+ distance);
                                     //Log.i("wherreeeeeee lllllll", ""+ location.getLatitude()+"   "+location.getLongitude());
@@ -398,7 +398,7 @@ public class SensorService extends Service implements GoogleApiClient.Connection
                         };
                         MyLocation myLocation = new MyLocation();
                         myLocation.getLocation(SensorService.this, locationResult);
-
+*/
                         //Toast.makeText(SensorService.this, "location update", Toast.LENGTH_SHORT).show();
                     }
                 },10000);

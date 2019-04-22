@@ -226,8 +226,8 @@ public class RegisterBankAccountActivity extends AppCompatActivity {
                             .duration(700)
                             .repeat(0)
                             .playOn(edpostal);
-                    edpayee.setError("Postal code cannot be empty");
-                    edpayee.requestFocus();
+                    edpostal.setError("Postal code cannot be empty");
+                    edpostal.requestFocus();
                 }
                 else if(edcountry.getText().toString().trim().isEmpty())
                 {
@@ -238,7 +238,7 @@ public class RegisterBankAccountActivity extends AppCompatActivity {
                     edcountry.setError("Country cannot be empty");
                     edcountry.requestFocus();
                 }
-                else if(edbirth.getText().toString().isEmpty() || edbirth.getText().toString().equalsIgnoreCase("0000-00-00"))
+               /* else if(edbirth.getText().toString().isEmpty() || edbirth.getText().toString().equalsIgnoreCase("0000-00-00"))
                 {
                     YoYo.with(Techniques.Shake)
                             .duration(700)
@@ -246,7 +246,7 @@ public class RegisterBankAccountActivity extends AppCompatActivity {
                             .playOn(edbirth);
                     edbirth.setError("Birth date cannot be empty");
                     edbirth.requestFocus();
-                }
+                }*/
                 else
                 {
                     updateBankdetails();

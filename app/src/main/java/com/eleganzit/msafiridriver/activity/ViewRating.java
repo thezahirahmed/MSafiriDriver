@@ -89,7 +89,7 @@ public class ViewRating extends AppCompatActivity {
 
         txtusername.setText(username);
 
-        ratingBar.setRating(Integer.parseInt(ratings));
+        ratingBar.setRating(Float.parseFloat(ratings+""));
 
         getReviews();
 

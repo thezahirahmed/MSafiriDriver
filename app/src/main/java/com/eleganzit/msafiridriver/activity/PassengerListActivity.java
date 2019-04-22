@@ -839,6 +839,8 @@ public class PassengerListActivity extends AppCompatActivity {
                             jsonArray = jsonObject.getJSONArray("data");
                             for(int i=0;i<jsonArray.length();i++)
                             {
+                                Log.d("tttttttttt","1first for");
+
                                 JSONObject jsonObject1=jsonArray.getJSONObject(i);
 
                                 String id = jsonObject1.getString("id");
@@ -848,23 +850,35 @@ public class PassengerListActivity extends AppCompatActivity {
                                 String fname = jsonObject1.getString("fname");
                                 String lname = jsonObject1.getString("lname");
                                 String photo = jsonObject1.getString("photo");
+                                Log.d("tttttttttt","2first for");
                                 String name;
                                 name=fname+" "+lname;
                                 JSONObject jsonObject2=jsonObject1.getJSONObject("passanger");
-                                JSONArray jsonArray1=jsonObject2.getJSONArray("data");
-
-                                for (int j=0;j<jsonArray1.length();j++)
+                                if(jsonObject2!=null || !jsonObject2.toString().equalsIgnoreCase(""))
                                 {
-                                    JSONObject jsonObject3=jsonArray1.getJSONObject(j);
-                                    String passanger_id = jsonObject3.getString("passanger_id");
-                                    String passanger_name = jsonObject3.getString("passanger_name");
-                                    String book_id = jsonObject3.getString("book_id");
+                                    Log.d("tttttttttt","passenger not null");
+                                    JSONArray jsonArray1=jsonObject2.getJSONArray("data");
 
-                                    PassengerData passengerData=new PassengerData(id,passanger_id,rating,rstatus,passanger_name,lname,photo);
+                                    for (int j=0;j<jsonArray1.length();j++)
+                                    {
+                                        Log.d("tttttttttt","second for");
+                                        JSONObject jsonObject3=jsonArray1.getJSONObject(j);
+                                        String passanger_id = jsonObject3.getString("passanger_id");
+                                        String passanger_name = jsonObject3.getString("passanger_name");
+                                        String book_id = jsonObject3.getString("book_id");
+
+                                        PassengerData passengerData=new PassengerData(id,passanger_id,rating,rstatus,passanger_name,lname,photo);
+                                        arrayList.add(passengerData);
+                                    }
+
+
+                                }
+                                else
+                                {
+                                    Log.d("tttttttttt","pass null");
+                                    PassengerData passengerData=new PassengerData(id,user_id,rating,rstatus,fname,lname,photo);
                                     arrayList.add(passengerData);
                                 }
-
-
 
                             }
                             passengers.setAdapter(new PassengerAdapter(arrayList,PassengerListActivity.this));
@@ -951,12 +965,27 @@ public class PassengerListActivity extends AppCompatActivity {
                     if(isChecked)
                     {
                         isChecked=false;
-                        selectAll(true);
+                        if(userslist.size()==arrayList.size())
+                        {
+                            selectAll(false);
+                        }
+                        else
+                        {
+                            selectAll(true);
+                        }
+
                     }
                     else
                     {
                         isChecked=true;
-                        selectAll(false);
+                        if(userslist.size()==arrayList.size())
+                        {
+                            selectAll(false);
+                        }
+                        else
+                        {
+                            selectAll(true);
+                        }
                     }
                 }
             });
@@ -1141,6 +1170,14 @@ public class PassengerListActivity extends AppCompatActivity {
 
         public void selectAll(boolean status){
             Log.e("onClickSelectAll","yes");
+            if(status)
+            {
+
+            }
+            else
+            {
+
+            }
             isSelectedAll=status;
             notifyDataSetChanged();
         }

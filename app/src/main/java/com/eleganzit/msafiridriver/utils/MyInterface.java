@@ -34,6 +34,19 @@ public interface MyInterface
     );
 
     @retrofit.http.FormUrlEncoded
+    @retrofit.http.POST("/addVehicledetail")
+    public void blankaddVehicledetail(@retrofit.http.Field("driver_id") String driver_id,
+                               @retrofit.http.Field("blank") String blank,
+                               @retrofit.http.Field("vehicle_name") String vehicle_name,
+                               @retrofit.http.Field("vehicle_type") String vehicle_type,
+                               @retrofit.http.Field("vehicle_number") String vehicle_number,
+                               @retrofit.http.Field("seats") String seats,
+                               @retrofit.http.Field("vehicle_photo[]") String vehicle_photo,
+                               @retrofit.http.Field("numberplate_photo[]") String numberplate_photo,
+                               Callback<Response> callback
+    );
+
+    @retrofit.http.FormUrlEncoded
     @retrofit.http.POST("/driverRemove")
     public void removeDriver(@retrofit.http.Field("driver_id") String driver_id,
                                 Callback<Response> callback
