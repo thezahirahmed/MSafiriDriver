@@ -208,7 +208,7 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
                 p_editor.putString("trip_lng2",lng2+"");
                 p_editor.putString("trip_status",trip_status+"");
 
-                Log.d("trip_statusssss",""+trip_status);
+                Log.d("trip_statusssssid","  "+id);
                 if(trip_status.equalsIgnoreCase("ongoing"))
                 {
                     getActivity().startActivity(new Intent(getActivity(),OnboardPassengerListActivity.class).putExtra("from","trip"));

@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.Service;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -75,6 +76,8 @@ public class SensorService extends Service implements GoogleApiClient.Connection
     String intent_data;
     SharedPreferences pref;
     SharedPreferences.Editor editor;
+    SharedPreferences p_pref;
+    SharedPreferences.Editor p_editor;
     String intent_action;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 5445;
     Activity activity;
@@ -112,8 +115,8 @@ public class SensorService extends Service implements GoogleApiClient.Connection
                 return;
             }
             currentLocation = locationResult.getLastLocation();
-            last_lat=String.valueOf(currentLocation.getLatitude());
-            last_lng=String.valueOf(currentLocation.getLongitude());
+            last_lat=String.valueOf(currentLocation.getLatitude()).trim();
+            last_lng=String.valueOf(currentLocation.getLongitude()).trim();
             Log.d("wherelll","onLocationResult   "+last_lat+"     "+last_lng);
 
             if (firstTimeFlag) {
@@ -156,13 +159,16 @@ public class SensorService extends Service implements GoogleApiClient.Connection
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
-        pref = getSharedPreferences("location_pref", MODE_PRIVATE);
-
+        p_pref=getSharedPreferences("passenger_pref",Context.MODE_PRIVATE);
+        p_editor=p_pref.edit();
+        pref=getSharedPreferences("location_pref",MODE_PRIVATE);
+        editor=pref.edit();
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         startCurrentLocationUpdates();
         intent_action = pref.getString("action", "");
-        trip_id = pref.getString("trip_id", "");
+        trip_id = p_pref.getString("trip_id", "").trim();
 
+        Log.d("trip_statusiddd","id ->"+trip_id+"");
 
         mChatHeadView = LayoutInflater.from(this).inflate(R.layout.layout_chat_head, null);
 

@@ -190,6 +190,7 @@
             android:screenOrientation="portrait" />
         <activity android:name=".MapActivity" />
         <activity android:name=".GetCurrentLocation"/>
+        <activity android:name=".utils.AndroidDetOrientationActivity"/>
     </application>
 
 </manifest>

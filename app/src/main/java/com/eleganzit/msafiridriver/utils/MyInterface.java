@@ -164,7 +164,7 @@ public interface MyInterface
     @retrofit.http.FormUrlEncoded
     @retrofit.http.POST("/updateDriverprofile")
     public void updateDriverstatus(@retrofit.http.Field("driver_id") String driver_id,
-                                   @retrofit.http.Field("status") String status,
+                                   @retrofit.http.Field("online_status") String status,
                                    Callback<Response> callback
     );
 

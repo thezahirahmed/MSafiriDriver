@@ -32,4 +32,5 @@
     <string name="profile_txt">You are few steps away from \ncompleting your profile.</string>
     <string name="address"><font size="10">2385 McDowell Street Location</font></string>
     <string name="registerhere">Don\'t have account? <b>Register Here</b></string>
+    <string name="hello">Hello</string>
 </resources>

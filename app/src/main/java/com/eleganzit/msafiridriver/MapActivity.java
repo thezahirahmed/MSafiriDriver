@@ -2,7 +2,13 @@ package com.eleganzit.msafiridriver;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Handler;
@@ -14,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Toast;
@@ -39,9 +46,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-
-
-public class MapActivity extends AppCompatActivity  implements OnMapReadyCallback{
+public class MapActivity extends AppCompatActivity  implements OnMapReadyCallback,SensorEventListener {
 
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 5445;
 
@@ -50,7 +55,17 @@ public class MapActivity extends AppCompatActivity  implements OnMapReadyCallbac
     private Marker currentLocationMarker;
     private Location currentLocation;
     private boolean firstTimeFlag = true;
+    SensorManager sensorManager;
+    private Sensor sensorAccelerometer;
+    private Sensor sensorMagneticField;
 
+    private float[] valuesAccelerometer;
+    private float[] valuesMagneticField;
+
+    private float[] matrixR;
+    private float[] matrixI;
+    private float[] matrixValues;
+    double azimuth;
     private final LocationCallback mLocationCallback = new LocationCallback() {
 
         @Override
@@ -72,9 +87,9 @@ public class MapActivity extends AppCompatActivity  implements OnMapReadyCallbac
                 firstTimeFlag = false;
             }
             showMarker(currentLocation);
+
         }
     };
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +106,16 @@ public class MapActivity extends AppCompatActivity  implements OnMapReadyCallbac
             Toast.makeText(this, "granted", Toast.LENGTH_SHORT).show();
         }
 
+        sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+        sensorAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        sensorMagneticField = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+
+        valuesAccelerometer = new float[3];
+        valuesMagneticField = new float[3];
+
+        matrixR = new float[9];
+        matrixI = new float[9];
+        matrixValues = new float[3];
 
         SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
         supportMapFragment.getMapAsync(this);
@@ -118,14 +143,6 @@ public class MapActivity extends AppCompatActivity  implements OnMapReadyCallbac
         this.googleMap.getUiSettings().setAllGesturesEnabled(true);
         LatLng loc2=new LatLng(23.0262,72.5242);
         this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(loc2));
-        /*Marker marker = this.googleMap.addMarker(new MarkerOptions()
-                .position(
-                        new LatLng(23.0262,
-                                72.5242))
-                .draggable(true).visible(true));
-        LatLng latLng=new LatLng(23.0129,72.5848);
-*/
-        //animateMarker(marker,latLng,false);
 
     }
 
@@ -219,6 +236,7 @@ public class MapActivity extends AppCompatActivity  implements OnMapReadyCallbac
         });
     }*/
 
+
     private void showMarker(@NonNull Location currentLocation) {
         Log.d("where","showMarker");
 
@@ -226,10 +244,22 @@ public class MapActivity extends AppCompatActivity  implements OnMapReadyCallbac
         if (currentLocationMarker == null)
         {
             Log.d("where","currentLocationMarker == null");
-            currentLocationMarker = googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker()).position(latLng));
+            BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.location_arrow);
+            Bitmap b=bitmapdraw.getBitmap();
+            Bitmap smallMarker = Bitmap.createScaledBitmap(b, 100, 100, false);
+            MarkerOptions markerOptions=new MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(smallMarker)).position(latLng).flat(true);
+
+            currentLocationMarker = googleMap.addMarker(markerOptions);
+            //moveVechile(currentLocationMarker,currentLocation);
+            //rotateMarker(currentLocationMarker,currentLocation.getBearing(),start_rotation);
         }
         else
+        {
             MarkerAnimation.animateMarkerToGB(currentLocationMarker, latLng, new LatLngInterpolator.Spherical());
+            ///moveVechile(currentLocationMarker,currentLocation);
+            //rotateMarker(currentLocationMarker,currentLocation.getBearing(),start_rotation);
+        }
+
     }
 
     @Override
@@ -241,6 +271,12 @@ public class MapActivity extends AppCompatActivity  implements OnMapReadyCallbac
 
     @Override
     protected void onResume() {
+        sensorManager.registerListener(this,
+                sensorAccelerometer,
+                SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this,
+                sensorMagneticField,
+                SensorManager.SENSOR_DELAY_NORMAL);
         super.onResume();
         if (isGooglePlayServicesAvailable()) {
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
@@ -250,10 +286,58 @@ public class MapActivity extends AppCompatActivity  implements OnMapReadyCallbac
     }
 
     @Override
+    protected void onPause() {
+        sensorManager.unregisterListener(this,
+                sensorAccelerometer);
+        sensorManager.unregisterListener(this,
+                sensorMagneticField);
+        super.onPause();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         fusedLocationProviderClient = null;
         googleMap = null;
     }
 
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
+        switch(sensorEvent.sensor.getType()){
+            case Sensor.TYPE_ACCELEROMETER:
+                for(int i =0; i < 3; i++){
+                    valuesAccelerometer[i] = sensorEvent.values[i];
+                }
+                break;
+            case Sensor.TYPE_MAGNETIC_FIELD:
+                for(int i =0; i < 3; i++){
+                    valuesMagneticField[i] = sensorEvent.values[i];
+                }
+                break;
+        }
+
+        boolean success = SensorManager.getRotationMatrix(
+                matrixR,
+                matrixI,
+                valuesAccelerometer,
+                valuesMagneticField);
+
+        if(success){
+            SensorManager.getOrientation(matrixR, matrixValues);
+
+            azimuth = Math.toDegrees(matrixValues[0]);
+            double pitch = Math.toDegrees(matrixValues[1]);
+            double roll = Math.toDegrees(matrixValues[2]);
+            if(currentLocationMarker!=null)
+            {
+                currentLocationMarker.setRotation((float) azimuth);
+            }
+        }
+
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+
+    }
 }

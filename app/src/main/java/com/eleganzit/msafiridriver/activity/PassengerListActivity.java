@@ -112,7 +112,7 @@ public class PassengerListActivity extends AppCompatActivity {
     Handler handler;
     private String trip_lat,trip_lng,trip_lat2,trip_lng2,trip_status;
     private static final int CODE_DRAW_OVER_OTHER_APP_PERMISSION = 2084;
-    ArrayList<String> userslist=new ArrayList<>();
+    ArrayList<String> userslist;
     private String from;
     private String photoPath;
     CheckBox select_allcheck;
@@ -467,7 +467,7 @@ public class PassengerListActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         registerReceiver(broadcastReceiver, new IntentFilter(GoogleService.str_receiver));
-
+        userslist=new ArrayList<>();
         if(select_allcheck.isChecked())
         {
             select_allcheck.setChecked(false);
@@ -482,7 +482,7 @@ public class PassengerListActivity extends AppCompatActivity {
         editor.putString("dest_lng",trip_lng2);
         editor.commit();
         trip_status=p_pref.getString("trip_status","");
-        Log.d("trip_status","activity on resume"+trip_status+"");
+        Log.d("trip_statusiddd","activity on resume"+trip_id+"");
 
             getPassengers();
             //Toast.makeText(PassengerListActivity.this, ""+trip_status, Toast.LENGTH_SHORT).show();
