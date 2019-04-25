@@ -209,7 +209,7 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
                 p_editor.putString("trip_status",trip_status+"");
 
                 Log.d("trip_statusssssid","  "+id);
-                if(trip_status.equalsIgnoreCase("ongoing"))
+                if(p_pref.getString("trip_status","").equalsIgnoreCase("ongoing"))
                 {
                     getActivity().startActivity(new Intent(getActivity(),OnboardPassengerListActivity.class).putExtra("from","trip"));
                     Bungee.slideLeft(getActivity());
@@ -376,13 +376,16 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
     public void getUpcomingTrip()
     {
 
+        if(!progressDialog.isShowing())
+        {
+            progressDialog.show();
+        }
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
         myInterface.getDriverTrips(pref.getString("driver_id",""), "upcoming", new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                 arrayList = new ArrayList<>();
-
 
                 final StringBuilder stringBuilder = new StringBuilder();
                 try {
@@ -629,7 +632,8 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
         String output = "json";
 
         // Building the url to the web service
-        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters+"&key=AIzaSyD3t0-rMDn9zvQbzXqOEu1EUV9lssGSPjg";
+        String maps_api_key=getResources().getString(R.string.google_maps_key);
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters+"&key="+maps_api_key;
 
         return url;
     }

@@ -93,46 +93,50 @@
 
             </LinearLayout>
         </FrameLayout>
-        <com.facebook.shimmer.ShimmerFrameLayout
-            android:id="@+id/shimmerLayout"
-            android:layout_width="match_parent"
-            android:layout_below="@+id/linerar"
 
-            android:visibility="visible"
-            android:layout_height="wrap_content">
-            <LinearLayout
+        <RelativeLayout
+            android:layout_below="@+id/linerar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/shimmerLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
 
-                <include layout="@layout/his_shimmer_layout"></include>
-                <include layout="@layout/his_shimmer_layout"></include>
-                <include layout="@layout/his_shimmer_layout"></include>
-                <include layout="@layout/his_shimmer_layout"></include>
+                android:visibility="visible"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-            </LinearLayout>
-        </com.facebook.shimmer.ShimmerFrameLayout>
-        <android.support.v7.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/linerar"
-            android:id="@+id/history"
-            android:background="@android:color/white">
+                    <include layout="@layout/his_shimmer_layout"></include>
+                    <include layout="@layout/his_shimmer_layout"></include>
+                    <include layout="@layout/his_shimmer_layout"></include>
+                    <include layout="@layout/his_shimmer_layout"></include>
 
-        </android.support.v7.widget.RecyclerView>
+                </LinearLayout>
+            </com.facebook.shimmer.ShimmerFrameLayout>
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/history"
+                android:background="@android:color/white">
+
+            </android.support.v7.widget.RecyclerView>
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/no_history"
+            android:layout_centerInParent="true"
+            android:textColor="#000"
+            android:visibility="gone"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No History"/>
 
     </RelativeLayout>
-
-    <TextView
-        android:id="@+id/no_history"
-        android:layout_centerInParent="true"
-        android:textColor="#000"
-        android:textStyle="bold"
-        android:visibility="gone"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="No History"/>
-
 
 </RelativeLayout>

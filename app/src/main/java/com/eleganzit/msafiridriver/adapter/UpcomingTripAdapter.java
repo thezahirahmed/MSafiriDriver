@@ -485,7 +485,7 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
                         @Override
                         public void onClick(View view) {
                             dialog.dismiss();
-                            delayTrip(tripData.getId(),holder.getAdapterPosition(),holder);
+                            delayTrip(tripData.getId(),position,holder);
                         }
                     });
 
@@ -510,7 +510,7 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
                                     }
                                     else
                                     {
-                                        removeDrivertrip(tripData.getId(),holder.getAdapterPosition(),edreason.getText().toString());
+                                        removeDrivertrip(tripData.getId(),position,edreason.getText().toString());
                                         dialog.dismiss();
                                         dialog2.dismiss();
                                     }

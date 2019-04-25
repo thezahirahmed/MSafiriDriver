@@ -129,6 +129,7 @@ public class PassengerListActivity extends AppCompatActivity {
     private int fastestTimeInterval = 1000;
     private boolean runAsBackgroundService = false;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 5445;
+    RelativeLayout top;
 
     @Override
     protected void onStart() {
@@ -219,6 +220,7 @@ public class PassengerListActivity extends AppCompatActivity {
         available_seats=findViewById(R.id.available_seats);
         select_allcheck=findViewById(R.id.select_allcheck);
         reload_passengers = findViewById(R.id.reload_passengers);
+        top = findViewById(R.id.top);
 
         progressDialog=new ProgressDialog(this);
         progressDialog.setCancelable(false);
@@ -786,7 +788,7 @@ public class PassengerListActivity extends AppCompatActivity {
     {
         progressBar.setVisibility(View.VISIBLE);
         reload_passengers.setVisibility(View.GONE);
-
+        top.setVisibility(View.GONE);
         progressDialog.show();
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
@@ -825,6 +827,7 @@ public class PassengerListActivity extends AppCompatActivity {
                         if(status.equalsIgnoreCase("1"))
                         {
                             passengers.setVisibility(View.VISIBLE);
+                            top.setVisibility(View.VISIBLE);
                             /*if(from.equalsIgnoreCase("home"))
                             {
                                 start.setVisibility(View.GONE);
@@ -867,7 +870,7 @@ public class PassengerListActivity extends AppCompatActivity {
                                         String passanger_name = jsonObject3.getString("passanger_name");
                                         String book_id = jsonObject3.getString("book_id");
 
-                                        PassengerData passengerData=new PassengerData(id,null,passanger_id,rating,rstatus,passanger_name,lname,photo);
+                                        PassengerData passengerData=new PassengerData(id,null,"",passanger_id,rating,rstatus,passanger_name,lname,photo);
                                         arrayList.add(passengerData);
                                     }
 
@@ -876,7 +879,7 @@ public class PassengerListActivity extends AppCompatActivity {
                                 else
                                 {
                                     Log.d("tttttttttt","pass null");
-                                    PassengerData passengerData=new PassengerData(id,null,user_id,rating,rstatus,fname,lname,photo);
+                                    PassengerData passengerData=new PassengerData(id,null,"",user_id,rating,rstatus,fname,lname,photo);
                                     arrayList.add(passengerData);
                                 }
 
@@ -887,9 +890,10 @@ public class PassengerListActivity extends AppCompatActivity {
                         {
 
                             no_passenger.setVisibility(View.VISIBLE);
+                            top.setVisibility(View.GONE);
 
                             passengers.setVisibility(View.GONE);
-                           // start.setVisibility(View.GONE);
+                            start.setVisibility(View.GONE);
 
                         }
 
@@ -898,6 +902,12 @@ public class PassengerListActivity extends AppCompatActivity {
                     }
                     else
                     {
+
+                        no_passenger.setVisibility(View.VISIBLE);
+                        top.setVisibility(View.GONE);
+
+                        passengers.setVisibility(View.GONE);
+                        start.setVisibility(View.GONE);
 
                         Toast.makeText(PassengerListActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
                     }
@@ -916,6 +926,8 @@ public class PassengerListActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
                 reload_passengers.setVisibility(View.VISIBLE);
                 progressDialog.dismiss();
+                top.setVisibility(View.GONE);
+
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
                 Toast.makeText(PassengerListActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.d("errorrrr",""+error.getMessage());

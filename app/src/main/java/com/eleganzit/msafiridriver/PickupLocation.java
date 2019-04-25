@@ -4,6 +4,8 @@ package com.eleganzit.msafiridriver;
 import com.eleganzit.msafiridriver.model.ContactModel;
 import com.eleganzit.msafiridriver.utils.ContactSearchDialogCompat;
 import com.eleganzit.msafiridriver.utils.CustomDateTimePicker;
+import com.github.gfranks.minimal.notification.GFMinimalNotification;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
 import android.animation.ValueAnimator;
@@ -15,6 +17,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 
 import android.os.Build;
@@ -51,9 +54,11 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONArray;
@@ -100,6 +105,7 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
     Calendar calendar=Calendar.getInstance();
     private String lat,lng,lat2,lng2;
     RelativeLayout progress_bar;
+    ProgressBar add_progressBar;
     GoogleMap googleMap;
     String dest_mydate = "";
     String pick_mydate = "";
@@ -119,6 +125,7 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
     int layoutBottomHeight;
     boolean isOpen=false;
     RelativeLayout content;
+    RelativeLayout main;
     private String id;
     ProgressBar progress;
     private String date_is;
@@ -264,10 +271,15 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
                 .playOn(layoutBottom);*/
         /*pref=getSharedPreferences("tripdetails",MODE_PRIVATE);
         editor=pref.edit();*/
+        main= findViewById(R.id.rmain);
         content= findViewById(R.id.content);
         mapView= (MapView) findViewById(R.id.map);
         //tenants=findViewById(R.id.recycler);
         progress_bar=findViewById(R.id.progress_bar);
+        add_progressBar=findViewById(R.id.add_progressBar);
+        Drawable progressDrawable = add_progressBar.getIndeterminateDrawable().mutate();
+        progressDrawable.setColorFilter(Color.parseColor("#0192D2"), android.graphics.PorterDuff.Mode.SRC_IN);
+        add_progressBar.setProgressDrawable(progressDrawable);
         progress=findViewById(R.id.progress);
         timeline=findViewById(R.id.timeline);
         pickup_location=findViewById(R.id.pickup_location);
@@ -352,18 +364,27 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
 
                 if(pickup_location.getText().toString().equalsIgnoreCase(""))
                 {
-                    pickup_location.requestFocus();
-                    pickup_location.setError("Please select location");
+
+                    GFMinimalNotification mCurrentNotification = GFMinimalNotification.make(main, "Please select location", GFMinimalNotification.LENGTH_LONG, GFMinimalNotification.TYPE_ERROR);
+                    mCurrentNotification.setDirection(GFMinimalNotification.DIRECTION_TOP);
+                    mCurrentNotification.setHelperImage(R.drawable.group_40);
+                    mCurrentNotification.show();
                 }
                 else if(pickup_date.getText().toString().equalsIgnoreCase(""))
                 {
-                    pickup_date.requestFocus();
-                    pickup_date.setError("Please select date");
+
+                    GFMinimalNotification mCurrentNotification = GFMinimalNotification.make(main, "Please select date", GFMinimalNotification.LENGTH_LONG, GFMinimalNotification.TYPE_ERROR);
+                    mCurrentNotification.setDirection(GFMinimalNotification.DIRECTION_TOP);
+                    mCurrentNotification.setHelperImage(R.drawable.group_40);
+                    mCurrentNotification.show();
                 }
                 else if(pickup_time.getText().toString().equalsIgnoreCase(""))
                 {
-                    pickup_time.requestFocus();
-                    pickup_time.setError("Please select time");
+
+                    GFMinimalNotification mCurrentNotification = GFMinimalNotification.make(main, "Please select time", GFMinimalNotification.LENGTH_LONG, GFMinimalNotification.TYPE_ERROR);
+                    mCurrentNotification.setDirection(GFMinimalNotification.DIRECTION_TOP);
+                    mCurrentNotification.setHelperImage(R.drawable.group_40);
+                    mCurrentNotification.show();
                 }
                 else
                 {
@@ -382,18 +403,26 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
 
                 if(destination_location.getText().toString().equalsIgnoreCase(""))
                 {
-                    destination_location.requestFocus();
-                    destination_location.setError("Please select location");
+
+                    GFMinimalNotification mCurrentNotification = GFMinimalNotification.make(main, "Please select location", GFMinimalNotification.LENGTH_LONG, GFMinimalNotification.TYPE_ERROR);
+                    mCurrentNotification.setDirection(GFMinimalNotification.DIRECTION_TOP);
+                    mCurrentNotification.setHelperImage(R.drawable.group_40);
+                    mCurrentNotification.show();
                 }
                 else if(destination_date.getText().toString().equalsIgnoreCase(""))
                 {
-                    destination_date.requestFocus();
-                    destination_date.setError("Please select date");
+
+                    GFMinimalNotification mCurrentNotification = GFMinimalNotification.make(main, "Please select date", GFMinimalNotification.LENGTH_LONG, GFMinimalNotification.TYPE_ERROR);
+                    mCurrentNotification.setDirection(GFMinimalNotification.DIRECTION_TOP);
+                    mCurrentNotification.setHelperImage(R.drawable.group_40);
+                    mCurrentNotification.show();
                 }
                 else if(destination_time.getText().toString().equalsIgnoreCase(""))
                 {
-                    destination_time.requestFocus();
-                    destination_time.setError("Please select time");
+                    GFMinimalNotification mCurrentNotification = GFMinimalNotification.make(main, "Please select time", GFMinimalNotification.LENGTH_LONG, GFMinimalNotification.TYPE_ERROR);
+                    mCurrentNotification.setDirection(GFMinimalNotification.DIRECTION_TOP);
+                    mCurrentNotification.setHelperImage(R.drawable.group_40);
+                    mCurrentNotification.show();
                 }
                 else
                     {
@@ -449,11 +478,6 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
 
                                 Log.d("latttt",""+lat);
                                 Log.d("latttt",""+lng);
-
-                                googleMap.getUiSettings().setAllGesturesEnabled(false);
-                                googleMap.getUiSettings().setZoomGesturesEnabled(true);
-                                googleMap.getUiSettings().setAllGesturesEnabled(true);
-                                googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(PickupLocation.this,R.raw.style_json));
 
                                 LatLng loc2=new LatLng(Double.parseDouble(lat),Double.parseDouble(lng));
                                 googleMap.moveCamera(CameraUpdateFactory.newLatLng(loc2));
@@ -627,11 +651,6 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
 
                                 Log.d("latttt",""+lat2);
                                 Log.d("latttt",""+lng2);
-
-                                googleMap.getUiSettings().setAllGesturesEnabled(false);
-                                googleMap.getUiSettings().setZoomGesturesEnabled(true);
-                                googleMap.getUiSettings().setAllGesturesEnabled(true);
-                                googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(PickupLocation.this,R.raw.style_json));
 
                                 to_title=item.getTitle();
                                 to_address=item.getTitle();
@@ -1011,8 +1030,8 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
                                 BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.location_green);
                                 Bitmap bm=bitmapdraw.getBitmap();
                                 Bitmap smallMarker = Bitmap.createScaledBitmap(bm, 70, 70, false);
-                                googleMap.moveCamera(CameraUpdateFactory.newLatLng(loc));
-                                googleMap.animateCamera(CameraUpdateFactory.zoomTo(13.0f));
+                                /*googleMap.moveCamera(CameraUpdateFactory.newLatLng(loc));
+                                googleMap.animateCamera(CameraUpdateFactory.zoomTo(13.0f));*/
                                 //DrawMarker.getInstance(this).draw(googleMap, loc2, BitmapDescriptorFactory.fromBitmap(smallMarker), "Pickup Location");
                                 a = new MarkerOptions().position(loc).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)).title("Pickup Location");
                                 m1 =googleMap.addMarker(a);
@@ -1022,11 +1041,14 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
                                 Bitmap b2=bitmapdraw2.getBitmap();
                                 Bitmap smallMarker2 = Bitmap.createScaledBitmap(b2, 70, 70, false);
 
+
                                 googleMap.animateCamera(CameraUpdateFactory.zoomTo(13.0f));
                                 //DrawMarker.getInstance(this).draw(googleMap, loc2, BitmapDescriptorFactory.fromBitmap(smallMarker), "Pickup Location");
                                 b = new MarkerOptions().position(loc2).icon(BitmapDescriptorFactory.fromBitmap(smallMarker2)).title("Destination Location");
                                 m2 =googleMap.addMarker(b);
+
                                 String url = getDirectionsUrl(loc, loc2);
+
                             /*Polyline linee = googleMap.addPolyline(new PolylineOptions()
                                     .add(new LatLng(Double.parseDouble(lat),Double.parseDouble(lng)), new LatLng(Double.parseDouble(lat2),Double.parseDouble(lng2)))
                                     .width(5)
@@ -1135,16 +1157,15 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
     public void onMapReady(GoogleMap googleMap)
     {
         MapsInitializer.initialize(getApplicationContext());
-        googleMap.getUiSettings().setAllGesturesEnabled(false);
-        googleMap.getUiSettings().setZoomGesturesEnabled(true);
-        googleMap.getUiSettings().setAllGesturesEnabled(true);
-        googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(PickupLocation.this,R.raw.style_json));
+        this.googleMap=googleMap;
+        this.googleMap.getUiSettings().setZoomGesturesEnabled(true);
+        this.googleMap.getUiSettings().setAllGesturesEnabled(true);
+        this.googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(PickupLocation.this,R.raw.style_json));
 
         LatLng loc2=new LatLng(23.0262,72.5242);
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(loc2));
+        this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(loc2));
 
-        googleMap.animateCamera(CameraUpdateFactory.zoomTo(13.0f));
-        this.googleMap=googleMap;
+        this.googleMap.animateCamera(CameraUpdateFactory.zoomTo(13.0f));
 
         //drewRoute(googleMap,lat,lng,lat2,lng2);
 
@@ -1170,10 +1191,6 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
             Log.d("latttt",""+place.getAddress());
 
             pickup_location.setText(place.getName());
-            googleMap.getUiSettings().setAllGesturesEnabled(false);
-            googleMap.getUiSettings().setZoomGesturesEnabled(true);
-            googleMap.getUiSettings().setAllGesturesEnabled(true);
-            googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(PickupLocation.this,R.raw.style_json));
 
             LatLng loc2=new LatLng(Double.parseDouble(lat),Double.parseDouble(lng));
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(loc2));
@@ -1216,10 +1233,6 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
             Log.d("latttt",""+lng2);
             Log.d("latttt",""+place.getAddress());
             destination_location.setText(place.getName());
-            googleMap.getUiSettings().setAllGesturesEnabled(false);
-            googleMap.getUiSettings().setZoomGesturesEnabled(true);
-            googleMap.getUiSettings().setAllGesturesEnabled(true);
-            googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(PickupLocation.this,R.raw.style_json));
 
             to_title=place.getName().toString();
             to_address=place.getAddress().toString();
@@ -1319,18 +1332,45 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
                         if(status.equalsIgnoreCase("1"))
                         {
 
+                            LatLng loc=new LatLng(Double.parseDouble(lat),Double.parseDouble(lng));
                             LatLng loc2=new LatLng(Double.parseDouble(lat2),Double.parseDouble(lng2));
-                            googleMap.moveCamera(CameraUpdateFactory.newLatLng(loc2));
+                            //googleMap.moveCamera(CameraUpdateFactory.newLatLng(loc2));
 
-                            BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.location_red);
+                            BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.location_green);
                             Bitmap bm=bitmapdraw.getBitmap();
                             Bitmap smallMarker = Bitmap.createScaledBitmap(bm, 70, 70, false);
 
                             //DrawMarker.getInstance(this).draw(googleMap, loc2, R.drawable.location_red, "Destination Location");
+                            BitmapDrawable bitmapdraw2=(BitmapDrawable)getResources().getDrawable(R.drawable.location_red);
+                            Bitmap b2=bitmapdraw2.getBitmap();
+                            Bitmap smallMarker2 = Bitmap.createScaledBitmap(b2, 70, 70, false);
+
 
                             googleMap.animateCamera(CameraUpdateFactory.zoomTo(13.0f));
                             b = new MarkerOptions().position(loc2).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)).title("Destination Location");
                             m2 =googleMap.addMarker(b);
+
+                            ArrayList<Marker> mMarkerArray = new ArrayList<Marker>();
+                            mMarkerArray.add(googleMap.addMarker(new MarkerOptions().position(loc).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)).title("Pickup Location")));
+                            mMarkerArray.add(googleMap.addMarker(new MarkerOptions().position(loc2).icon(BitmapDescriptorFactory.fromBitmap(smallMarker2)).title("Destination Location")));
+
+                            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                            for (Marker marker : mMarkerArray) {
+                                builder.include(marker.getPosition());
+                            }
+                            final LatLngBounds bounds = builder.build();
+                            int padding = 80; // offset from edges of the map in pixels
+                            final CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+
+                            googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                                @Override
+                                public void onMapLoaded() {
+                                    //Toast.makeText(PickupLocation.this, "onMapLoaded", Toast.LENGTH_SHORT).show();
+
+                                    googleMap.moveCamera(cu);
+                                    googleMap.animateCamera(cu);
+                                }
+                            });
 
                             jsonArray = jsonObject.getJSONArray("data");
                             for(int i=0;i<jsonArray.length();i++)
@@ -1603,13 +1643,15 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
                 }
 
                 lineOptions.addAll(points);
-                lineOptions.width(10);
-                lineOptions.color(Color.parseColor("#4885ed"));
+                lineOptions.width(13);
+                lineOptions.color(Color.parseColor("#FF3166C1"));
                 lineOptions.geodesic(true);
 
             }
 
 // Drawing polyline in the Google Map for the i-th route
+            googleMap.addPolyline(lineOptions);
+            lineOptions.color(Color.parseColor("#FF5392FD")).width(10);
             googleMap.addPolyline(lineOptions);
         }
     }
@@ -1632,7 +1674,8 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
         String output = "json";
 
         // Building the url to the web service
-        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters+"&key=AIzaSyD3t0-rMDn9zvQbzXqOEu1EUV9lssGSPjg";
+        String maps_api_key=getResources().getString(R.string.google_maps_key);
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters+"&key="+maps_api_key;
 
         return url;
     }

@@ -529,7 +529,7 @@ public class NavHomeActivity extends AppCompatActivity
                                 editor.putString("vehicle_profile", vehicle_profile);
                                 String vehicle_name = jsonObject1.getString("vehicle_name");
                                 editor.putString("vehicle_name", vehicle_name);
-                                dstatus = jsonObject1.getString("status");
+                                dstatus = jsonObject1.getString("online_status");
                                 editor.putString("dstatus", dstatus);
 
                                 editor.commit();

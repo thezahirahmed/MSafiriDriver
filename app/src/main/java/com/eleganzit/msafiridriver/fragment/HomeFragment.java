@@ -42,6 +42,7 @@ import com.eleganzit.msafiridriver.VehicleDetailsActivity;
 import com.eleganzit.msafiridriver.activity.NavHomeActivity;
 import com.eleganzit.msafiridriver.adapter.UpcomingTripAdapter;
 import com.eleganzit.msafiridriver.model.TripData;
+import com.eleganzit.msafiridriver.utils.BlurDrawable;
 import com.eleganzit.msafiridriver.utils.MyInterface;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -202,6 +203,21 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         sort.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                /*sort_bg.setVisibility(View.VISIBLE);
+
+                BlurDrawable blurDrawable = new BlurDrawable(main_bg, 15);
+                sort_bg.setBackgroundDrawable(blurDrawable);
+
+                sort_bg.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        sort_bg.setVisibility(View.GONE);
+
+                    }
+                });
+*/
                 final Dialog dialog=new Dialog(getActivity());
                 dialog.setContentView(R.layout.sorting_dialog);
                 final TextView date=dialog.findViewById(R.id.date);
@@ -392,7 +408,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject1 = jsonArray.getJSONObject(i);
 
-                                dstatus = jsonObject1.getString("status");
+                                dstatus = jsonObject1.getString("online_status");
                                 editor.putString("dstatus", dstatus);
 
                                 editor.commit();

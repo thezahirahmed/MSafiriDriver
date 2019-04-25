@@ -289,6 +289,7 @@ public class SensorService extends Service implements GoogleApiClient.Connection
                                 }
                             });
                             final AlertDialog alertDialog = builder.create();
+
                             alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
                             alertDialog.show();
 

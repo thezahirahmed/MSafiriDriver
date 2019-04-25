@@ -57,6 +57,19 @@
                 android:layout_gravity="center"
                 android:src="@drawable/arrow_down"/>
 
+            <TextView
+                android:id="@+id/seats_count"
+                android:text="2 seats"
+                android:textColor="#000000"
+                android:gravity="center"
+                android:maxLines="1"
+                android:padding="1dp"
+                android:layout_gravity="center"
+                android:ellipsize="end"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+
         </LinearLayout>
 
     </LinearLayout>
@@ -64,7 +77,6 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#ececec"
-        android:layout_marginBottom="2dp"/>
+        android:background="#ececec" />
 
 </LinearLayout>

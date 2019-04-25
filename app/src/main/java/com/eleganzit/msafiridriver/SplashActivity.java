@@ -107,6 +107,8 @@ public class SplashActivity extends AppCompatActivity {
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
+                    Log.d("preffff",pref.getString("status","")+"   tt");
+
                     getDriverdata();
                 }
 
@@ -309,29 +311,57 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void failure(RetrofitError error) {
                 logo.startAnimation(flyout1);
+                if(pref.getString("status","").equalsIgnoreCase("loggedin"))
+                {
+                    if(pref.getString("approvel","").equalsIgnoreCase("yes"))
+                    {
+                        flyout1.setAnimationListener(new Animation.AnimationListener() {
+                            @Override
+                            public void onAnimationStart(Animation animation) {
 
-                flyout1.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animation animation) {
+                                loggedinDriver();
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animation animation) {
+
+                            }
+                        });
 
                     }
 
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
+                }
+                else
+                {
+                    flyout1.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {
 
-                        Intent i = new Intent(SplashActivity.this, SignInActivity.class).putExtra("from", "splash");
+                        }
 
-                        startActivity(i);
-                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
 
-                        finish();
-                    }
+                            Intent i = new Intent(SplashActivity.this, SignInActivity.class).putExtra("from", "splash");
 
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
+                            startActivity(i);
+                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 
-                    }
-                });
+                            finish();
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+
+                        }
+                    });
+                }
+
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
                 Toast.makeText(SplashActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
 

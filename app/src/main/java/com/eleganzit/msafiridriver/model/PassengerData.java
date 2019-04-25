@@ -2,18 +2,20 @@ package com.eleganzit.msafiridriver.model;
 
 import android.os.Parcel;
 
+
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 
 import java.util.List;
 
 public class PassengerData extends ExpandableGroup<SubPassengersData>
 {
-    String id,user_id,rating,rstatus,fname,lname,photo;
+    String id,user_id,bookedSeats,rating,rstatus,fname,lname,photo;
 
-    public PassengerData(String id, List<SubPassengersData> passengers, String user_id, String rating, String rstatus, String fname, String lname, String photo) {
+    public PassengerData(String id, List<SubPassengersData> passengers, String bookedSeats, String user_id, String rating, String rstatus, String fname, String lname, String photo) {
         super(fname, passengers);
         this.id = id;
         this.user_id = user_id;
+        this.bookedSeats = bookedSeats;
         this.rating = rating;
         this.rstatus = rstatus;
         this.fname = fname;
@@ -35,6 +37,14 @@ public class PassengerData extends ExpandableGroup<SubPassengersData>
 
     public void setUser_id(String user_id) {
         this.user_id = user_id;
+    }
+
+    public String getBookedSeats() {
+        return bookedSeats;
+    }
+
+    public void setBookedSeats(String bookedSeats) {
+        this.bookedSeats = bookedSeats;
     }
 
     public String getRating() {

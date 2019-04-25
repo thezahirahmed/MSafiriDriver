@@ -17,9 +17,11 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.RotateAnimation;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -27,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,6 +69,7 @@ public class HomePassengerListActivity extends AppCompatActivity {
     private String trip_id;
     SharedPreferences p_pref;
     SharedPreferences.Editor p_editor;
+    ImageView reload_passengers;
 
     ProgressDialog progressDialog;
     PassengerAdapter passengerAdapter;
@@ -88,11 +92,18 @@ public class HomePassengerListActivity extends AppCompatActivity {
 
         progress=findViewById(R.id.progress);
         no_passenger=findViewById(R.id.no_passenger);
+        reload_passengers = findViewById(R.id.reload_passengers);
 
         progressDialog=new ProgressDialog(this);
         progressDialog.setCancelable(false);
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.setMessage("Please wait...");
+        reload_passengers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getPassengers();
+            }
+        });
 
         trip_id=getIntent().getStringExtra("trip_id");
 
@@ -129,6 +140,7 @@ public class HomePassengerListActivity extends AppCompatActivity {
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
         progressDialog.show();
+        reload_passengers.setVisibility(View.GONE);
 
         Log.d("ppppppppstringBuilder", "" + trip_id);
 
@@ -193,6 +205,7 @@ public class HomePassengerListActivity extends AppCompatActivity {
                                     String passanger_id ="";
                                     String passanger_name = "";
                                     String user_name = "";
+                                    String bookedSeats = "";
                                     for (int j=0;j<jsonArray1.length();j++)
                                     {
                                         Log.d("tttttttttt","second for");
@@ -200,7 +213,7 @@ public class HomePassengerListActivity extends AppCompatActivity {
                                         passanger_id = jsonObject3.getString("passanger_id");
                                         passanger_name = jsonObject3.getString("passanger_name");
                                         String book_id = jsonObject3.getString("book_id");
-
+                                        bookedSeats=String.valueOf(jsonArray1.length());
                                         if(j!=0)
                                         {
                                             SubPassengersData subPassengersData=new SubPassengersData(id,passanger_id,"","",passanger_name,"","");
@@ -208,19 +221,19 @@ public class HomePassengerListActivity extends AppCompatActivity {
                                         }
                                         else
                                         {
-                                            user_name=passanger_name;
+                                            user_name=passanger_name+","+photo;
                                         }
 
                                     }
 
-                                    PassengerData passengerData=new PassengerData(id,arrayList1,user_id,rating,rstatus,user_name,lname,photo);
+                                    PassengerData passengerData=new PassengerData(id,arrayList1,bookedSeats,user_id,rating,rstatus,user_name,lname,photo);
                                     arrayList.add(passengerData);
 
                                 }
                                 else
                                 {
                                     Log.d("tttttttttt","pass null");
-                                    PassengerData passengerData=new PassengerData(id,null,user_id,rating,rstatus,fname,lname,photo);
+                                    PassengerData passengerData=new PassengerData(id,null,"",user_id,rating,rstatus,fname,lname,photo);
                                     arrayList.add(passengerData);
                                 }
 
@@ -413,44 +426,68 @@ public class HomePassengerListActivity extends AppCompatActivity {
 
             CircleImageView p_photo;
             ImageView img_drop_down;
-            TextView p_name;
+            TextView p_name,seats_count;
 
             public MyViewHolder(View itemView) {
                 super(itemView);
                 p_photo=itemView.findViewById(R.id.p_photo);
                 img_drop_down=itemView.findViewById(R.id.img_drop_down);
                 p_name=itemView.findViewById(R.id.p_name);
+                seats_count=itemView.findViewById(R.id.seats_count);
 
             }
 
             public void setPassengerName(ExpandableGroup group) {
-                p_name.setText(group.getTitle());
+
+                String currentString = group.getTitle();
+                String[] separated = currentString.split(",");
+                Log.d("photooooop",separated[1]+"");
+                Glide
+                        .with(HomePassengerListActivity.this)
+                        .load(separated[1]).apply(new RequestOptions().placeholder(R.drawable.pr))
+                        .into(p_photo);
+
+                p_name.setText(separated[0].trim());
+                if(group.getItems().size()==0)
+                {
+                    seats_count.setText((group.getItems().size()+1)+" seat");
+                    img_drop_down.setVisibility(View.GONE);
+                }
+                else
+                {
+                    seats_count.setText((group.getItems().size()+1)+" seats");
+                }
+
             }
 
             @Override
             public void expand() {
+                super.expand();
                 animateExpand();
             }
 
             @Override
             public void collapse() {
+                super.collapse();
                 animateCollapse();
             }
 
             private void animateExpand() {
-                RotateAnimation rotate =
-                        new RotateAnimation(360, 180, RELATIVE_TO_SELF, 0.5f, RELATIVE_TO_SELF, 0.5f);
+                //Toast.makeText(HomePassengerListActivity.this, "expand", Toast.LENGTH_SHORT).show();
+                /*RotateAnimation rotate =
+                        new RotateAnimation(0, 180, RELATIVE_TO_SELF, 0.5f, RELATIVE_TO_SELF, 0.5f);
                 rotate.setDuration(300);
-                rotate.setFillAfter(true);
-                img_drop_down.setAnimation(rotate);
+                rotate.setFillAfter(true);*/
+                img_drop_down.animate().rotation(180).setDuration(300);
             }
 
             private void animateCollapse() {
-                RotateAnimation rotate =
-                        new RotateAnimation(180, 360, RELATIVE_TO_SELF, 0.5f, RELATIVE_TO_SELF, 0.5f);
+                //Toast.makeText(HomePassengerListActivity.this, "collapse", Toast.LENGTH_SHORT).show();
+                /*RotateAnimation rotate =
+                        new RotateAnimation(180, 0, RELATIVE_TO_SELF, 0.5f, RELATIVE_TO_SELF, 0.5f);
                 rotate.setDuration(300);
-                rotate.setFillAfter(true);
-                img_drop_down.setAnimation(rotate);
+                rotate.setFillAfter(true);*/
+                img_drop_down.animate().rotation(0).setDuration(300);
             }
         }
 

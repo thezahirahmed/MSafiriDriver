@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout
+    android:id="@+id/rmain"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -57,7 +58,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
-            android:layout_marginTop="0dp">
+            android:layout_above="@+id/layoutBottom"
+            android:layout_marginBottom="-30dp">
 
         </com.google.android.gms.maps.MapView>
 
@@ -86,7 +88,7 @@
                     android:layout_marginTop="15dp">
 
 
-                    <LinearLayout
+                    <RelativeLayout
                         android:id="@+id/top"
                         android:orientation="vertical"
                         android:layout_width="match_parent"
@@ -173,7 +175,7 @@
                             </LinearLayout>
 
                         </LinearLayout>
-                    </LinearLayout>
+                    </RelativeLayout>
 
                     <ImageView
                         android:id="@+id/timeline"

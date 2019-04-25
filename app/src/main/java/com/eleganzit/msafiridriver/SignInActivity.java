@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -27,6 +29,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,6 +64,7 @@ public class SignInActivity extends AppCompatActivity {
     Animation flyin1,flyout1,flyout2,flyout3,flyout4,flyout5,flyout6,flyout7;
     EditText email,password;
     LinearLayout progressBar;
+    ProgressBar signin_progress;
     SharedPreferences pref;
     SharedPreferences.Editor editor;
     String devicetoken;
@@ -109,8 +113,11 @@ public class SignInActivity extends AppCompatActivity {
         googlebtn=findViewById(R.id.googlebtn);
         facebookbtn=findViewById(R.id.facebookbtn);
         progressBar = findViewById(R.id.progressBar);
+        signin_progress = findViewById(R.id.signin_progress);
 
-
+        Drawable progressDrawable = signin_progress.getIndeterminateDrawable().mutate();
+        progressDrawable.setColorFilter(Color.parseColor("#0192D2"), android.graphics.PorterDuff.Mode.SRC_IN);
+        signin_progress.setProgressDrawable(progressDrawable);
         flyin1 = AnimationUtils.loadAnimation(SignInActivity.this, R.anim.flyin1);
 
         flyout1 = AnimationUtils.loadAnimation(SignInActivity.this, R.anim.flyout1);

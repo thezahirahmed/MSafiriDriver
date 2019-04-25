@@ -392,7 +392,8 @@ public class TripDetail extends AppCompatActivity implements OnMapReadyCallback 
         String output = "json";
 
         // Building the url to the web service
-        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters+"&key=AIzaSyD3t0-rMDn9zvQbzXqOEu1EUV9lssGSPjg";
+        String maps_api_key=getResources().getString(R.string.google_api_key);
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters+"&key="+maps_api_key;
 
         return url;
     }
