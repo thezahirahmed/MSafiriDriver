@@ -546,7 +546,7 @@ public class PersonalInfoActivity extends AppCompatActivity {
                                 }
                                 else
                                 {
-                                    getState(country_id);
+                                    getState(country_id,null);
                                 }
                             }
                         }
@@ -742,7 +742,7 @@ public class PersonalInfoActivity extends AppCompatActivity {
         });
     }
 
-    public void getState(String country_id)
+    public void getState(String country_id, final DialogInterface dialogInterface)
     {
         if(stateArrayList.size()>0)
         {
@@ -791,6 +791,10 @@ public class PersonalInfoActivity extends AppCompatActivity {
                                 stateArrayList.add(state);
 
                             }
+                            if(dialogInterface!=null)
+                            {
+                                dialogInterface.dismiss();
+                            }
 
                         }
                         else
@@ -831,12 +835,13 @@ public class PersonalInfoActivity extends AppCompatActivity {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom));
 
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        /*builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
             }
-        });
+        });*/
+
         builder.setSingleChoiceItems(adapter, -1, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -847,7 +852,7 @@ public class PersonalInfoActivity extends AppCompatActivity {
 
                 country_id=countryData.getCountry_id();
                 edstate.setText("");
-                getState(country_id);
+                getState(country_id,dialogInterface);
             }
         });
         builder.show();
@@ -860,17 +865,19 @@ public class PersonalInfoActivity extends AppCompatActivity {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom));
 
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+       /* builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
             }
-        });
+        });*/
+
         builder.setSingleChoiceItems(adapter, -1, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
                 edstate.setText(stateArrayList.get(i));
+                dialogInterface.dismiss();
             }
         });
         builder.show();

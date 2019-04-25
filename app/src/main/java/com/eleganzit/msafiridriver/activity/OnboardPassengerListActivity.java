@@ -456,7 +456,7 @@ public class OnboardPassengerListActivity extends AppCompatActivity {
                                         String passanger_name = jsonObject3.getString("passanger_name");
                                         String book_id = jsonObject3.getString("book_id");
 
-                                        PassengerData passengerData=new PassengerData(id,passanger_id,rating,rstatus,passanger_name,lname,photo);
+                                        PassengerData passengerData=new PassengerData(id,null,passanger_id,rating,rstatus,passanger_name,lname,photo);
                                         arrayList.add(passengerData);
                                     }
 
@@ -465,7 +465,7 @@ public class OnboardPassengerListActivity extends AppCompatActivity {
                                 else
                                 {
                                     Log.d("tttttttttt","pass null");
-                                    PassengerData passengerData=new PassengerData(id,user_id,rating,rstatus,fname,lname,photo);
+                                    PassengerData passengerData=new PassengerData(id,null,user_id,rating,rstatus,fname,lname,photo);
                                     arrayList.add(passengerData);
                                 }
 

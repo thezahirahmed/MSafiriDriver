@@ -561,7 +561,7 @@ public class BankAccountActivity extends AppCompatActivity {
                                 }
                                 else
                                 {
-                                    getState(country_id);
+                                    getState(country_id,null);
                                 }
                             }
                         }
@@ -864,7 +864,7 @@ public class BankAccountActivity extends AppCompatActivity {
         });
     }
 
-    public void getState(String country_id)
+    public void getState(String country_id, final DialogInterface dialogInterface)
     {
         progressDialog.show();
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
@@ -909,6 +909,11 @@ public class BankAccountActivity extends AppCompatActivity {
                                 stateArrayList.add(state);
 
                             }
+                            if(dialogInterface!=null)
+                            {
+                                dialogInterface.dismiss();
+
+                            }
 
                         }
                         else
@@ -949,12 +954,11 @@ public class BankAccountActivity extends AppCompatActivity {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom));
 
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+       /* builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
             }
-        });
+        });*/
         builder.setSingleChoiceItems(adapter, -1, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -965,7 +969,7 @@ public class BankAccountActivity extends AppCompatActivity {
 
                 country_id=countryData.getCountry_id();
                 edstate.setText("");
-                getState(country_id);
+                getState(country_id,dialogInterface);
             }
         });
         builder.show();
@@ -978,15 +982,15 @@ public class BankAccountActivity extends AppCompatActivity {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom));
 
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+      /*  builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
             }
-        });
+        });*/
         builder.setSingleChoiceItems(adapter, -1, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
 
                 edstate.setText(stateArrayList.get(i));
             }

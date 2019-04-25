@@ -23,6 +23,9 @@ import com.google.firebase.messaging.RemoteMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
+import java.util.Random;
+
 
 /**
  * Created by Uv on 2/7/2018.
@@ -92,8 +95,9 @@ public class MyFirebaseMessagingService extends com.google.firebase.messaging.Fi
 
             NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
+        int m = (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 //notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                 String id = "id_product";
                 // The user-visible name of the channel.
@@ -123,11 +127,12 @@ public class MyFirebaseMessagingService extends com.google.firebase.messaging.Fi
                         .setColor(255)
                         .setContentText(text)
                         .setWhen(System.currentTimeMillis());
-                manager.notify(1, notificationBuilder.build());
+
+                manager.notify(m, notificationBuilder.build());
             }
 
 
-            manager.notify(0, builder.build());
+            manager.notify(m, builder.build());
 
 
     }
@@ -158,6 +163,7 @@ public class MyFirebaseMessagingService extends com.google.firebase.messaging.Fi
 
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
+        int m = (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             //notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -189,11 +195,11 @@ public class MyFirebaseMessagingService extends com.google.firebase.messaging.Fi
                     .setColor(255)
                     .setContentText(text)
                     .setWhen(System.currentTimeMillis());
-            manager.notify(1, notificationBuilder.build());
+            manager.notify(m, notificationBuilder.build());
         }
 
 
-        manager.notify(0, builder.build());
+        manager.notify(m, builder.build());
 
 
     }
@@ -224,6 +230,7 @@ public class MyFirebaseMessagingService extends com.google.firebase.messaging.Fi
 
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
+        int m = (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             //notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -255,11 +262,11 @@ public class MyFirebaseMessagingService extends com.google.firebase.messaging.Fi
                     .setColor(255)
                     .setContentText(text)
                     .setWhen(System.currentTimeMillis());
-            manager.notify(1, notificationBuilder.build());
+            manager.notify(m, notificationBuilder.build());
         }
 
 
-        manager.notify(0, builder.build());
+        manager.notify(m, builder.build());
 
 
     }

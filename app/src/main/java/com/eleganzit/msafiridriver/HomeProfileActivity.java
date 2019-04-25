@@ -236,11 +236,15 @@ public class HomeProfileActivity extends AppCompatActivity {
                                         editor.putString("approvel", approvel);
                                         editor.commit();
 
-                                        if (approvel.equalsIgnoreCase("yes")) {
-                                            startActivity(new Intent(HomeProfileActivity.this, NavHomeActivity.class).putExtra("from","home"));
-                                            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_in_left);
+                                        if(approvel.equalsIgnoreCase("yes"))
+                                        {
+                                            startActivity(new Intent(HomeProfileActivity.this, NavHomeActivity.class).putExtra("from","profile"));
+                                            overridePendingTransition(android.R.anim.slide_in_left,android.R.anim.slide_in_left);
                                             finish();
-                                        } else {
+                                        }
+                                        else
+                                        {
+                                            txtsubmit.setText("Waiting for Approval");
                                             Toast.makeText(HomeProfileActivity.this, "Profile has been submitted for approval", Toast.LENGTH_SHORT).show();
                                         }
                                     }

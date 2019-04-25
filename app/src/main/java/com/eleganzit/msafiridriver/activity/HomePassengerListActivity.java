@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.RotateAnimation;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -33,8 +34,13 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.eleganzit.msafiridriver.R;
 import com.eleganzit.msafiridriver.model.PassengerData;
+import com.eleganzit.msafiridriver.model.SubPassengersData;
 import com.eleganzit.msafiridriver.utils.MyInterface;
 import com.eleganzit.msafiridriver.utils.SensorService;
+import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter;
+import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
+import com.thoughtbot.expandablerecyclerview.viewholders.ChildViewHolder;
+import com.thoughtbot.expandablerecyclerview.viewholders.GroupViewHolder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,11 +50,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import spencerstudios.com.bungeelib.Bungee;
+
+import static android.view.animation.Animation.RELATIVE_TO_SELF;
 
 public class HomePassengerListActivity extends AppCompatActivity {
     RecyclerView passengers;
@@ -59,6 +68,7 @@ public class HomePassengerListActivity extends AppCompatActivity {
     SharedPreferences.Editor p_editor;
 
     ProgressDialog progressDialog;
+    PassengerAdapter passengerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,30 +189,44 @@ public class HomePassengerListActivity extends AppCompatActivity {
                                 {
                                     Log.d("tttttttttt","passenger not null");
                                     JSONArray jsonArray1=jsonObject2.getJSONArray("data");
-
+                                    ArrayList<SubPassengersData> arrayList1=new ArrayList<>();
+                                    String passanger_id ="";
+                                    String passanger_name = "";
+                                    String user_name = "";
                                     for (int j=0;j<jsonArray1.length();j++)
                                     {
                                         Log.d("tttttttttt","second for");
                                         JSONObject jsonObject3=jsonArray1.getJSONObject(j);
-                                        String passanger_id = jsonObject3.getString("passanger_id");
-                                        String passanger_name = jsonObject3.getString("passanger_name");
+                                        passanger_id = jsonObject3.getString("passanger_id");
+                                        passanger_name = jsonObject3.getString("passanger_name");
                                         String book_id = jsonObject3.getString("book_id");
 
-                                        PassengerData passengerData=new PassengerData(id,passanger_id,rating,rstatus,passanger_name,lname,photo);
-                                        arrayList.add(passengerData);
+                                        if(j!=0)
+                                        {
+                                            SubPassengersData subPassengersData=new SubPassengersData(id,passanger_id,"","",passanger_name,"","");
+                                            arrayList1.add(subPassengersData);
+                                        }
+                                        else
+                                        {
+                                            user_name=passanger_name;
+                                        }
+
                                     }
 
+                                    PassengerData passengerData=new PassengerData(id,arrayList1,user_id,rating,rstatus,user_name,lname,photo);
+                                    arrayList.add(passengerData);
 
                                 }
                                 else
                                 {
                                     Log.d("tttttttttt","pass null");
-                                    PassengerData passengerData=new PassengerData(id,user_id,rating,rstatus,fname,lname,photo);
+                                    PassengerData passengerData=new PassengerData(id,null,user_id,rating,rstatus,fname,lname,photo);
                                     arrayList.add(passengerData);
                                 }
 
                             }
-                            passengers.setAdapter(new PassengerAdapter(arrayList,HomePassengerListActivity.this));
+                            passengerAdapter=new PassengerAdapter(arrayList);
+                            passengers.setAdapter(passengerAdapter);
                         }
                         else
                         {
@@ -244,16 +268,25 @@ public class HomePassengerListActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        passengerAdapter.onSaveInstanceState(outState);
+    }
 
-    public class PassengerAdapter extends RecyclerView.Adapter<PassengerAdapter.MyViewHolder>
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        passengerAdapter.onRestoreInstanceState(savedInstanceState);
+    }
+
+   /* public class PassengerAdapter extends ExpandableRecyclerViewAdapter<PassengerAdapter.MyViewHolder, PassengerAdapter.SubViewHolder>
     {
-        ArrayList<PassengerData> arrayList;
         Context context;
         boolean isSelectedAll;
 
-        public PassengerAdapter(ArrayList<PassengerData> arrayList, Context context)
-        {
-            this.arrayList = arrayList;
+        public PassengerAdapter(List<? extends ExpandableGroup> groups,Context context) {
+            super(groups);
             this.context = context;
         }
 
@@ -267,37 +300,179 @@ public class HomePassengerListActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(final MyViewHolder holder, final int position) {
+        public MyViewHolder onCreateGroupViewHolder(ViewGroup parent, int viewType) {
+            View v= LayoutInflater.from(context).inflate(R.layout.passenger_list_layout,parent,false);
 
-            final PassengerData passengerData=arrayList.get(position);
+            MyViewHolder myViewHolder=new MyViewHolder(v);
+
+            return myViewHolder;
+        }
+
+        @Override
+        public SubViewHolder onCreateChildViewHolder(ViewGroup parent, int viewType) {
+            View v= LayoutInflater.from(context).inflate(R.layout.sub_passenger_list_layout,parent,false);
+
+            SubViewHolder subViewHolder=new SubViewHolder(v);
+
+            return subViewHolder;
+        }
+
+        @Override
+        public void onBindChildViewHolder(SubViewHolder holder, int flatPosition, ExpandableGroup group, int childIndex) {
+            final SubPassengersData subPassengersData = ((PassengerData) group).getItems().get(childIndex);
+            holder.setSubPassengerName(subPassengersData);
+        }
+
+        @Override
+        public void onBindGroupViewHolder(MyViewHolder holder, int flatPosition, ExpandableGroup group) {
+            final PassengerData passengerData=((PassengerData)group);
+
             Glide
                     .with(context)
                     .load(passengerData.getPhoto()).apply(new RequestOptions().placeholder(R.drawable.pr))
                     .into(holder.p_photo);
 
-            holder.p_name.setText(passengerData.getFname()+"");
+            holder.setPassengerName(group);
 
         }
 
-
-        @Override
-        public int getItemCount() {
-            return arrayList.size();
-        }
-
-        public  class MyViewHolder extends RecyclerView.ViewHolder {
+        public  class MyViewHolder extends GroupViewHolder {
 
             CircleImageView p_photo;
+            ImageView img_drop_down;
             TextView p_name;
 
             public MyViewHolder(View itemView) {
                 super(itemView);
                 p_photo=itemView.findViewById(R.id.p_photo);
+                img_drop_down=itemView.findViewById(R.id.img_drop_down);
                 p_name=itemView.findViewById(R.id.p_name);
 
             }
+
+            public void setPassengerName(ExpandableGroup group) {
+                p_name.setText(group.getTitle());
+            }
+        }
+
+        public  class SubViewHolder extends ChildViewHolder {
+
+            CircleImageView p_photo;
+            TextView p_name;
+
+            public SubViewHolder(View itemView) {
+                super(itemView);
+                p_photo=itemView.findViewById(R.id.p_photo);
+                p_name=itemView.findViewById(R.id.p_name);
+
+            }
+
+            public void setSubPassengerName(SubPassengersData subPassengersData) {
+                p_name.setText(subPassengersData.getFname());
+            }
+
         }
     }
+*/
+    public class PassengerAdapter extends ExpandableRecyclerViewAdapter<PassengerAdapter.MyViewHolder, PassengerAdapter.SubViewHolder> {
+
+        public PassengerAdapter(List<? extends ExpandableGroup> groups) {
+            super(groups);
+        }
+
+        @Override
+        public MyViewHolder onCreateGroupViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.passenger_list_layout, parent, false);
+            return new MyViewHolder(view);
+        }
+
+        @Override
+        public SubViewHolder onCreateChildViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.sub_passenger_list_layout, parent, false);
+            return new SubViewHolder(view);
+        }
+
+        @Override
+        public void onBindChildViewHolder(SubViewHolder holder, int flatPosition,
+                                          ExpandableGroup group, int childIndex) {
+
+            final SubPassengersData artist = ((PassengerData) group).getItems().get(childIndex);
+            holder.setSubPassengerName(artist);
+        }
+
+        @Override
+        public void onBindGroupViewHolder(MyViewHolder holder, int flatPosition,
+                                          ExpandableGroup group) {
+
+            holder.setPassengerName(group);
+        }
+
+        public  class MyViewHolder extends GroupViewHolder {
+
+            CircleImageView p_photo;
+            ImageView img_drop_down;
+            TextView p_name;
+
+            public MyViewHolder(View itemView) {
+                super(itemView);
+                p_photo=itemView.findViewById(R.id.p_photo);
+                img_drop_down=itemView.findViewById(R.id.img_drop_down);
+                p_name=itemView.findViewById(R.id.p_name);
+
+            }
+
+            public void setPassengerName(ExpandableGroup group) {
+                p_name.setText(group.getTitle());
+            }
+
+            @Override
+            public void expand() {
+                animateExpand();
+            }
+
+            @Override
+            public void collapse() {
+                animateCollapse();
+            }
+
+            private void animateExpand() {
+                RotateAnimation rotate =
+                        new RotateAnimation(360, 180, RELATIVE_TO_SELF, 0.5f, RELATIVE_TO_SELF, 0.5f);
+                rotate.setDuration(300);
+                rotate.setFillAfter(true);
+                img_drop_down.setAnimation(rotate);
+            }
+
+            private void animateCollapse() {
+                RotateAnimation rotate =
+                        new RotateAnimation(180, 360, RELATIVE_TO_SELF, 0.5f, RELATIVE_TO_SELF, 0.5f);
+                rotate.setDuration(300);
+                rotate.setFillAfter(true);
+                img_drop_down.setAnimation(rotate);
+            }
+        }
+
+        public  class SubViewHolder extends ChildViewHolder {
+
+            CircleImageView p_photo;
+            TextView p_name;
+
+            public SubViewHolder(View itemView) {
+                super(itemView);
+                p_photo=itemView.findViewById(R.id.p_photo);
+                p_name=itemView.findViewById(R.id.p_name);
+
+            }
+
+            public void setSubPassengerName(SubPassengersData subPassengersData) {
+                p_name.setText(subPassengersData.getFname());
+            }
+
+        }
+    }
+
 
     @Override
     public void onBackPressed() {

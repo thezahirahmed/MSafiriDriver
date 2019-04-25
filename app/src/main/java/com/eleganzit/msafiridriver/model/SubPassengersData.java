@@ -1,17 +1,13 @@
 package com.eleganzit.msafiridriver.model;
 
 import android.os.Parcel;
+import android.os.Parcelable;
 
-import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
+public class SubPassengersData implements Parcelable {
 
-import java.util.List;
-
-public class PassengerData extends ExpandableGroup<SubPassengersData>
-{
     String id,user_id,rating,rstatus,fname,lname,photo;
 
-    public PassengerData(String id, List<SubPassengersData> passengers, String user_id, String rating, String rstatus, String fname, String lname, String photo) {
-        super(fname, passengers);
+    public SubPassengersData(String id, String user_id, String rating, String rstatus, String fname, String lname, String photo) {
         this.id = id;
         this.user_id = user_id;
         this.rating = rating;
@@ -20,6 +16,44 @@ public class PassengerData extends ExpandableGroup<SubPassengersData>
         this.lname = lname;
         this.photo = photo;
     }
+
+    protected SubPassengersData(Parcel in) {
+        id = in.readString();
+        user_id = in.readString();
+        rating = in.readString();
+        rstatus = in.readString();
+        fname = in.readString();
+        lname = in.readString();
+        photo = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(user_id);
+        dest.writeString(rating);
+        dest.writeString(rstatus);
+        dest.writeString(fname);
+        dest.writeString(lname);
+        dest.writeString(photo);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<SubPassengersData> CREATOR = new Creator<SubPassengersData>() {
+        @Override
+        public SubPassengersData createFromParcel(Parcel in) {
+            return new SubPassengersData(in);
+        }
+
+        @Override
+        public SubPassengersData[] newArray(int size) {
+            return new SubPassengersData[size];
+        }
+    };
 
     public String getId() {
         return id;
