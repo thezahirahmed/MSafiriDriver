@@ -398,7 +398,7 @@ public class RegisterPersonalInfoActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 Log.d("errorrrr",""+error.getMessage());
-                Toast.makeText(RegisterPersonalInfoActivity.this, "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterPersonalInfoActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -471,7 +471,7 @@ public class RegisterPersonalInfoActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 Log.d("errorrrr",""+error.getMessage());
-                Toast.makeText(RegisterPersonalInfoActivity.this, "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterPersonalInfoActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -491,7 +491,6 @@ public class RegisterPersonalInfoActivity extends AppCompatActivity {
         myInterface.getPersonalInfo(pref.getString("driver_id",""), new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
-                getCountry();
 
                 final StringBuilder stringBuilder = new StringBuilder();
                 try {
@@ -561,13 +560,7 @@ public class RegisterPersonalInfoActivity extends AppCompatActivity {
                                 edstate.setText(state);
                                 edpostal.setText(postal_code);
                                 edcountry.setText(country);
-                                if(country_id.equalsIgnoreCase("") || country_id.equalsIgnoreCase("0"))
-                                {
-                                }
-                                else
-                                {
-                                    getState(country_id,null);
-                                }
+
                             }
                         }
                         else
@@ -598,7 +591,7 @@ public class RegisterPersonalInfoActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(RegisterPersonalInfoActivity.this, "" + error.getMessage()+" : Please try again, Couldn't load personal information", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterPersonalInfoActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -678,7 +671,7 @@ public class RegisterPersonalInfoActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(RegisterPersonalInfoActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterPersonalInfoActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -686,7 +679,7 @@ public class RegisterPersonalInfoActivity extends AppCompatActivity {
 
     public void getCountry()
     {
-        //progressDialog.show();
+        progressDialog.show();
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
         myInterface.getCountry("",new retrofit.Callback<retrofit.client.Response>() {
@@ -729,6 +722,32 @@ public class RegisterPersonalInfoActivity extends AppCompatActivity {
                                 countryArrayList2.add(countryData);
 
                             }
+                            final ListAdapter adapter = new ArrayAdapter(RegisterPersonalInfoActivity.this, android.R.layout.simple_list_item_single_choice, android.R.id.text1, countryArrayList);
+
+                            final AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(RegisterPersonalInfoActivity.this, R.style.AlertDialogCustom));
+
+                        /*builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        });*/
+
+                            builder.setSingleChoiceItems(adapter, -1, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                    CountryData countryData=countryArrayList2.get(i);
+
+                                    edcountry.setText(countryData.getCountry());
+
+                                    RegisterPersonalInfoActivity.this.country_id=countryData.getCountry_id();
+                                    edstate.setText("");
+                                    getState(RegisterPersonalInfoActivity.this.country_id,dialogInterface);
+                                }
+                            });
+                            builder.show();
+
 
                         }
                         else
@@ -761,7 +780,7 @@ public class RegisterPersonalInfoActivity extends AppCompatActivity {
                 progressDialog.dismiss();
 
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(RegisterPersonalInfoActivity.this, "" + error.getMessage()+" : Couldn't load countries", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterPersonalInfoActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -849,7 +868,7 @@ public class RegisterPersonalInfoActivity extends AppCompatActivity {
                 progressDialog.dismiss();
 
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(RegisterPersonalInfoActivity.this, "" + error.getMessage()+" : Couldn't load states", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterPersonalInfoActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -857,31 +876,7 @@ public class RegisterPersonalInfoActivity extends AppCompatActivity {
 
     void showCountryDialog() {
 
-        final ListAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_single_choice, android.R.id.text1, countryArrayList);
-
-        final AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom));
-
-        /*builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-            }
-        });*/
-
-        builder.setSingleChoiceItems(adapter, -1, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-                CountryData countryData=countryArrayList2.get(i);
-
-                edcountry.setText(countryData.getCountry());
-
-                country_id=countryData.getCountry_id();
-                edstate.setText("");
-                getState(country_id,dialogInterface);
-            }
-        });
-        builder.show();
+        getCountry();
 
     }
 
@@ -1006,7 +1001,7 @@ public class RegisterPersonalInfoActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(RegisterPersonalInfoActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterPersonalInfoActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });

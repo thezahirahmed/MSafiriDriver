@@ -506,7 +506,9 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
 
                                     if(edreason.getText().toString().isEmpty())
                                     {
-                                        Toast.makeText(context, "Please give the reason", Toast.LENGTH_SHORT).show();
+                                        edreason.requestFocus();
+                                        edreason.setError("Please give the reason");
+                                        //Toast.makeText(context, "Please give the reason", Toast.LENGTH_SHORT).show();
                                     }
                                     else
                                     {

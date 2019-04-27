@@ -26,6 +26,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.eleganzit.msafiridriver.ChoosePictureActivity;
 import com.eleganzit.msafiridriver.R;
@@ -89,8 +90,10 @@ public class RegisterChoosePictureActivity extends AppCompatActivity {
 
         Glide
                 .with(this)
+                .asBitmap()
+                .apply(new RequestOptions().override(250, 250).placeholder(R.drawable.pr).centerCrop().circleCrop().diskCacheStrategy(DiskCacheStrategy.ALL))
                 .load(photo)
-                .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop()).into(profile_pic);
+                .into(profile_pic);
 
     }
 
@@ -449,14 +452,14 @@ public class RegisterChoosePictureActivity extends AppCompatActivity {
 
 
                 mediapath=""+sb.toString().trim();
-
-                /*Glide
-                        .with(RegisterChoosePictureActivity.this)
-                        .load(mediapath.trim())
-                        .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop())
-                        .into(profile_pic);*/
                 uploadProfile();
 
+                Glide
+                        .with(RegisterChoosePictureActivity.this)
+                        .asBitmap()
+                        .apply(new RequestOptions().override(250, 250).placeholder(R.drawable.pr).centerCrop().circleCrop())
+                        .load(mediapath.trim())
+                        .into(profile_pic);
 
                 Log.d("mediapathhhhhhhh",""+mediapath);
             }

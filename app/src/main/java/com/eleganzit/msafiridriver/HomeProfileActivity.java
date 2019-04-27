@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -273,7 +274,7 @@ public class HomeProfileActivity extends AppCompatActivity {
                     public void failure(RetrofitError error) {
                         progressDialog.dismiss();
                         //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                        Toast.makeText(HomeProfileActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(HomeProfileActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
                     }
                 });
@@ -335,9 +336,11 @@ public class HomeProfileActivity extends AppCompatActivity {
                             Log.d("photooooooo", "photo " + photo);
                             Glide
                                     .with(HomeProfileActivity.this)
+                                    .asBitmap()
+                                    .apply(new RequestOptions().override(200, 200).placeholder(R.drawable.pr).centerCrop().circleCrop().format(PREFER_ARGB_8888).diskCacheStrategy(DiskCacheStrategy.ALL))
                                     .load(photo)
                                     .thumbnail(.1f)
-                                    .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop().format(PREFER_ARGB_8888).diskCacheStrategy(DiskCacheStrategy.ALL)).into(profile_pic);
+                                    .into(profile_pic);
                         } else {
 
                         }
@@ -362,7 +365,7 @@ public class HomeProfileActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(HomeProfileActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(HomeProfileActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -372,9 +375,11 @@ public class HomeProfileActivity extends AppCompatActivity {
 
         Glide
                 .with(HomeProfileActivity.this)
+                .asBitmap()
+                .apply(new RequestOptions().override(200, 200).placeholder(R.drawable.pr).centerCrop().circleCrop().format(PREFER_ARGB_8888).diskCacheStrategy(DiskCacheStrategy.ALL))
                 .load(pref.getString("photo",""))
                 .thumbnail(.1f)
-                .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop().format(PREFER_ARGB_8888).diskCacheStrategy(DiskCacheStrategy.ALL)).into(profile_pic);
+                .into(profile_pic);
 
         progressDialog.show();
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
@@ -463,7 +468,7 @@ public class HomeProfileActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(HomeProfileActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(HomeProfileActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -478,9 +483,11 @@ public class HomeProfileActivity extends AppCompatActivity {
 
         Glide
                 .with(HomeProfileActivity.this)
+                .asBitmap()
+                .apply(new RequestOptions().override(200, 200).placeholder(R.drawable.pr).centerCrop().circleCrop().format(PREFER_ARGB_8888).diskCacheStrategy(DiskCacheStrategy.ALL))
                 .load(pref.getString("photo",""))
                 .thumbnail(.1f)
-                .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop().format(PREFER_ARGB_8888).diskCacheStrategy(DiskCacheStrategy.ALL)).into(profile_pic);
+                .into(profile_pic);
 
         if (pref.getString("type", "").equalsIgnoreCase("individual")) {
             vehicle_detail.setVisibility(View.VISIBLE);

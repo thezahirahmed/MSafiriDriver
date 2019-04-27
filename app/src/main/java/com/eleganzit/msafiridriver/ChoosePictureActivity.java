@@ -15,6 +15,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
@@ -120,8 +121,9 @@ public class ChoosePictureActivity extends AppCompatActivity {
 
         Glide
                 .with(this)
+                .asBitmap()
+                .apply(new RequestOptions().override(250, 250).placeholder(R.drawable.pr).centerCrop().circleCrop().diskCacheStrategy(DiskCacheStrategy.ALL))
                 .load(photo)
-                .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop().diskCacheStrategy(DiskCacheStrategy.ALL))
                 .thumbnail(.1f)
                 .into(profile_pic);
 
@@ -269,7 +271,7 @@ public class ChoosePictureActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 Log.d("errorrrr",""+error.getMessage());
-                Toast.makeText(ChoosePictureActivity.this, "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ChoosePictureActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -343,7 +345,7 @@ public class ChoosePictureActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 Log.d("errorrrr",""+error.getMessage());
-                Toast.makeText(ChoosePictureActivity.this, "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ChoosePictureActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -496,13 +498,14 @@ public class ChoosePictureActivity extends AppCompatActivity {
                     int file_size2 = Integer.parseInt(String.valueOf(f.length() / 1024));
                     Log.d("file_size", "mediapath2222 : " + mediapath + " ---- " + file_size2);
 
-                Glide
-                        .with(ChoosePictureActivity.this)
-                        .load(mediapath.trim())
-                        .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop())
-                        .into(profile_pic);
                     uploadProfile();
 
+                    Glide
+                            .with(ChoosePictureActivity.this)
+                            .asBitmap()
+                            .apply(new RequestOptions().override(250, 250).placeholder(R.drawable.pr).centerCrop().circleCrop().diskCacheStrategy(DiskCacheStrategy.ALL))
+                            .load(mediapath.trim())
+                            .into(profile_pic);
 
                     Log.d("mediapathhhhhhhh",""+mediapath);
                 }
@@ -609,8 +612,9 @@ public class ChoosePictureActivity extends AppCompatActivity {
                         {
                             Glide
                                     .with(ChoosePictureActivity.this)
+                                    .asBitmap()
+                                    .apply(new RequestOptions().override(250, 250).placeholder(R.drawable.pr).centerCrop().circleCrop().diskCacheStrategy(DiskCacheStrategy.ALL))
                                     .load(photo)
-                                    .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop())
                                     .into(profile_pic);
                             Toast.makeText(ChoosePictureActivity.this, "Profile picture updated", Toast.LENGTH_SHORT).show();
                         }
@@ -625,6 +629,7 @@ public class ChoosePictureActivity extends AppCompatActivity {
                     //progressDialog.dismiss();
                     //Toast.makeText(ChoosePictureActivity.this, "thisssss "+message, Toast.LENGTH_SHORT).show();
                     Log.d("messageeeeeeeeeee",message);
+                    Toast.makeText(ChoosePictureActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
                 }
             });

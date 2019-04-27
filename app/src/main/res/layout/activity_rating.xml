@@ -21,12 +21,10 @@
         <RelativeLayout
 
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
+            android:layout_height="wrap_content">
 
             <com.eleganzit.msafiridriver.utils.RobotoMediumTextView
                 android:layout_centerInParent="true"
-
                 android:textStyle="bold"
                 android:text="Rating"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
@@ -198,6 +196,14 @@
                     android:layout_height="match_parent">
 
                 </android.support.v7.widget.RecyclerView>
+
+                <ImageView
+                    android:id="@+id/reload"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:visibility="gone"
+                    android:src="@mipmap/reload_icon"/>
                 <com.eleganzit.msafiridriver.utils.RobotoMediumTextView
                     android:id="@+id/no_ratings"
                     android:layout_width="wrap_content"

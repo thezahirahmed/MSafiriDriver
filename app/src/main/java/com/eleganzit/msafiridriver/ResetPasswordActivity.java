@@ -151,7 +151,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(ResetPasswordActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ResetPasswordActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });

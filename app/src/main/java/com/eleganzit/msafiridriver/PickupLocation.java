@@ -482,9 +482,9 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
                                 LatLng loc2=new LatLng(Double.parseDouble(lat),Double.parseDouble(lng));
                                 googleMap.moveCamera(CameraUpdateFactory.newLatLng(loc2));
 
-                                BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.location_green);
+                                BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.location_green_dot);
                                 Bitmap b=bitmapdraw.getBitmap();
-                                Bitmap smallMarker = Bitmap.createScaledBitmap(b, 70, 70, false);
+                                Bitmap smallMarker = Bitmap.createScaledBitmap(b, 75, 75, false);
 
                                 googleMap.animateCamera(CameraUpdateFactory.zoomTo(13.0f));
                                 a = new MarkerOptions().position(loc2).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)).title("Pickup Location");
@@ -555,29 +555,35 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
         pickup_time.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
-                Calendar mcurrentTime = Calendar.getInstance();
-                int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
-                int minute = mcurrentTime.get(Calendar.MINUTE);
-                TimePickerDialog mTimePicker;
-                mTimePicker = new TimePickerDialog(PickupLocation.this, new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                if(pick_mydate.equalsIgnoreCase(""))
+                {
+                    Toast.makeText(PickupLocation.this, "Please select the date", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    // TODO Auto-generated method stub
+                    Calendar mcurrentTime = Calendar.getInstance();
+                    int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                    int minute = mcurrentTime.get(Calendar.MINUTE);
+                    TimePickerDialog mTimePicker;
+                    mTimePicker = new TimePickerDialog(PickupLocation.this, new TimePickerDialog.OnTimeSetListener() {
+                        @Override
+                        public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
 
-                        if(selectedMinute<10)
-                        {
-                            pick_mytime=selectedHour+":0"+selectedMinute+":00";
-                        }
-                        else
-                        {
-                            pick_mytime=selectedHour+":"+selectedMinute+":00";
-                        }
-                        Log.d("compppppp","set "+compareStringOne);
+                            if(selectedMinute<10)
+                            {
+                                pick_mytime=selectedHour+":0"+selectedMinute+":00";
+                            }
+                            else
+                            {
+                                pick_mytime=selectedHour+":"+selectedMinute+":00";
+                            }
+                            Log.d("compppppp","set "+compareStringOne);
 
-                        String am_pm = "";
-                        Calendar datetime = Calendar.getInstance();
-                        datetime.set(Calendar.HOUR_OF_DAY, selectedHour);
-                        datetime.set(Calendar.MINUTE, selectedMinute);
+                            String am_pm = "";
+                            Calendar datetime = Calendar.getInstance();
+                            datetime.set(Calendar.HOUR_OF_DAY, selectedHour);
+                            datetime.set(Calendar.MINUTE, selectedMinute);
 
                             if (datetime.get(Calendar.AM_PM) == Calendar.AM)
                                 am_pm = "AM";
@@ -620,12 +626,34 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
 
 
 
-                        pick_final_date=pick_mydate+" "+pick_mytime;
+                            pick_final_date=pick_mydate+" "+pick_mytime;
+                            /*String givenDateString = pick_final_date;//"2018-11-01 10:39:53";
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                            try {
+                                Date mDate = sdf.parse(givenDateString);
+                                long timeInMilliseconds = mDate.getTime();
+                                System.out.println("Date in milli :: " + timeInMilliseconds);
+                                Log.d("Dateinmilli",""+timeInMilliseconds);
+                                Log.d("Dateinmilli","-5.30   "+(timeInMilliseconds-19080000));
 
-                    }
-                }, hour, minute, true);//Yes 24 hour time
-                mTimePicker.setTitle("Select Time");
-                mTimePicker.show();
+                                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+                                // Create a calendar object that will convert the date and time value in milliseconds to date.
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.setTimeInMillis((timeInMilliseconds-19080000));
+                                sdf.format(calendar.getTime());
+                                Log.d("Dateinmilli","final     "+sdf.format(calendar.getTime()));
+                                pick_final_date=sdf.format(calendar.getTime());
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+*/
+                        }
+                    }, hour, minute, true);//Yes 24 hour time
+                    mTimePicker.setTitle("Select Time");
+                    mTimePicker.show();
+                }
+
             }
         });
         destination_location.setOnClickListener(new View.OnClickListener() {
@@ -720,80 +748,86 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
         destination_time.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
-                Calendar mcurrentTime = Calendar.getInstance();
-                int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
-                int minute = mcurrentTime.get(Calendar.MINUTE);
-                TimePickerDialog mTimePicker;
-                mTimePicker = new TimePickerDialog(PickupLocation.this, new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                if(dest_mydate.equalsIgnoreCase(""))
+                {
+                    Toast.makeText(PickupLocation.this, "Please select the date", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    // TODO Auto-generated method stub
+                    Calendar mcurrentTime = Calendar.getInstance();
+                    int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                    int minute = mcurrentTime.get(Calendar.MINUTE);
+                    TimePickerDialog mTimePicker;
+                    mTimePicker = new TimePickerDialog(PickupLocation.this, new TimePickerDialog.OnTimeSetListener() {
+                        @Override
+                        public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
 
-                        if(selectedMinute<10)
-                        {
-                            dest_mytime=selectedHour+":0"+selectedMinute+":00";
-                            //compareStringOne=selectedHour+":"+selectedMinute;
-                        }
-                        else
-                        {
-                            dest_mytime=selectedHour+":"+selectedMinute+":00";
-                            //compareStringOne=selectedHour+":"+selectedMinute;
-
-                        }
-                        Log.d("compppppp","set "+compareStringOne);
-
-                        compareDates(compareStringOne);
-                        String am_pm = "";
-                        Calendar datetime = Calendar.getInstance();
-                        datetime.set(Calendar.HOUR_OF_DAY, selectedHour);
-                        datetime.set(Calendar.MINUTE, selectedMinute);
-
-                        if (datetime.get(Calendar.AM_PM) == Calendar.AM)
-                            am_pm = "AM";
-                        else if (datetime.get(Calendar.AM_PM) == Calendar.PM)
-                            am_pm = "PM";
-                        String strHrsToShow = (datetime.get(Calendar.HOUR) == 0) ?"12":datetime.get(Calendar.HOUR)+"";
-                        Log.d("dated",pickup_date.getText().toString()+" "+pickup_time.getText().toString()+"    ----      "+destination_date.getText().toString()+" "+strHrsToShow+":"+datetime.get(Calendar.MINUTE)+" "+am_pm);
-                        String compareStringOne2;
-
-                        if(selectedMinute<10)
-                        {
-                            compareStringOne2=destination_date.getText().toString()+" "+selectedHour+":0"+datetime.get(Calendar.MINUTE);
-                        }
-                        else
-                        {
-                            compareStringOne2=destination_date.getText().toString()+" "+selectedHour+":"+datetime.get(Calendar.MINUTE);
-                        }
-                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                        Date strDate = null;
-                        Date strDate2 = null;
-
-                        try {
-                            strDate = formatter.parse(compareStringOne);
-                            strDate2 = formatter.parse(compareStringOne2);
-
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        Log.d("timeessss",""+new Date().getTime() +"     "+ strDate2.getTime());
-                        if (strDate.getTime() > strDate2.getTime()) {
-                            your_date_is_outdated = "invalid";
-                            Toast.makeText(PickupLocation.this, "Please select the future hours", Toast.LENGTH_SHORT).show();
-                            destination_time.setText("");
-                            date_is="lesser";
-                        }
-                        else {
-                            date_is="greater";
-                            //Toast.makeText(PickupLocation.this, "Valid", Toast.LENGTH_SHORT).show();
                             if(selectedMinute<10)
                             {
-                                destination_time.setText(strHrsToShow+":0"+datetime.get(Calendar.MINUTE)+" "+am_pm);
+                                dest_mytime=selectedHour+":0"+selectedMinute+":00";
+                                //compareStringOne=selectedHour+":"+selectedMinute;
                             }
                             else
                             {
-                                destination_time.setText(strHrsToShow+":"+datetime.get(Calendar.MINUTE)+" "+am_pm);
+                                dest_mytime=selectedHour+":"+selectedMinute+":00";
+                                //compareStringOne=selectedHour+":"+selectedMinute;
+
                             }
-                        }
+                            Log.d("compppppp","set "+compareStringOne);
+
+                            compareDates(compareStringOne);
+                            String am_pm = "";
+                            Calendar datetime = Calendar.getInstance();
+                            datetime.set(Calendar.HOUR_OF_DAY, selectedHour);
+                            datetime.set(Calendar.MINUTE, selectedMinute);
+
+                            if (datetime.get(Calendar.AM_PM) == Calendar.AM)
+                                am_pm = "AM";
+                            else if (datetime.get(Calendar.AM_PM) == Calendar.PM)
+                                am_pm = "PM";
+                            String strHrsToShow = (datetime.get(Calendar.HOUR) == 0) ?"12":datetime.get(Calendar.HOUR)+"";
+                            Log.d("dated",pickup_date.getText().toString()+" "+pickup_time.getText().toString()+"    ----      "+destination_date.getText().toString()+" "+strHrsToShow+":"+datetime.get(Calendar.MINUTE)+" "+am_pm);
+                            String compareStringOne2;
+
+                            if(selectedMinute<10)
+                            {
+                                compareStringOne2=destination_date.getText().toString()+" "+selectedHour+":0"+datetime.get(Calendar.MINUTE);
+                            }
+                            else
+                            {
+                                compareStringOne2=destination_date.getText().toString()+" "+selectedHour+":"+datetime.get(Calendar.MINUTE);
+                            }
+                            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                            Date strDate = null;
+                            Date strDate2 = null;
+
+                            try {
+                                strDate = formatter.parse(compareStringOne);
+                                strDate2 = formatter.parse(compareStringOne2);
+
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            Log.d("timeessss",""+new Date().getTime() +"     "+ strDate2.getTime());
+                            if (strDate.getTime() > strDate2.getTime()) {
+                                your_date_is_outdated = "invalid";
+                                Toast.makeText(PickupLocation.this, "Please select the future hours", Toast.LENGTH_SHORT).show();
+                                destination_time.setText("");
+                                date_is="lesser";
+                            }
+                            else {
+                                date_is="greater";
+                                //Toast.makeText(PickupLocation.this, "Valid", Toast.LENGTH_SHORT).show();
+                                if(selectedMinute<10)
+                                {
+                                    destination_time.setText(strHrsToShow+":0"+datetime.get(Calendar.MINUTE)+" "+am_pm);
+                                }
+                                else
+                                {
+                                    destination_time.setText(strHrsToShow+":"+datetime.get(Calendar.MINUTE)+" "+am_pm);
+                                }
+                            }
                         /*
                         if(selectedMinute<10)
                         {
@@ -824,12 +858,34 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
                             }
                             Log.d("dateissss",date_is+"  ");
                         }*/
-                        dest_final_date=dest_mydate+" "+dest_mytime;
+                            dest_final_date=dest_mydate+" "+dest_mytime;
+                            /*String givenDateString = dest_final_date;//"2018-11-01 10:39:53";
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                            try {
+                                Date mDate = sdf.parse(givenDateString);
+                                long timeInMilliseconds = mDate.getTime();
+                                System.out.println("Date in milli :: " + timeInMilliseconds);
+                                Log.d("Dateinmilli",""+timeInMilliseconds);
+                                Log.d("Dateinmilli","-5.30   "+(timeInMilliseconds-19080000));
 
-                    }
-                }, hour, minute, true);//Yes 24 hour time
-                mTimePicker.setTitle("Select Time");
-                mTimePicker.show();
+                                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+                                // Create a calendar object that will convert the date and time value in milliseconds to date.
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.setTimeInMillis((timeInMilliseconds-19080000));
+                                sdf.format(calendar.getTime());
+                                Log.d("Dateinmilli","final     "+sdf.format(calendar.getTime()));
+                                dest_final_date=sdf.format(calendar.getTime());
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+*/
+                        }
+                    }, hour, minute, true);//Yes 24 hour time
+                    mTimePicker.setTitle("Select Time");
+                    mTimePicker.show();
+                }
+
             }
         });
 
@@ -920,7 +976,7 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
                 progressDialog.dismiss();
 
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(PickupLocation.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(PickupLocation.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -1087,7 +1143,7 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
                 progress.setVisibility(View.GONE);
                 content.setVisibility(View.VISIBLE);
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(PickupLocation.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(PickupLocation.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -1157,10 +1213,13 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
     public void onMapReady(GoogleMap googleMap)
     {
         MapsInitializer.initialize(getApplicationContext());
+        googleMap.setMaxZoomPreference(17);
+
         this.googleMap=googleMap;
+
         this.googleMap.getUiSettings().setZoomGesturesEnabled(true);
         this.googleMap.getUiSettings().setAllGesturesEnabled(true);
-        this.googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(PickupLocation.this,R.raw.style_json));
+        //this.googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(PickupLocation.this,R.raw.style_json));
 
         LatLng loc2=new LatLng(23.0262,72.5242);
         this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(loc2));
@@ -1336,14 +1395,14 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
                             LatLng loc2=new LatLng(Double.parseDouble(lat2),Double.parseDouble(lng2));
                             //googleMap.moveCamera(CameraUpdateFactory.newLatLng(loc2));
 
-                            BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.location_green);
+                            BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.location_green_dot);
                             Bitmap bm=bitmapdraw.getBitmap();
-                            Bitmap smallMarker = Bitmap.createScaledBitmap(bm, 70, 70, false);
+                            Bitmap smallMarker = Bitmap.createScaledBitmap(bm, 75, 75, false);
 
                             //DrawMarker.getInstance(this).draw(googleMap, loc2, R.drawable.location_red, "Destination Location");
-                            BitmapDrawable bitmapdraw2=(BitmapDrawable)getResources().getDrawable(R.drawable.location_red);
+                            BitmapDrawable bitmapdraw2=(BitmapDrawable)getResources().getDrawable(R.drawable.location_red_dot);
                             Bitmap b2=bitmapdraw2.getBitmap();
-                            Bitmap smallMarker2 = Bitmap.createScaledBitmap(b2, 70, 70, false);
+                            Bitmap smallMarker2 = Bitmap.createScaledBitmap(b2, 75, 75, false);
 
 
                             googleMap.animateCamera(CameraUpdateFactory.zoomTo(13.0f));
@@ -1440,7 +1499,7 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
                 pickupcontinue1.setEnabled(true);
 
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(PickupLocation.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(PickupLocation.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -1566,7 +1625,7 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
                         pickupcontinue1.setEnabled(true);
 
                         //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                        Toast.makeText(PickupLocation.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PickupLocation.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
                     }
                 });
     }
@@ -1675,7 +1734,7 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
 
         // Building the url to the web service
         String maps_api_key=getResources().getString(R.string.google_maps_key);
-        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters+"&key="+maps_api_key;
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters+"&key=AIzaSyCpPNc0DSeT6s-cFF4ohBOIOVlHJQl2ztQ";
 
         return url;
     }

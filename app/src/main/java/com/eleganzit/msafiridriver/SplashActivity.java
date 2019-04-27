@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
 import com.eleganzit.msafiridriver.activity.NavHomeActivity;
 import com.eleganzit.msafiridriver.utils.MyInterface;
+import com.eleganzit.msafiridriver.utils.ServerFailureDialog;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import io.fabric.sdk.android.Fabric;
@@ -302,14 +303,18 @@ public class SplashActivity extends AppCompatActivity {
 
                 } catch (IOException e) {
 
+                    Log.d("dddddddstringBuilder","IOException "+e.getMessage());
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    Log.d("dddddddstringBuilder","JSONException "+e.getMessage());
                 }
 
             }
 
             @Override
             public void failure(RetrofitError error) {
+                Toast.makeText(SplashActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
+                //ServerFailureDialog.alertDialog(SplashActivity.this);
                 logo.startAnimation(flyout1);
                 if(pref.getString("status","").equalsIgnoreCase("loggedin"))
                 {
@@ -363,7 +368,7 @@ public class SplashActivity extends AppCompatActivity {
                 }
 
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(SplashActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(SplashActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -445,13 +450,13 @@ public class SplashActivity extends AppCompatActivity {
 
             @Override
             public void failure(RetrofitError error) {
-                //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(SplashActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
-                /*
+                Toast.makeText(SplashActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
+                //ServerFailureDialog.alertDialog(SplashActivity.this);
+                //Toast.makeText(SplashActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(SplashActivity.this, SignInActivity.class).putExtra("from","this");
                 startActivity(i);
                 overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
-                finish();*/
+                finish();
             }
         });
     }
@@ -533,13 +538,13 @@ public class SplashActivity extends AppCompatActivity {
 
             @Override
             public void failure(RetrofitError error) {
-                //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(SplashActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
-                /*
+                Toast.makeText(SplashActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
+                //ServerFailureDialog.alertDialog(SplashActivity.this);
+                //Toast.makeText(SplashActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(SplashActivity.this, SignInActivity.class).putExtra("from","this");
                 startActivity(i);
                 overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
-                finish();*/
+                finish();
             }
         });
     }

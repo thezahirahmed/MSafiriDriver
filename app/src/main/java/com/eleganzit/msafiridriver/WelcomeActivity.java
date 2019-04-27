@@ -119,7 +119,7 @@ public class WelcomeActivity extends AppCompatActivity {
                     //progressDialog.dismiss();
                     uploadVehicleProfileSuccess=false;
                     removeDriver();
-                    Toast.makeText(WelcomeActivity.this, ""+message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(WelcomeActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
                     Log.d("messageeeeeeeeeee",message);
 
                 }
@@ -180,7 +180,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    Toast.makeText(WelcomeActivity.this, ""+message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(WelcomeActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
                 }
                 Log.d("messageeeeeeeeeee",message);
 
@@ -251,7 +251,7 @@ public class WelcomeActivity extends AppCompatActivity {
             @Override
             public void failure(RetrofitError error) {
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(WelcomeActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(WelcomeActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -339,7 +339,7 @@ public class WelcomeActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(WelcomeActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(WelcomeActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -391,7 +391,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    Toast.makeText(WelcomeActivity.this, ""+message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(WelcomeActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
                     removeDriver();
                     Log.d("messageeeeeeeeeee","veh 4"+message);
                 }
@@ -473,7 +473,7 @@ public class WelcomeActivity extends AppCompatActivity {
                         progressDialog.dismiss();
                         addBankdetailsSuccess=false;
                         //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                        Toast.makeText(WelcomeActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(WelcomeActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
                     }
                 });

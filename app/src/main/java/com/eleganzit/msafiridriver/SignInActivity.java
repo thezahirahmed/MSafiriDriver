@@ -39,6 +39,7 @@ import com.daimajia.androidanimations.library.YoYo;
 import com.eleganzit.msafiridriver.activity.Home;
 import com.eleganzit.msafiridriver.activity.NavHomeActivity;
 import com.eleganzit.msafiridriver.utils.MyInterface;
+import com.eleganzit.msafiridriver.utils.ServerFailureDialog;
 import com.github.gfranks.minimal.notification.GFMinimalNotification;
 import com.google.firebase.iid.FirebaseInstanceId;
 
@@ -498,7 +499,9 @@ public class SignInActivity extends AppCompatActivity {
             @Override
             public void failure(RetrofitError error) {
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(SignInActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(SignInActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
+                //ServerFailureDialog.alertDialog(SignInActivity.this);
+
                 logo.startAnimation(flyout1);
                                         /*progress.startAnimation(flyout1);
                                         animationDrawable.stop();*/
@@ -571,8 +574,9 @@ public class SignInActivity extends AppCompatActivity {
             @Override
             public void failure(RetrofitError error) {
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(SignInActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
-                /*
+                Toast.makeText(SignInActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
+                //ServerFailureDialog.alertDialog(SignInActivity.this);
+/*
                 Intent i = new Intent(SplashActivity.this, SignInActivity.class).putExtra("from","this");
                 startActivity(i);
                 overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);

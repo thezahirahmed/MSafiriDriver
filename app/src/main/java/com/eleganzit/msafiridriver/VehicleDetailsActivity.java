@@ -37,6 +37,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.daimajia.androidanimations.library.Techniques;
@@ -67,6 +68,8 @@ import me.nereo.multi_image_selector.MultiImageSelector;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import spencerstudios.com.bungeelib.Bungee;
+
+import static com.bumptech.glide.load.DecodeFormat.PREFER_ARGB_8888;
 
 public class VehicleDetailsActivity extends AppCompatActivity {
 
@@ -351,7 +354,7 @@ public class VehicleDetailsActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 Log.d("errorrrr",""+error.getMessage());
-                Toast.makeText(VehicleDetailsActivity.this, "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
+                Toast.makeText(VehicleDetailsActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -436,7 +439,7 @@ public class VehicleDetailsActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 Log.d("errorrrr",""+error.getMessage());
-                Toast.makeText(VehicleDetailsActivity.this, "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
+                Toast.makeText(VehicleDetailsActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -624,6 +627,11 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                         editor.commit();
                         Toast.makeText(VehicleDetailsActivity.this, "successfully uploaded", Toast.LENGTH_SHORT).show();
                     }
+                    else
+                    {
+                        Toast.makeText(VehicleDetailsActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
+
+                    }
                     finish();
                     Log.d("messageeeeeeeeeee",message);
 
@@ -661,8 +669,10 @@ public class VehicleDetailsActivity extends AppCompatActivity {
 
             Glide
                     .with(context)
+                    .asBitmap()
+                    .apply(new RequestOptions().override(200, 200).placeholder(Drawable.createFromPath(arrayList2.get(position))).centerCrop().format(PREFER_ARGB_8888).diskCacheStrategy(DiskCacheStrategy.ALL))
                     .load(arrayList2.get(position))
-                    .apply(new RequestOptions().centerCrop().placeholder(Drawable.createFromPath(arrayList2.get(position)))).into(holder.image);
+                    .into(holder.image);
 
             holder.remove.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -783,7 +793,7 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                         progressDialog.dismiss();
                     }
                     //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                    Toast.makeText(context, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(VehicleDetailsActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
                 }
             });
@@ -822,8 +832,10 @@ public class VehicleDetailsActivity extends AppCompatActivity {
             Log.d("ssimageeeeee","eeeee "+vehicleData.getPhoto()+"     "+arrayList2.get(position));
             Glide
                     .with(context)
+                    .asBitmap()
+                    .apply(new RequestOptions().override(200, 200).placeholder(Drawable.createFromPath(arrayList2.get(position))).centerCrop().format(PREFER_ARGB_8888).diskCacheStrategy(DiskCacheStrategy.ALL))
                     .load(arrayList2.get(position))
-                    .apply(new RequestOptions().placeholder(Drawable.createFromPath(arrayList2.get(position))).centerCrop()).into(holder.image);
+                    .into(holder.image);
 
             holder.remove.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -940,7 +952,7 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                         progressDialog.dismiss();
                     }
                     //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                    Toast.makeText(context, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(VehicleDetailsActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
                 }
             });
@@ -1037,7 +1049,7 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    Toast.makeText(VehicleDetailsActivity.this, ""+message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(VehicleDetailsActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
                 }
                 Log.d("messageeeeeeeeeee",message);
 
@@ -1117,7 +1129,7 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                     public void failure(RetrofitError error) {
                         progressDialog.dismiss();
                         //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                        Toast.makeText(VehicleDetailsActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(VehicleDetailsActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
                     }
                 });
@@ -1232,7 +1244,7 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                 progressDialog.dismiss();
 
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(VehicleDetailsActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(VehicleDetailsActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });

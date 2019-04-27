@@ -50,24 +50,6 @@
         android:layout_above="@+id/start"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/no_passenger"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="No Passengers"
-            android:visibility="gone"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-            android:textStyle="bold"
-            android:layout_centerInParent="true"/>
-
-        <ImageView
-            android:id="@+id/reload_onboard_passengers"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:visibility="gone"
-            android:src="@mipmap/reload_icon"/>
-
 
         <RelativeLayout
             android:id="@+id/top"
@@ -146,9 +128,18 @@
             android:visibility="visible"
             android:background="#ffffff"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"/>
 
-        </android.support.v7.widget.RecyclerView>
+        <TextView
+            android:id="@+id/no_passenger"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No Passengers"
+            android:visibility="gone"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+            android:textStyle="bold"
+            android:layout_centerInParent="true"/>
+
         <ImageView
             android:id="@+id/reload_passengers"
             android:layout_width="wrap_content"

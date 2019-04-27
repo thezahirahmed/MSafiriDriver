@@ -3,7 +3,9 @@ package com.eleganzit.msafiridriver.activity;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.support.v4.widget.CircularProgressDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +16,9 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.eleganzit.msafiridriver.PickupLocation;
 import com.eleganzit.msafiridriver.R;
 import com.eleganzit.msafiridriver.utils.DirectionsJSONParser;
@@ -56,14 +61,14 @@ import retrofit.RetrofitError;
 import retrofit.client.OkClient;
 import spencerstudios.com.bungeelib.Bungee;
 
-public class TripDetail extends AppCompatActivity implements OnMapReadyCallback {
+public class TripDetail extends AppCompatActivity {
 
-    MapView mapView;
+    ImageView mapView;
     private String id;
-    GoogleMap googleMap;
     ProgressBar progress;
     TextView pickup_location,destination_location,pickup_time,destination_time,total_passenger,total_rating;
     ScrollView content;
+    CircularProgressDrawable circularProgressDrawable;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,8 +82,12 @@ public class TripDetail extends AppCompatActivity implements OnMapReadyCallback 
                 Bungee.slideRight(TripDetail.this);
             }
         });
-        mapView= (MapView) findViewById(R.id.map);
+
+        mapView= findViewById(R.id.map);
         progress=findViewById(R.id.progress);
+        Drawable progressDrawable = progress.getIndeterminateDrawable().mutate();
+        progressDrawable.setColorFilter(Color.parseColor("#0192D2"), android.graphics.PorterDuff.Mode.SRC_IN);
+        progress.setProgressDrawable(progressDrawable);
         content= findViewById(R.id.content);
         pickup_location=findViewById(R.id.pickup_location);
         pickup_location.setSelected(true);
@@ -88,13 +97,12 @@ public class TripDetail extends AppCompatActivity implements OnMapReadyCallback 
         destination_time=findViewById(R.id.destination_time);
         total_passenger=findViewById(R.id.total_passenger);
         total_rating=findViewById(R.id.total_rating);
-        if(mapView != null)
-        {
-            mapView.onCreate(null);
-            mapView.onResume();
-            mapView.getMapAsync(this);
 
-        }
+        circularProgressDrawable = new CircularProgressDrawable(this);
+        circularProgressDrawable.setStrokeWidth(5f);
+        circularProgressDrawable.setCenterRadius(30f);
+        circularProgressDrawable.start();
+
         id=getIntent().getStringExtra("id");
         getTrip();
 
@@ -155,6 +163,7 @@ public class TripDetail extends AppCompatActivity implements OnMapReadyCallback 
                                 String statuss = jsonObject1.getString("status");
                                 String stotal_passenger = jsonObject1.getString("total_passenger");
                                 String ratting = jsonObject1.getString("ratting");
+                                String trip_map_screenshot = jsonObject1.getString("trip_map_screenshot");
 
                                 String inputPattern = "yyyy-MM-dd HH:mm:ss";
                                 String outputPattern = "dd/MM/yy 'at' hh:mm a";
@@ -166,6 +175,13 @@ public class TripDetail extends AppCompatActivity implements OnMapReadyCallback 
                                 String pstr = null;
                                 String dstr = null;
 
+                                Glide
+                                        .with(TripDetail.this)
+                                        .asBitmap()
+                                        .apply(new RequestOptions().override(350, 350).placeholder(circularProgressDrawable).centerCrop().diskCacheStrategy(DiskCacheStrategy.ALL))
+                                        .load(trip_map_screenshot)
+                                        .thumbnail(.1f)
+                                        .into(mapView);
 
                                 try {
                                     pdate = inputFormat.parse(spickup_time);
@@ -185,47 +201,6 @@ public class TripDetail extends AppCompatActivity implements OnMapReadyCallback 
                                 destination_time.setText(dstr);
                                 total_passenger.setText(stotal_passenger);
                                 total_rating.setText(ratting);
-                                ArrayList<Marker> mMarkerArray = new ArrayList<Marker>();
-
-                                LatLng loc=new LatLng(Double.parseDouble(from_lat),Double.parseDouble(from_lng));
-                                BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.location_green);
-                                Bitmap bm=bitmapdraw.getBitmap();
-                                Bitmap smallMarker = Bitmap.createScaledBitmap(bm, 70, 70, false);
-                                //DrawMarker.getInstance(this).draw(googleMap, loc2, BitmapDescriptorFactory.fromBitmap(smallMarker), "Pickup Location");
-
-                                googleMap.addMarker(new MarkerOptions().position(loc).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)).title("Pickup Location"));
-
-                                LatLng loc2=new LatLng(Double.parseDouble(to_lat),Double.parseDouble(to_lng));
-                                BitmapDrawable bitmapdraw2=(BitmapDrawable)getResources().getDrawable(R.drawable.location_red);
-                                Bitmap b2=bitmapdraw2.getBitmap();
-                                Bitmap smallMarker2 = Bitmap.createScaledBitmap(b2, 70, 70, false);
-
-                                //DrawMarker.getInstance(this).draw(googleMap, loc2, BitmapDescriptorFactory.fromBitmap(smallMarker), "Pickup Location");
-
-                                googleMap.addMarker(new MarkerOptions().position(loc2).icon(BitmapDescriptorFactory.fromBitmap(smallMarker2)).title("Destination Location"));
-                                String url = getDirectionsUrl(loc, loc2);
-                                mMarkerArray.add(googleMap.addMarker(new MarkerOptions().position(loc).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)).title("Pickup Location")));
-                                mMarkerArray.add(googleMap.addMarker(new MarkerOptions().position(loc2).icon(BitmapDescriptorFactory.fromBitmap(smallMarker2)).title("Destination Location")));
-
-                                LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                                for (Marker marker : mMarkerArray) {
-                                    builder.include(marker.getPosition());
-                                }
-                                final LatLngBounds bounds = builder.build();
-                                int padding = 80; // offset from edges of the map in pixels
-                                final CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-
-                                googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-                                    @Override
-                                    public void onMapLoaded() {
-                                        googleMap.moveCamera(cu);
-                                        googleMap.animateCamera(cu);
-                                    }
-                                });
-                                googleMap.getUiSettings().setAllGesturesEnabled(false);
-                                DownloadTask downloadTask = new DownloadTask();
-                                // Start downloading json data from Google Directions API
-                                downloadTask.execute(url);
                             }
 
                         }
@@ -259,26 +234,12 @@ public class TripDetail extends AppCompatActivity implements OnMapReadyCallback 
                 progress.setVisibility(View.GONE);
                 //content.setVisibility(View.VISIBLE);
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(TripDetail.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(TripDetail.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        this.googleMap=googleMap;
-        MapsInitializer.initialize(getApplicationContext());
-        googleMap.getUiSettings().setAllGesturesEnabled(false);
-        googleMap.getUiSettings().setZoomGesturesEnabled(true);
-        googleMap.getUiSettings().setAllGesturesEnabled(true);
-        LatLng loc2=new LatLng(23.0262,72.5242);
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(loc2));
-
-
-        googleMap.animateCamera(CameraUpdateFactory.zoomTo(13.0f));
-       // googleMap.addMarker(new MarkerOptions().position(loc2));
-    }
 
     @Override
     public void onPointerCaptureChanged(boolean hasCapture) {
@@ -370,7 +331,6 @@ public class TripDetail extends AppCompatActivity implements OnMapReadyCallback 
             }
 
 // Drawing polyline in the Google Map for the i-th route
-            googleMap.addPolyline(lineOptions);
         }
     }
 
@@ -393,7 +353,7 @@ public class TripDetail extends AppCompatActivity implements OnMapReadyCallback 
 
         // Building the url to the web service
         String maps_api_key=getResources().getString(R.string.google_api_key);
-        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters+"&key="+maps_api_key;
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters+"&key=AIzaSyCpPNc0DSeT6s-cFF4ohBOIOVlHJQl2ztQ";
 
         return url;
     }

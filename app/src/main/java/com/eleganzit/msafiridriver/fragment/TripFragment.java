@@ -209,7 +209,7 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
                 p_editor.putString("trip_status",trip_status+"");
 
                 Log.d("trip_statusssssid","  "+id);
-                if(p_pref.getString("trip_status","").equalsIgnoreCase("ongoing"))
+                if(trip_status.equalsIgnoreCase("ongoing"))
                 {
                     getActivity().startActivity(new Intent(getActivity(),OnboardPassengerListActivity.class).putExtra("from","trip"));
                     Bungee.slideLeft(getActivity());
@@ -282,6 +282,8 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        googleMap.setMaxZoomPreference(17);
+
         map=googleMap;
         MapsInitializer.initialize(getContext().getApplicationContext());
         map.getUiSettings().setAllGesturesEnabled(false);
@@ -431,6 +433,8 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
                                 lat2=to_lat;
                                 lng2=to_lng;
                                 trip_status=statuss;
+                                p_editor.putString("trip_status",trip_status+"");
+                                p_editor.commit();
                                 pickup.setText(from_address);
                                 destination.setText(to_address);
 
@@ -479,6 +483,7 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
                 no_trip.setVisibility(View.VISIBLE);
                 content.setVisibility(View.VISIBLE);
                 progressDialog.dismiss();
+                Toast.makeText(getActivity(), "Server or Internet Error", Toast.LENGTH_LONG).show();
 
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
                 //Toast.makeText(getActivity(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
@@ -496,15 +501,15 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
         // Setting the position of the marker
         options.position(origin);
 
-        BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.location_green);
+        BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.location_green_dot);
         Bitmap b=bitmapdraw.getBitmap();
-        Bitmap firstMarker = Bitmap.createScaledBitmap(b, 70   , 70, false);
+        Bitmap firstMarker = Bitmap.createScaledBitmap(b, 75   , 75, false);
 
         Marker amarker1=    map.addMarker(options.icon(BitmapDescriptorFactory.fromBitmap(firstMarker)));
         MarkerOptions options2 = new MarkerOptions();
-        BitmapDrawable bitmapdraw2=(BitmapDrawable)getResources().getDrawable(R.drawable.location_red);
+        BitmapDrawable bitmapdraw2=(BitmapDrawable)getResources().getDrawable(R.drawable.location_red_dot);
         Bitmap b2=bitmapdraw2.getBitmap();
-        Bitmap firstMarker2 = Bitmap.createScaledBitmap(b2, 70   , 70, false);
+        Bitmap firstMarker2 = Bitmap.createScaledBitmap(b2, 75   , 75, false);
 
         // Setting the position of the marker
         options2.position(destination);
@@ -602,7 +607,7 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
                 }
 
                 lineOptions.addAll(points);
-                lineOptions.width(10);
+                lineOptions.width(13);
                 lineOptions.color(Color.parseColor("#4885ed"));
                 lineOptions.geodesic(true);
 
@@ -610,7 +615,8 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
 
 // Drawing polyline in the Google Map for the i-th route
             map.addPolyline(lineOptions);
-
+            lineOptions.color(Color.parseColor("#FF5392FD")).width(10);
+            map.addPolyline(lineOptions);
         }
     }
 
@@ -633,7 +639,7 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
 
         // Building the url to the web service
         String maps_api_key=getResources().getString(R.string.google_maps_key);
-        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters+"&key="+maps_api_key;
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters+"&key=AIzaSyCpPNc0DSeT6s-cFF4ohBOIOVlHJQl2ztQ";
 
         return url;
     }

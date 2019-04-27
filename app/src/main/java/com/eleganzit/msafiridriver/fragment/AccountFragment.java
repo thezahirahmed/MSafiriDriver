@@ -48,6 +48,7 @@ import com.eleganzit.msafiridriver.activity.AboutUs;
 import com.eleganzit.msafiridriver.activity.HelpActivity;
 import com.eleganzit.msafiridriver.activity.NavHomeActivity;
 import com.eleganzit.msafiridriver.activity.RatingActivity;
+import com.eleganzit.msafiridriver.activity.TripDetail;
 import com.eleganzit.msafiridriver.activity.Utility;
 import com.eleganzit.msafiridriver.adapter.UpcomingTripAdapter;
 import com.eleganzit.msafiridriver.model.TripData;
@@ -256,7 +257,7 @@ public class AccountFragment extends Fragment {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 Log.d("errorrrr",""+error.getMessage());
-                Toast.makeText(getActivity(), "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -338,7 +339,7 @@ public class AccountFragment extends Fragment {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 Log.d("errorrrr",""+error.getMessage());
-                Toast.makeText(getActivity(), "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -822,6 +823,7 @@ public class AccountFragment extends Fragment {
                     //progressDialog.dismiss();
                     //Toast.makeText(getActivity(), "thisssss "+message, Toast.LENGTH_SHORT).show();
                     Log.d("messageeeeeeeeeee",message);
+                    Toast.makeText(getActivity(), "Server or Internet Error", Toast.LENGTH_LONG).show();
 
                 }
             });
@@ -877,6 +879,7 @@ public class AccountFragment extends Fragment {
                     //progressDialog.dismiss();
                     //Toast.makeText(getActivity(), "thisssss "+message, Toast.LENGTH_SHORT).show();
                     Log.d("messageeeeeeeeeee",message);
+                    Toast.makeText(getActivity(), "Server or Internet Error", Toast.LENGTH_LONG).show();
 
                 }
             });

@@ -370,7 +370,7 @@ public class NavHomeActivity extends AppCompatActivity
 
                 toolbar_progress.setVisibility(View.GONE);
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(NavHomeActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(NavHomeActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -480,7 +480,7 @@ public class NavHomeActivity extends AppCompatActivity
                 progressDialog.dismiss();
                 toolbar_progress.setVisibility(View.GONE);
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(NavHomeActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(NavHomeActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -579,7 +579,7 @@ public class NavHomeActivity extends AppCompatActivity
             @Override
             public void failure(RetrofitError error) {
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(NavHomeActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(NavHomeActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });

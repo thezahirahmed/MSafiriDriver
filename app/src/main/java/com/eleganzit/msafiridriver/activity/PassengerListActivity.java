@@ -14,7 +14,9 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -113,6 +115,7 @@ public class PassengerListActivity extends AppCompatActivity {
     private String trip_lat,trip_lng,trip_lat2,trip_lng2,trip_status;
     private static final int CODE_DRAW_OVER_OTHER_APP_PERMISSION = 2084;
     ArrayList<String> userslist;
+    ArrayList<String> bookIdlist;
     private String from;
     private String photoPath;
     CheckBox select_allcheck;
@@ -197,6 +200,7 @@ public class PassengerListActivity extends AppCompatActivity {
         getEvent(new LocationEvent());
         trip_status=p_pref.getString("trip_status","");
         Log.d("trip_status","activity on create"+trip_status+"");
+        Log.d("trip_status","activity PassengerList");
         handler=new Handler();
         mSensorService = new SensorService(handler,pref,this);
         mServiceIntent = new Intent(PassengerListActivity.this, mSensorService.getClass());
@@ -214,7 +218,9 @@ public class PassengerListActivity extends AppCompatActivity {
         Log.d("photoPathPP",""+photoPath);
         passengers=findViewById(R.id.passengers);
         progressBar=findViewById(R.id.progressBar);
-
+        Drawable progressDrawable = progressBar.getIndeterminateDrawable().mutate();
+        progressDrawable.setColorFilter(Color.parseColor("#0192D2"), android.graphics.PorterDuff.Mode.SRC_IN);
+        progressBar.setProgressDrawable(progressDrawable);
         start=findViewById(R.id.start);
         no_passenger=findViewById(R.id.no_passenger);
         available_seats=findViewById(R.id.available_seats);
@@ -470,6 +476,7 @@ public class PassengerListActivity extends AppCompatActivity {
         super.onResume();
         registerReceiver(broadcastReceiver, new IntentFilter(GoogleService.str_receiver));
         userslist=new ArrayList<>();
+        bookIdlist=new ArrayList<>();
         if(select_allcheck.isChecked())
         {
             select_allcheck.setChecked(false);
@@ -535,11 +542,27 @@ public class PassengerListActivity extends AppCompatActivity {
             }
         }
 
-        Log.d("productsssssssss",sb+"");
+        Log.d("uuuuuuuuuuu",bookIdlist+"");
+        StringBuilder sb2 = new StringBuilder();
+        for(int i=0;i<bookIdlist.size();i++)
+        {
+            Log.d("productsssssssss",bookIdlist.get(i)+"");
+            if (i==bookIdlist.size()-1)
+            {
+                sb2.append(bookIdlist.get(i)).append("");
+            }
+            else {
+                sb2.append(bookIdlist.get(i)).append(",");
+
+            }
+        }
+
+        Log.d("productsssssssss",sb2+"");
+
         myInterface.onboardUserlist(trip_id, sb.toString(), new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
-                progressDialog.dismiss();
+                //progressDialog.dismiss();
                 final StringBuilder stringBuilder = new StringBuilder();
                 try {
                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
@@ -591,7 +614,7 @@ public class PassengerListActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(PassengerListActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(PassengerListActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -604,7 +627,7 @@ public class PassengerListActivity extends AppCompatActivity {
         }
         final String finalTstatus = tstatus;
 
-        progressDialog.show();
+        //progressDialog.show();
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
 
@@ -639,7 +662,7 @@ public class PassengerListActivity extends AppCompatActivity {
                                     {
                                         Log.d("trip_latsss","lnggggggg  "+trip_lat+"   "+trip_lng);
 
-                                        holder.select_radioButton.setVisibility(View.GONE);
+                                        //holder.select_radioButton.setVisibility(View.GONE);
                                         p_editor.putString("trip_status","ongoing");
                                         p_editor.commit();
 
@@ -759,7 +782,7 @@ public class PassengerListActivity extends AppCompatActivity {
                     public void failure(RetrofitError error) {
                         progressDialog.dismiss();
                         //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                        Toast.makeText(PassengerListActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PassengerListActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
                     }
                 });
     }
@@ -789,21 +812,23 @@ public class PassengerListActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         reload_passengers.setVisibility(View.GONE);
         top.setVisibility(View.GONE);
-        progressDialog.show();
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
 
         Log.d("ppppppppstringBuilder", "" + trip_id);
+        Log.d("whereeeeeeeeeeeeeeeeeee", "in getPassengers");
 
         myInterface.getPassengers(trip_id, new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                 ArrayList<PassengerData> arrayList = new ArrayList<>();
                 progressBar.setVisibility(View.GONE);
-                progressDialog.dismiss();
+                Log.d("whereeeeeeeeeeeeeeeeeee", "in success");
 
                 final StringBuilder stringBuilder = new StringBuilder();
                 try {
+                    Log.d("whereeeeeeeeeeeeeeeeeee", "in try");
+
                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
 
                     String line;
@@ -814,18 +839,22 @@ public class PassengerListActivity extends AppCompatActivity {
                     //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
 
                     if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
+                        Log.d("whereeeeeeeeeeeeeeeeeee", "in stringBuilder != null");
 
                         JSONObject jsonObject = new JSONObject("" + stringBuilder);
                         String status = jsonObject.getString("status");
-                        String countBookedseats = jsonObject.getString("countBookedseats");
-                        String countRemainingseats = jsonObject.getString("countRemainingseats");
-                        int booked=Integer.valueOf(countBookedseats+"");
-                        int remain=Integer.valueOf(countRemainingseats+"");
-                        int total_seats=booked+remain;
-                        available_seats.setText(countBookedseats+"/"+total_seats);
+
+
                         JSONArray jsonArray = null;
                         if(status.equalsIgnoreCase("1"))
                         {
+                            Log.d("whereeeeeeeeeeeeeeeeeee", "in status.equalsIgnoreCase 1");
+                            String countBookedseats = jsonObject.getString("countBookedseats");
+                            String countRemainingseats = jsonObject.getString("countRemainingseats");
+                            int booked=Integer.valueOf(countBookedseats+"");
+                            int remain=Integer.valueOf(countRemainingseats+"");
+                            int total_seats=booked+remain;
+                            available_seats.setText(countBookedseats+"/"+total_seats);
                             passengers.setVisibility(View.VISIBLE);
                             top.setVisibility(View.VISIBLE);
                             /*if(from.equalsIgnoreCase("home"))
@@ -843,6 +872,7 @@ public class PassengerListActivity extends AppCompatActivity {
                             for(int i=0;i<jsonArray.length();i++)
                             {
                                 Log.d("tttttttttt","1first for");
+                                Log.d("whereeeeeeeeeeeeeeeeeee", "in for");
 
                                 JSONObject jsonObject1=jsonArray.getJSONObject(i);
 
@@ -861,14 +891,18 @@ public class PassengerListActivity extends AppCompatActivity {
                                 {
                                     Log.d("tttttttttt","passenger not null");
                                     JSONArray jsonArray1=jsonObject2.getJSONArray("data");
+                                    Log.d("whereeeeeeeeeeeeeeeeeee", "in jsonObject2!=null ");
 
                                     for (int j=0;j<jsonArray1.length();j++)
                                     {
                                         Log.d("tttttttttt","second for");
+                                        Log.d("whereeeeeeeeeeeeeeeeeee", "in for (int j= ");
                                         JSONObject jsonObject3=jsonArray1.getJSONObject(j);
                                         String passanger_id = jsonObject3.getString("passanger_id");
                                         String passanger_name = jsonObject3.getString("passanger_name");
                                         String book_id = jsonObject3.getString("book_id");
+
+                                        bookIdlist.add(book_id);
 
                                         PassengerData passengerData=new PassengerData(id,null,"",passanger_id,rating,rstatus,passanger_name,lname,photo);
                                         arrayList.add(passengerData);
@@ -879,21 +913,25 @@ public class PassengerListActivity extends AppCompatActivity {
                                 else
                                 {
                                     Log.d("tttttttttt","pass null");
+                                    Log.d("whereeeeeeeeeeeeeeeeeee", "in else of for (int j= ");
                                     PassengerData passengerData=new PassengerData(id,null,"",user_id,rating,rstatus,fname,lname,photo);
                                     arrayList.add(passengerData);
                                 }
 
                             }
                             passengers.setAdapter(new PassengerAdapter(arrayList,PassengerListActivity.this));
+                            no_passenger.setVisibility(View.GONE);
                         }
                         else
                         {
+                            Log.d("whereeeeeeeeeeeeeeeeeee", "in else of for ");
 
                             no_passenger.setVisibility(View.VISIBLE);
                             top.setVisibility(View.GONE);
 
                             passengers.setVisibility(View.GONE);
-                            start.setVisibility(View.GONE);
+                            //start.setVisibility(View.GONE);
+                            Toast.makeText(PassengerListActivity.this, ""+status, Toast.LENGTH_SHORT).show();
 
                         }
 
@@ -902,35 +940,38 @@ public class PassengerListActivity extends AppCompatActivity {
                     }
                     else
                     {
+                        Log.d("whereeeeeeeeeeeeeeeeeee", "in else of string builder ");
 
                         no_passenger.setVisibility(View.VISIBLE);
                         top.setVisibility(View.GONE);
 
                         passengers.setVisibility(View.GONE);
-                        start.setVisibility(View.GONE);
+                        //start.setVisibility(View.GONE);
 
                         Toast.makeText(PassengerListActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
                     }
 
 
                 } catch (IOException e) {
+                    Log.d("whereeeeeeeeeeeeeeeeeee", "in io exc "+e.getMessage());
 
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    Log.d("whereeeeeeeeeeeeeeeeeee", "in JSONException "+e.getMessage());
                 }
-
+                reload_passengers.setVisibility(View.GONE);
             }
 
             @Override
             public void failure(RetrofitError error) {
                 progressBar.setVisibility(View.GONE);
                 reload_passengers.setVisibility(View.VISIBLE);
-                progressDialog.dismiss();
                 top.setVisibility(View.GONE);
+                no_passenger.setVisibility(View.GONE);
 
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(PassengerListActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
-                Log.d("errorrrr",""+error.getMessage());
+                Toast.makeText(PassengerListActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
+                Log.d("whereeeeeeeeeeeeeeeeeee",""+error.getMessage());
 
             }
         });

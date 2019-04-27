@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.eleganzit.msafiridriver.DocumentsActivity;
 import com.eleganzit.msafiridriver.R;
@@ -254,7 +255,7 @@ public class RegisterDocumentsActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 Log.d("errorrrr",""+error.getMessage());
-                Toast.makeText(RegisterDocumentsActivity.this, "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterDocumentsActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -339,7 +340,7 @@ public class RegisterDocumentsActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 Log.d("errorrrr",""+error.getMessage());
-                Toast.makeText(RegisterDocumentsActivity.this, "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterDocumentsActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -610,7 +611,7 @@ public class RegisterDocumentsActivity extends AppCompatActivity {
                 progressDialog.dismiss();
 
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(RegisterDocumentsActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterDocumentsActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -652,8 +653,10 @@ public class RegisterDocumentsActivity extends AppCompatActivity {
             {
                 Glide
                         .with(context)
+                        .asBitmap()
+                        .apply(new RequestOptions().override(200, 200).placeholder(Drawable.createFromPath(arrayList2.get(position))).centerCrop().diskCacheStrategy(DiskCacheStrategy.ALL))
                         .load(arrayList2.get(position))
-                        .apply(new RequestOptions().centerCrop().placeholder(Drawable.createFromPath(arrayList2.get(position)))).into(holder.image);
+                        .into(holder.image);
             }
 
             holder.remove.setOnClickListener(new View.OnClickListener() {
@@ -816,8 +819,10 @@ public class RegisterDocumentsActivity extends AppCompatActivity {
                   //  Toast.makeText(context, "else  prooof "+arrayList.get(position).getPhoto_type(), Toast.LENGTH_SHORT).show();
                 Glide
                         .with(context)
+                        .asBitmap()
+                        .apply(new RequestOptions().override(200, 200).placeholder(Drawable.createFromPath(arrayList2.get(position))).centerCrop().diskCacheStrategy(DiskCacheStrategy.ALL))
                         .load(arrayList2.get(position))
-                        .apply(new RequestOptions().centerCrop().placeholder(Drawable.createFromPath(arrayList2.get(position)))).into(holder.image);
+                        .into(holder.image);
             }
             holder.remove.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -936,7 +941,7 @@ public class RegisterDocumentsActivity extends AppCompatActivity {
                         progressDialog.dismiss();
                     }
                     //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                    Toast.makeText(context, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterDocumentsActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
                 }
             });
@@ -1015,7 +1020,7 @@ public class RegisterDocumentsActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    Toast.makeText(RegisterDocumentsActivity.this, ""+message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterDocumentsActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
                 }
                 Log.d("messageeeeeeeeeee",message);
 
@@ -1097,7 +1102,7 @@ public class RegisterDocumentsActivity extends AppCompatActivity {
                     public void failure(RetrofitError error) {
                         progressDialog.dismiss();
                         //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                        Toast.makeText(RegisterDocumentsActivity.this, "" + error.getMessage()+" : Please try again, Couldn't update approval status", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterDocumentsActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
                     }
                 });

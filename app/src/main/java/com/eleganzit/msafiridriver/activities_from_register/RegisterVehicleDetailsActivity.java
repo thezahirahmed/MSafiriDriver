@@ -35,10 +35,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.eleganzit.msafiridriver.DocumentsActivity;
+import com.eleganzit.msafiridriver.PersonalInfoActivity;
 import com.eleganzit.msafiridriver.R;
 import com.eleganzit.msafiridriver.model.VehicleData;
 import com.eleganzit.msafiridriver.utils.MyInterface;
@@ -344,7 +346,7 @@ public class RegisterVehicleDetailsActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 Log.d("errorrrr",""+error.getMessage());
-                Toast.makeText(RegisterVehicleDetailsActivity.this, "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterVehicleDetailsActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -429,7 +431,7 @@ public class RegisterVehicleDetailsActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 Log.d("errorrrr",""+error.getMessage());
-                Toast.makeText(RegisterVehicleDetailsActivity.this, "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterVehicleDetailsActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -716,8 +718,10 @@ public class RegisterVehicleDetailsActivity extends AppCompatActivity {
 
             Glide
                     .with(context)
+                    .asBitmap()
+                    .apply(new RequestOptions().override(200, 200).placeholder(Drawable.createFromPath(arrayList2.get(position))).centerCrop().diskCacheStrategy(DiskCacheStrategy.ALL))
                     .load(arrayList2.get(position))
-                    .apply(new RequestOptions().centerCrop().placeholder(Drawable.createFromPath(arrayList2.get(position)))).into(holder.image);
+                    .into(holder.image);
 
             holder.remove.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -838,7 +842,7 @@ public class RegisterVehicleDetailsActivity extends AppCompatActivity {
                         progressDialog.dismiss();
                     }
                     //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                    Toast.makeText(context, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterVehicleDetailsActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
                 }
             });
@@ -877,8 +881,10 @@ public class RegisterVehicleDetailsActivity extends AppCompatActivity {
             Log.d("ssimageeeeee","eeeee "+vehicleData.getPhoto()+"     "+arrayList2.get(position));
             Glide
                     .with(context)
+                    .asBitmap()
+                    .apply(new RequestOptions().override(200, 200).placeholder(Drawable.createFromPath(arrayList2.get(position))).centerCrop().diskCacheStrategy(DiskCacheStrategy.ALL))
                     .load(arrayList2.get(position))
-                    .apply(new RequestOptions().placeholder(Drawable.createFromPath(arrayList2.get(position))).centerCrop()).into(holder.image);
+                    .into(holder.image);
 
             holder.remove.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -995,7 +1001,7 @@ public class RegisterVehicleDetailsActivity extends AppCompatActivity {
                         progressDialog.dismiss();
                     }
                     //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                    Toast.makeText(context, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterVehicleDetailsActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
                 }
             });
@@ -1092,7 +1098,7 @@ public class RegisterVehicleDetailsActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    Toast.makeText(RegisterVehicleDetailsActivity.this, ""+message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterVehicleDetailsActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
                 }
                 Log.d("messageeeeeeeeeee",message);
 
@@ -1172,7 +1178,7 @@ public class RegisterVehicleDetailsActivity extends AppCompatActivity {
                     public void failure(RetrofitError error) {
                         progressDialog.dismiss();
                         //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                        Toast.makeText(RegisterVehicleDetailsActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterVehicleDetailsActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
                     }
                 });
@@ -1287,7 +1293,7 @@ public class RegisterVehicleDetailsActivity extends AppCompatActivity {
                 progressDialog.dismiss();
 
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(RegisterVehicleDetailsActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterVehicleDetailsActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });

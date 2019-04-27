@@ -36,6 +36,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.eleganzit.msafiridriver.R;
+import com.eleganzit.msafiridriver.activities_from_register.RegisterVehicleDetailsActivity;
 import com.eleganzit.msafiridriver.model.PassengerData;
 import com.eleganzit.msafiridriver.model.SubPassengersData;
 import com.eleganzit.msafiridriver.utils.MyInterface;
@@ -129,6 +130,7 @@ public class HomePassengerListActivity extends AppCompatActivity {
         p_editor=p_pref.edit();
         //trip_id=p_pref.getString("trip_id","");
 
+        Log.d("trip_status","activity Home PassengerList");
 
         getPassengers();
 
@@ -274,7 +276,7 @@ public class HomePassengerListActivity extends AppCompatActivity {
                 progressDialog.dismiss();
 
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(HomePassengerListActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(HomePassengerListActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
                 Log.d("errorrrr",""+error.getMessage());
 
             }

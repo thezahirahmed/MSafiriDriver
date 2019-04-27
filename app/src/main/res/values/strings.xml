@@ -25,8 +25,8 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <!--<string name="google_maps_key">AIzaSyBfIo6MvwH7KwDr60naJfKhR2XS0osQnNM</string>-->
-    <!--<string name="google_maps_key">AIzaSyD3t0-rMDn9zvQbzXqOEu1EUV9lssGSPjg</string>-->
-    <string name="google_maps_key">AIzaSyCpPNc0DSeT6s-cFF4ohBOIOVlHJQl2ztQ</string>
+    <string name="google_maps_key">AIzaSyD3t0-rMDn9zvQbzXqOEu1EUV9lssGSPjg</string>
+    <!--<string name="google_maps_key">AIzaSyCpPNc0DSeT6s-cFF4ohBOIOVlHJQl2ztQ</string>-->
     <!--<string name="google_maps_key">AIzaSyAlfxVsErR9EwJwhLaEmEJnm2kZMhMrovU</string>-->
     <string name="complete_profile">Add a profile photo, describe your service, enter your information, add your service location and ask for a review to create an awesome profile.</string>
     <string name="verify_profile">To offer good quality services to customers, each professional on the platform has to fulfill minimum requirements of experience and skill. Please provide as much information as possible in your profile so we can take a decision.</string>

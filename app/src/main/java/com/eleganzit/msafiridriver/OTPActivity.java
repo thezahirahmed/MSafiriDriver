@@ -135,7 +135,7 @@ public class OTPActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(OTPActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(OTPActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });

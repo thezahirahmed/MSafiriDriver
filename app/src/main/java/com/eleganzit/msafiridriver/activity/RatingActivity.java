@@ -69,6 +69,7 @@ public class RatingActivity extends Fragment {
     RatingBar ratingBar;
     RobotoMediumTextView rating_stars,no_ratings;
     TextView lifetime,rated,fourstar;
+    ImageView reload;
 
     @Nullable
     @Override
@@ -85,7 +86,7 @@ public class RatingActivity extends Fragment {
         fourstar=v.findViewById(R.id.fourstar);
         no_ratings=v.findViewById(R.id.no_ratings);
         progress_bar=v.findViewById(R.id.progress_bar);
-
+        reload = v.findViewById(R.id.reload);
 
         return v;
     }
@@ -93,6 +94,7 @@ public class RatingActivity extends Fragment {
     public void getratingDetails()
     {
         shimmerFrameLayout.startShimmer();
+        reload.setVisibility(View.GONE);
         //progress_bar.setVisibility(View.VISIBLE);
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
@@ -103,6 +105,7 @@ public class RatingActivity extends Fragment {
                 //progress_bar.setVisibility(View.GONE);
                 shimmerFrameLayout.stopShimmer();
                 shimmerFrameLayout.setVisibility(View.GONE);
+                reload.setVisibility(View.GONE);
 
                 final StringBuilder stringBuilder = new StringBuilder();
                 try {
@@ -201,9 +204,10 @@ public class RatingActivity extends Fragment {
                // progress_bar.setVisibility(View.GONE);
                 shimmerFrameLayout.stopShimmer();
                 shimmerFrameLayout.setVisibility(View.GONE);
+                reload.setVisibility(View.VISIBLE);
 
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(getActivity(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -218,6 +222,13 @@ public class RatingActivity extends Fragment {
                 DividerItemDecoration.VERTICAL);
         recyclerview.addItemDecoration(dividerItemDecoration);*/
         getratingDetails();
+        reload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getratingDetails();
+            }
+        });
+
     }
 
     private class TenantsAdapter extends RecyclerView.Adapter<TenantsAdapter.MyViewHolder>

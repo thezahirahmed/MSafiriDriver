@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+import com.eleganzit.msafiridriver.activities_from_register.RegisterBankAccountActivity;
 import com.eleganzit.msafiridriver.model.CountryData;
 import com.eleganzit.msafiridriver.model.StateData;
 import com.eleganzit.msafiridriver.utils.MyInterface;
@@ -85,7 +86,6 @@ public class BankAccountActivity extends AppCompatActivity {
         progressDialog.setMessage("Please wait...");
         progressDialog.setCancelable(false);
         progressDialog.setCanceledOnTouchOutside(false);
-        getCountry();
         getBankdetails();
         edstate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -318,7 +318,7 @@ public class BankAccountActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 Log.d("errorrrr",""+error.getMessage());
-                Toast.makeText(BankAccountActivity.this, "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
+                Toast.makeText(BankAccountActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -403,7 +403,7 @@ public class BankAccountActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 Log.d("errorrrr",""+error.getMessage());
-                Toast.makeText(BankAccountActivity.this, "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
+                Toast.makeText(BankAccountActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -479,7 +479,7 @@ public class BankAccountActivity extends AppCompatActivity {
                     public void failure(RetrofitError error) {
                         progressDialog.dismiss();
                         //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                        Toast.makeText(BankAccountActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(BankAccountActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
                     }
                 });
@@ -592,7 +592,7 @@ public class BankAccountActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(BankAccountActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(BankAccountActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -686,7 +686,7 @@ public class BankAccountActivity extends AppCompatActivity {
                     public void failure(RetrofitError error) {
                         progressDialog.dismiss();
                         //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                        Toast.makeText(BankAccountActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(BankAccountActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
                     }
                 });
@@ -779,7 +779,7 @@ public class BankAccountActivity extends AppCompatActivity {
                     public void failure(RetrofitError error) {
                         progressDialog.dismiss();
                         //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                        Toast.makeText(BankAccountActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(BankAccountActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
                     }
                 });
@@ -830,6 +830,29 @@ public class BankAccountActivity extends AppCompatActivity {
                                 countryArrayList2.add(countryData);
 
                             }
+                            final ListAdapter adapter = new ArrayAdapter(BankAccountActivity.this, android.R.layout.simple_list_item_single_choice, android.R.id.text1, countryArrayList);
+
+                            final AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(BankAccountActivity.this, R.style.AlertDialogCustom));
+
+       /* builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+            }
+        });*/
+                            builder.setSingleChoiceItems(adapter, -1, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                    CountryData countryData=countryArrayList2.get(i);
+
+                                    edcountry.setText(countryData.getCountry());
+
+                                    BankAccountActivity.this.country_id=countryData.getCountry_id();
+                                    edstate.setText("");
+                                    getState(BankAccountActivity.this.country_id,dialogInterface);
+                                }
+                            });
+                            builder.show();
 
                         }
                         else
@@ -858,7 +881,7 @@ public class BankAccountActivity extends AppCompatActivity {
                 progressDialog.dismiss();
 
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(BankAccountActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(BankAccountActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -942,37 +965,15 @@ public class BankAccountActivity extends AppCompatActivity {
                 progressDialog.dismiss();
 
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(BankAccountActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(BankAccountActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
     }
 
     void showCountryDialog() {
+        getCountry();
 
-        final ListAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_single_choice, android.R.id.text1, countryArrayList);
-
-        final AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom));
-
-       /* builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-            }
-        });*/
-        builder.setSingleChoiceItems(adapter, -1, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-                CountryData countryData=countryArrayList2.get(i);
-
-                edcountry.setText(countryData.getCountry());
-
-                country_id=countryData.getCountry_id();
-                edstate.setText("");
-                getState(country_id,dialogInterface);
-            }
-        });
-        builder.show();
 
     }
 

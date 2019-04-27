@@ -72,6 +72,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:layout_weight="1"
+                    android:visibility="gone"
                     android:gravity="right"
                     android:layout_gravity="center">
                     <TextView
@@ -117,13 +118,13 @@
 
                 </LinearLayout>
             </com.facebook.shimmer.ShimmerFrameLayout>
-            <android.support.v7.widget.RecyclerView
+            <com.chauthai.overscroll.RecyclerViewBouncy
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/history"
-                android:background="@android:color/white">
+                android:overScrollMode="never"
+                android:background="@android:color/white"/>
 
-            </android.support.v7.widget.RecyclerView>
 
         </RelativeLayout>
 

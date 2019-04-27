@@ -265,6 +265,7 @@ public class OnboardPassengerListActivity extends AppCompatActivity {
         end.setVisibility(View.GONE);
         getOnBoardPassengers();
         Log.d("trip_status","activity on resume"+trip_status+"    "+trip_id);
+        Log.d("trip_status","activity Onboard PassengerList");
 
     }
 
@@ -385,7 +386,7 @@ public class OnboardPassengerListActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(OnboardPassengerListActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(OnboardPassengerListActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -506,7 +507,7 @@ public class OnboardPassengerListActivity extends AppCompatActivity {
                 reload_onboard_passengers.setVisibility(View.VISIBLE);
                 progressDialog.dismiss();
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(OnboardPassengerListActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(OnboardPassengerListActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
                 Log.d("errorrrr",""+error.getMessage());
 
             }

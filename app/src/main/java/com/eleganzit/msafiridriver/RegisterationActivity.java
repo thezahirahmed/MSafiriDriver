@@ -380,7 +380,7 @@ public class RegisterationActivity extends AppCompatActivity {
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(RegisterationActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterationActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -459,7 +459,7 @@ public class RegisterationActivity extends AppCompatActivity {
                         progressDialog.dismiss();
                         removeDriver();
                         //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                        Toast.makeText(RegisterationActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterationActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
                     }
                 });
@@ -518,7 +518,7 @@ public class RegisterationActivity extends AppCompatActivity {
                 else
                 {
                     removeDriver();
-                    Toast.makeText(RegisterationActivity.this, ""+message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterationActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
                 }
                 Log.d("messageeeeeeeeeee",message);
 
@@ -589,7 +589,7 @@ public class RegisterationActivity extends AppCompatActivity {
             @Override
             public void failure(RetrofitError error) {
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                Toast.makeText(RegisterationActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterationActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });

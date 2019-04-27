@@ -206,6 +206,7 @@ public class HistoryFragment extends Fragment{
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
                 //Toast.makeText(getActivity(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.d("errorrrr",""+error.getMessage());
+                Toast.makeText(getActivity(), "Server or Internet Error", Toast.LENGTH_LONG).show();
 
             }
         });
