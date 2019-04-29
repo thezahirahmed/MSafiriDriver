@@ -364,6 +364,13 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
 
     }
 
+    public void swap(ArrayList<TripData> datas)
+    {
+        arrayList.clear();
+        arrayList.addAll(datas);
+        notifyDataSetChanged();
+    }
+
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 

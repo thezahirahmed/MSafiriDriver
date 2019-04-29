@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:focusable="false"
-        android:inputType="text"
+        android:inputType="textNoSuggestions"
         android:layout_marginLeft="10dp"
         android:drawableRight="@drawable/ic_location_gray"
         android:layout_marginRight="10dp"

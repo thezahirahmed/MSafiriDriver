@@ -199,6 +199,14 @@ public class RegisterPersonalInfoActivity extends AppCompatActivity {
                             neww.setError("Please enter new Password");
                             neww.requestFocus();
                         }
+                        else if (neww.getText().toString().length()<6) {
+                            YoYo.with(Techniques.Shake)
+                                    .duration(700)
+                                    .repeat(0)
+                                    .playOn(neww);
+                            neww.setError("Password must contain at least 6 characters");
+                            neww.requestFocus();
+                        }
                         else if (!(confirm.getText().toString().equalsIgnoreCase(neww.getText().toString())))
                         {
                             YoYo.with(Techniques.Shake)
@@ -491,6 +499,7 @@ public class RegisterPersonalInfoActivity extends AppCompatActivity {
         myInterface.getPersonalInfo(pref.getString("driver_id",""), new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
+                progressDialog.dismiss();
 
                 final StringBuilder stringBuilder = new StringBuilder();
                 try {

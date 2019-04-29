@@ -135,8 +135,7 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
         NavHomeActivity.fab.setVisibility(View.GONE);
         pref = getActivity().getSharedPreferences("mysession", MODE_PRIVATE);
         editor=pref.edit();
-        p_pref=getActivity().getSharedPreferences("passenger_pref",Context.MODE_PRIVATE);
-        p_editor=p_pref.edit();
+
         photo=pref.getString("photo","");
         vehicle_name=pref.getString("vehicle_name","");
         mapView= v.findViewById(R.id.map);
@@ -178,6 +177,9 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
         progressDialog.setMessage("Please wait...");
         progressDialog.show();
 
+        p_pref=getActivity().getSharedPreferences("passenger_pref",Context.MODE_PRIVATE);
+        p_editor=p_pref.edit();
+
         BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.location_green);
         Bitmap b = bitmapdraw.getBitmap();
         Bitmap smallMarker = Bitmap.createScaledBitmap(b, 60, 60, false);
@@ -209,7 +211,7 @@ public class TripFragment extends Fragment implements OnMapReadyCallback {
                 p_editor.putString("trip_status",trip_status+"");
 
                 Log.d("trip_statusssssid","  "+id);
-                if(trip_status.equalsIgnoreCase("ongoing"))
+                if(p_pref.getString("trip_status","").equalsIgnoreCase("ongoing"))
                 {
                     getActivity().startActivity(new Intent(getActivity(),OnboardPassengerListActivity.class).putExtra("from","trip"));
                     Bungee.slideLeft(getActivity());

@@ -47,6 +47,7 @@ import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -164,13 +165,18 @@ public class NavHomeActivity extends AppCompatActivity
 
 
         Log.d("trip_status", "home activity   " + p_pref.getString("trip_status", "") + "");
-        active = findViewById(R.id.active);
-        prog_rel = findViewById(R.id.prog_rel);
+
         pop_anim = AnimationUtils.loadAnimation(this, R.anim.pop_anim);
         pop_in = AnimationUtils.loadAnimation(this, R.anim.pop_in);
         pop_out = AnimationUtils.loadAnimation(this, R.anim.pop_out);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View headerview = navigationView.getHeaderView(0);
+        LinearLayout header_main = headerview.findViewById(R.id.header_main);
+        active = headerview.findViewById(R.id.active);
+        toolbar_progress = headerview.findViewById(R.id.toolbar_progress);
+        prog_rel = headerview.findViewById(R.id.prog_rel);
         active.startAnimation(pop_anim);
-        ViewTreeObserver vto = active.getViewTreeObserver();
+        /*ViewTreeObserver vto = active.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -186,14 +192,14 @@ public class NavHomeActivity extends AppCompatActivity
                 prog_rel.getLayoutParams().height = height;
                 prog_rel.requestLayout();
             }
-        });
+        });*/
         fab = findViewById(R.id.fab);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar_progress = findViewById(R.id.toolbar_progress);
+
         Drawable progressDrawable = toolbar_progress.getIndeterminateDrawable().mutate();
-        progressDrawable.setColorFilter(Color.WHITE, android.graphics.PorterDuff.Mode.SRC_IN);
+        progressDrawable.setColorFilter(Color.parseColor("#0192D2"), android.graphics.PorterDuff.Mode.SRC_IN);
         toolbar_progress.setProgressDrawable(progressDrawable);
         pref = getSharedPreferences("mysession", MODE_PRIVATE);
         editor = pref.edit();
@@ -261,9 +267,8 @@ public class NavHomeActivity extends AppCompatActivity
             }
         });
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        View headerview = navigationView.getHeaderView(0);
-        headerview.setOnClickListener(new View.OnClickListener() {
+
+        header_main.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(NavHomeActivity.this, HomeProfileActivity.class).putExtra("from", "home");
@@ -382,7 +387,7 @@ public class NavHomeActivity extends AppCompatActivity
         progressDialog.show();
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.updateDriverstatus(pref.getString("driver_id", ""), status, new retrofit.Callback<retrofit.client.Response>() {
+        myInterface.logOutDriver(pref.getString("driver_id", ""), status,"", new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                 toolbar_progress.setVisibility(View.GONE);

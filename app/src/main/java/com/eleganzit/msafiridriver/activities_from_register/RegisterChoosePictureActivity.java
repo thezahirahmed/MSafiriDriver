@@ -4,6 +4,7 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,8 +19,10 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -57,6 +60,8 @@ import java.util.List;
 import me.nereo.multi_image_selector.MultiImageSelector;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
+
+import static com.eleganzit.msafiridriver.activity.NavHomeActivity.active;
 
 public class RegisterChoosePictureActivity extends AppCompatActivity {
 
@@ -454,13 +459,13 @@ public class RegisterChoosePictureActivity extends AppCompatActivity {
                 mediapath=""+sb.toString().trim();
                 uploadProfile();
 
-                Glide
+                /*Glide
                         .with(RegisterChoosePictureActivity.this)
                         .asBitmap()
                         .apply(new RequestOptions().override(250, 250).placeholder(R.drawable.pr).centerCrop().circleCrop())
                         .load(mediapath.trim())
                         .into(profile_pic);
-
+*/
                 Log.d("mediapathhhhhhhh",""+mediapath);
             }
         }
@@ -502,11 +507,30 @@ public class RegisterChoosePictureActivity extends AppCompatActivity {
                         }
                         else
                         {
-                            Glide
-                                    .with(RegisterChoosePictureActivity.this)
-                                    .load(photo)
-                                    .apply(new RequestOptions().placeholder(R.drawable.pr).centerCrop().circleCrop())
-                                    .into(profile_pic);
+                            final int[] width = new int[1];
+                            final int[] height = new int[1];
+                            ViewTreeObserver vto = active.getViewTreeObserver();
+                            vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                                @Override
+                                public void onGlobalLayout() {
+                                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                                        active.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                                    } else {
+                                        active.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                                    }
+                                    width[0] = active.getMeasuredWidth() + 10;
+                                    height[0] = active.getMeasuredHeight();
+                                    Log.d("wwwwwhhhhh", "" + width[0] + " - " + convertPixelsToDp(width[0], RegisterChoosePictureActivity.this) + "     " + height[0] + " - " + convertPixelsToDp(height[0], RegisterChoosePictureActivity.this));
+                                    Glide
+                                            .with(RegisterChoosePictureActivity.this)
+                                            .asBitmap()
+                                            .apply(new RequestOptions().override(width[0], height[0]).placeholder(R.drawable.pr).centerCrop().circleCrop().diskCacheStrategy(DiskCacheStrategy.ALL))
+                                            .load(photo)
+                                            .thumbnail(.1f)
+                                            .into(profile_pic);
+                                }
+                            });
+
                             Toast.makeText(RegisterChoosePictureActivity.this, "Profile picture updated", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -524,6 +548,10 @@ public class RegisterChoosePictureActivity extends AppCompatActivity {
         }
 
     }
+    public static float convertPixelsToDp(float px, Context context) {
+        return px / ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+    }
+
 //    private void onSelectFromGalleryResult(Intent data) {
 //        if (data != null) {
 //            try {

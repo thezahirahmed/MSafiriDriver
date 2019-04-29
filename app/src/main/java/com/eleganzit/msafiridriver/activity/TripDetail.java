@@ -178,7 +178,7 @@ public class TripDetail extends AppCompatActivity {
                                 Glide
                                         .with(TripDetail.this)
                                         .asBitmap()
-                                        .apply(new RequestOptions().override(350, 350).placeholder(circularProgressDrawable).centerCrop().diskCacheStrategy(DiskCacheStrategy.ALL))
+                                        .apply(new RequestOptions().override(380, 380).placeholder(circularProgressDrawable).centerCrop().diskCacheStrategy(DiskCacheStrategy.ALL))
                                         .load(trip_map_screenshot)
                                         .thumbnail(.1f)
                                         .into(mapView);
@@ -188,8 +188,6 @@ public class TripDetail extends AppCompatActivity {
                                     pstr = outputFormat.format(pdate);
                                     ddate = inputFormat.parse(sdestination_time);
                                     dstr = outputFormat.format(ddate);
-
-
 
                                 } catch (ParseException e) {
                                     e.printStackTrace();

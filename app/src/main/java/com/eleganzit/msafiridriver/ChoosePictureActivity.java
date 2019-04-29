@@ -28,8 +28,10 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -85,6 +87,7 @@ import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 
 import static com.eleganzit.msafiridriver.ProfileActivity.profileActivity;
+import static com.eleganzit.msafiridriver.activity.NavHomeActivity.active;
 
 public class ChoosePictureActivity extends AppCompatActivity {
 
@@ -500,13 +503,13 @@ public class ChoosePictureActivity extends AppCompatActivity {
 
                     uploadProfile();
 
-                    Glide
+                  /*  Glide
                             .with(ChoosePictureActivity.this)
                             .asBitmap()
                             .apply(new RequestOptions().override(250, 250).placeholder(R.drawable.pr).centerCrop().circleCrop().diskCacheStrategy(DiskCacheStrategy.ALL))
                             .load(mediapath.trim())
                             .into(profile_pic);
-
+*/
                     Log.d("mediapathhhhhhhh",""+mediapath);
                 }
             }
@@ -610,12 +613,30 @@ public class ChoosePictureActivity extends AppCompatActivity {
                         }
                         else
                         {
-                            Glide
-                                    .with(ChoosePictureActivity.this)
-                                    .asBitmap()
-                                    .apply(new RequestOptions().override(250, 250).placeholder(R.drawable.pr).centerCrop().circleCrop().diskCacheStrategy(DiskCacheStrategy.ALL))
-                                    .load(photo)
-                                    .into(profile_pic);
+                            final int[] width = new int[1];
+                            final int[] height = new int[1];
+                            ViewTreeObserver vto = active.getViewTreeObserver();
+                            vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                                @Override
+                                public void onGlobalLayout() {
+                                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                                        active.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                                    } else {
+                                        active.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                                    }
+                                    width[0] = active.getMeasuredWidth() + 10;
+                                    height[0] = active.getMeasuredHeight();
+                                    Log.d("wwwwwhhhhh", "" + width[0] + " - " + convertPixelsToDp(width[0], ChoosePictureActivity.this) + "     " + height[0] + " - " + convertPixelsToDp(height[0], ChoosePictureActivity.this));
+                                    Glide
+                                            .with(ChoosePictureActivity.this)
+                                            .asBitmap()
+                                            .apply(new RequestOptions().override(width[0], height[0]).placeholder(R.drawable.pr).centerCrop().circleCrop().diskCacheStrategy(DiskCacheStrategy.ALL))
+                                            .load(photo)
+                                            .thumbnail(.1f)
+                                            .into(profile_pic);
+                                }
+                            });
+
                             Toast.makeText(ChoosePictureActivity.this, "Profile picture updated", Toast.LENGTH_SHORT).show();
                         }
 
@@ -636,6 +657,10 @@ public class ChoosePictureActivity extends AppCompatActivity {
         }
 
     }
+    public static float convertPixelsToDp(float px, Context context) {
+        return px / ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+    }
+
 //    private void onSelectFromGalleryResult(Intent data) {
 //        if (data != null) {
 //            try {

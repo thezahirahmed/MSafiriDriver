@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -65,6 +66,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -91,6 +94,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     TextView trip_title;
     CardView card,upcoming_card,past_card;
     String trip_type="current";
+    UpcomingTripAdapter upcomingTripAdapter;
     ProgressDialog progressDialog;
     public HomeFragment() {
         // Required empty public constructor
@@ -184,7 +188,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         card.setCardElevation(0);
         card.setMaxCardElevation(0);
-        getDriverTrips("current");
+
         Log.d("whereeeee","onResume");
 
     }
@@ -261,6 +265,17 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 }
             }
         });
+        getDriverTrips("current");
+        final Handler handler=new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            public void run() {
+
+                refreshDriverTrips();
+                Log.d("timeeeeeee","called");
+
+                handler.postDelayed(this,1000*30);
+            }
+        },1000*30);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         upcoming.setLayoutManager(layoutManager);
@@ -549,7 +564,8 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                                 arrayList.add(tripData);
 
                             }
-                            upcoming.setAdapter(new UpcomingTripAdapter(pref.getString("type",""),arrayList, getActivity()));
+                            upcomingTripAdapter=new UpcomingTripAdapter(pref.getString("type",""),arrayList, getActivity());
+                            upcoming.setAdapter(upcomingTripAdapter);
                         }
                         else
                         {
@@ -601,6 +617,115 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 Log.d("errorrrr",""+error.getMessage());
                 Toast.makeText(getActivity(), "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
                 reload.setVisibility(View.VISIBLE);
+
+            }
+        });
+    }
+
+    public void refreshDriverTrips()
+    {
+        no_trips.setVisibility(View.GONE);
+
+        //reload.setVisibility(View.GONE);
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
+        final MyInterface myInterface = restAdapter.create(MyInterface.class);
+        myInterface.getDriverTrips(pref.getString("driver_id",""), "current", new retrofit.Callback<retrofit.client.Response>() {
+            @Override
+            public void success(retrofit.client.Response response, retrofit.client.Response response2) {
+                arrayList = new ArrayList<>();
+
+                final StringBuilder stringBuilder = new StringBuilder();
+                try {
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
+
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line);
+                    }
+                    Log.d("stringBuilder", "" + stringBuilder);
+                    //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
+
+                    if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
+
+                        JSONObject jsonObject = new JSONObject("" + stringBuilder);
+                        String status = jsonObject.getString("status");
+                        JSONArray jsonArray = null;
+                        if(status.equalsIgnoreCase("1"))
+                        {
+                            no_trips.setVisibility(View.GONE);
+
+                            jsonArray = jsonObject.getJSONArray("data");
+                            for(int i=0;i<jsonArray.length();i++)
+                            {
+                                JSONObject jsonObject1=jsonArray.getJSONObject(i);
+
+                                String id = jsonObject1.getString("id");
+                                String from_title = jsonObject1.getString("from_title");
+                                String from_lat = jsonObject1.getString("from_lat");
+                                String from_lng = jsonObject1.getString("from_lng");
+                                String from_address = jsonObject1.getString("from_address");
+                                String to_title = jsonObject1.getString("to_title");
+                                String to_lat = jsonObject1.getString("to_lat");
+                                String to_lng = jsonObject1.getString("to_lng");
+                                String to_address = jsonObject1.getString("to_address");
+                                String pickup_time = jsonObject1.getString("datetime");
+                                String destination_time = jsonObject1.getString("end_datetime");
+                                String statuss = jsonObject1.getString("status");
+                                String trip_price = jsonObject1.getString("trip_price");
+                                Date date = null;
+                                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                try {
+                                    date = format.parse(pickup_time);
+                                    System.out.println(date);
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+
+                                TripData tripData=new TripData("current",id,from_title,from_lat,from_lng,from_address,to_title,to_lat,to_lng,to_address,pickup_time,date,destination_time,statuss,trip_price);
+                                arrayList.add(tripData);
+
+                            }
+
+                            if(upcomingTripAdapter!=null)
+                            {
+                                upcomingTripAdapter.swap(arrayList);
+                            }
+                            //upcoming.setAdapter(new UpcomingTripAdapter(pref.getString("type",""),arrayList, getActivity()));
+                        }
+                        else
+                        {
+
+                            no_trips.setVisibility(View.VISIBLE);
+
+                            upcoming.setVisibility(View.GONE);
+                        }
+
+                        // Toast.makeText(RegistrationActivity.this, "scc "+Token, Toast.LENGTH_SHORT).show();
+
+                    }
+                    else
+                    {
+
+                        //Toast.makeText(getActivity(), ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                    }
+
+
+                } catch (IOException e) {
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                //reload.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+//Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.d("errorrrr",""+error.getMessage());
+                //Toast.makeText(getActivity(), "Couldn't refresh trips", Toast.LENGTH_SHORT).show();
+                //reload.setVisibility(View.VISIBLE);
 
             }
         });

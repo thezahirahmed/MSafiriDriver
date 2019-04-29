@@ -189,7 +189,7 @@ public class SplashActivity extends AppCompatActivity {
     public void getDriverdata() {
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.loginDriver(pref.getString("email", ""), pref.getString("password", ""), "", new retrofit.Callback<retrofit.client.Response>() {
+        myInterface.loginDriver(pref.getString("email", ""), pref.getString("password", ""), "android","", new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                 final StringBuilder stringBuilder = new StringBuilder();
@@ -379,7 +379,7 @@ public class SplashActivity extends AppCompatActivity {
         Log.d("devicetoken", "" + devicetoken);
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.loginDriver(pref.getString("email", ""), pref.getString("password", ""), devicetoken, new retrofit.Callback<retrofit.client.Response>() {
+        myInterface.loginDriver(pref.getString("email", ""), pref.getString("password", ""), "android",devicetoken, new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
 
@@ -466,7 +466,7 @@ public class SplashActivity extends AppCompatActivity {
         Log.d("devicetoken", "" + devicetoken);
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.loginDriver(pref.getString("email", ""), pref.getString("password", ""), devicetoken, new retrofit.Callback<retrofit.client.Response>() {
+        myInterface.loginDriver(pref.getString("email", ""), pref.getString("password", ""), "android",devicetoken, new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
 

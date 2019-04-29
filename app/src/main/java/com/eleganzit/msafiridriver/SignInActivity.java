@@ -379,7 +379,7 @@ public class SignInActivity extends AppCompatActivity {
         Log.d("devicetoken",""+devicetoken);
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.loginDriver(email.getText().toString(), password.getText().toString(),devicetoken, new retrofit.Callback<retrofit.client.Response>() {
+        myInterface.loginDriver(email.getText().toString(), password.getText().toString(),"android",devicetoken, new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                 logo.startAnimation(flyout1);
@@ -521,7 +521,7 @@ public class SignInActivity extends AppCompatActivity {
         Log.d("devicetoken",""+devicetoken);
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
-        myInterface.loginDriver(pref.getString("email",""), pref.getString("password",""),devicetoken, new retrofit.Callback<retrofit.client.Response>() {
+        myInterface.loginDriver(pref.getString("email",""), pref.getString("password",""),"android",devicetoken, new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
 

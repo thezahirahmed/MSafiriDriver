@@ -57,6 +57,7 @@ public interface MyInterface
     @retrofit.http.POST("/driverLogin")
     public void loginDriver(@retrofit.http.Field("email") String email,
                             @retrofit.http.Field("password") String password,
+                            @retrofit.http.Field("device_id") String device_id,
                             @retrofit.http.Field("device_token") String device_token,
                             Callback<Response> callback
     );
@@ -165,6 +166,14 @@ public interface MyInterface
     @retrofit.http.POST("/updateDriverprofile")
     public void updateDriverstatus(@retrofit.http.Field("driver_id") String driver_id,
                                    @retrofit.http.Field("online_status") String status,
+                                   Callback<Response> callback
+    );
+
+    @retrofit.http.FormUrlEncoded
+    @retrofit.http.POST("/updateDriverprofile")
+    public void logOutDriver(@retrofit.http.Field("driver_id") String driver_id,
+                                   @retrofit.http.Field("online_status") String status,
+                                   @retrofit.http.Field("device_token") String device_token,
                                    Callback<Response> callback
     );
 
