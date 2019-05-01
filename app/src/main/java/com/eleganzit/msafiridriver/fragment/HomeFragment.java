@@ -193,8 +193,12 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         handler.postDelayed(new Runnable() {
             public void run() {
 
-                refreshDriverTrips();
-                Log.d("timeeeeeee","called");
+                if(trip_type.equalsIgnoreCase("current"))
+                {
+                    refreshDriverTrips();
+                    Log.d("timeeeeeee","called");
+
+                }
 
                 handler.postDelayed(this,1000*30);
             }
