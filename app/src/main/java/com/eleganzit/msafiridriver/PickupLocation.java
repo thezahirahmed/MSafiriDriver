@@ -488,15 +488,14 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
 
                                 googleMap.animateCamera(CameraUpdateFactory.zoomTo(13.0f));
                                 a = new MarkerOptions().position(loc2).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)).title("Pickup Location");
-                                if(getIntent().getStringExtra("from").equalsIgnoreCase("update"))
-                                {
-
+                                if (m1 != null) {
+                                    m1.setPosition(loc2);
+                                   // m1.remove();
                                 }
                                 else
                                 {
                                     m1 =googleMap.addMarker(a);
                                 }
-                                m1.setPosition(loc2);
                                 //DrawMarker.getInstance(this).draw(googleMap, loc2, BitmapDescriptorFactory.fromBitmap(smallMarker), "Pickup Location");
 
                                 from_title=item.getTitle();

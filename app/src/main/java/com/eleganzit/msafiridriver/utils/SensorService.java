@@ -2,15 +2,19 @@ package com.eleganzit.msafiridriver.utils;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.location.Location;
 import android.location.LocationListener;
@@ -22,7 +26,9 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -63,6 +69,8 @@ import java.util.TimerTask;
 
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
+
+import static android.support.v4.app.NotificationCompat.PRIORITY_MIN;
 
 /**
  * Created by fabio on 30/01/2016.
@@ -133,11 +141,32 @@ public class SensorService extends Service implements GoogleApiClient.Connection
     @Override
     public void onCreate() {
         super.onCreate();
-        startForeground(1,new Notification());
         //Inflate the chat head layout we created
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            startMyOwnForeground();
+        else
+            startForeground(1, new Notification());
     }
+    @TargetApi(Build.VERSION_CODES.O)
+    private void startMyOwnForeground(){
+        String NOTIFICATION_CHANNEL_ID = "com.eleganzit.msafiridriver";
+        String channelName = "My Background Service";
+        NotificationChannel chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_NONE);
+        chan.setLightColor(Color.BLUE);
+        chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        assert manager != null;
+        manager.createNotificationChannel(chan);
 
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
+        Notification notification = notificationBuilder.setOngoing(true)
+                .setSmallIcon(R.drawable.logo)
+                .setContentTitle("App is running in background")
+                .setPriority(NotificationManager.IMPORTANCE_MIN)
+                .setCategory(Notification.CATEGORY_SERVICE)
+                .build();
+        startForeground(2, notification);
+    }
     private void startCurrentLocationUpdates() {
         LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -289,8 +318,11 @@ public class SensorService extends Service implements GoogleApiClient.Connection
                                 }
                             });
                             final AlertDialog alertDialog = builder.create();
-
-                            alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
+                            } else {
+                                alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+                            }
                             alertDialog.show();
 
                         }
@@ -330,8 +362,8 @@ public class SensorService extends Service implements GoogleApiClient.Connection
     @Override
     public void onDestroy() {
         super.onDestroy();
-        intent_action=pref.getString("action","");
-        Log.i("wherreeeeeee", "sensor service ondestroy!  "+intent_action);
+       /* intent_action=pref.getString("action","");
+        Log.i("wherreeeeeee", "sensor service ondestroy!  "+intent_action);*/
         /*if(intent_action.equalsIgnoreCase("stop"))
         {
             mWindowManager.removeViewImmediate(mChatHeadView);

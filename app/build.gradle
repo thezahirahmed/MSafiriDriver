@@ -22,7 +22,7 @@ android {
         applicationId "com.eleganzit.msafiridriver"
         minSdkVersion 19
         targetSdkVersion 28
-        project.ext.set("archivesBaseName", "TuRyde-Driver-29-04-2019" + defaultConfig.versionName)
+        project.ext.set("archivesBaseName", "TuRyde-Driver-30-04-2019" + defaultConfig.versionName)
         versionCode 1
         versionName "1.0"
         multiDexEnabled true

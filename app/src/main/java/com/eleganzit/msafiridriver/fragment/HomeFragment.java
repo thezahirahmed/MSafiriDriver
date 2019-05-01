@@ -188,6 +188,17 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         card.setCardElevation(0);
         card.setMaxCardElevation(0);
+        getDriverTrips("current");
+        final Handler handler=new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            public void run() {
+
+                refreshDriverTrips();
+                Log.d("timeeeeeee","called");
+
+                handler.postDelayed(this,1000*30);
+            }
+        },1000*30);
 
         Log.d("whereeeee","onResume");
 
@@ -265,17 +276,6 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 }
             }
         });
-        getDriverTrips("current");
-        final Handler handler=new Handler(Looper.getMainLooper());
-        handler.postDelayed(new Runnable() {
-            public void run() {
-
-                refreshDriverTrips();
-                Log.d("timeeeeeee","called");
-
-                handler.postDelayed(this,1000*30);
-            }
-        },1000*30);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         upcoming.setLayoutManager(layoutManager);

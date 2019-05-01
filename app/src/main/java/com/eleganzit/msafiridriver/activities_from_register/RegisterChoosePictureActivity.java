@@ -521,16 +521,16 @@ public class RegisterChoosePictureActivity extends AppCompatActivity {
                                     width[0] = active.getMeasuredWidth() + 10;
                                     height[0] = active.getMeasuredHeight();
                                     Log.d("wwwwwhhhhh", "" + width[0] + " - " + convertPixelsToDp(width[0], RegisterChoosePictureActivity.this) + "     " + height[0] + " - " + convertPixelsToDp(height[0], RegisterChoosePictureActivity.this));
-                                    Glide
-                                            .with(RegisterChoosePictureActivity.this)
-                                            .asBitmap()
-                                            .apply(new RequestOptions().override(width[0], height[0]).placeholder(R.drawable.pr).centerCrop().circleCrop().diskCacheStrategy(DiskCacheStrategy.ALL))
-                                            .load(photo)
-                                            .thumbnail(.1f)
-                                            .into(profile_pic);
+
                                 }
                             });
-
+                            Glide
+                                    .with(RegisterChoosePictureActivity.this)
+                                    .asBitmap()
+                                    .apply(new RequestOptions().override(300, 300).placeholder(R.drawable.pr).centerCrop().circleCrop().diskCacheStrategy(DiskCacheStrategy.ALL))
+                                    .load(photo)
+                                    .thumbnail(.1f)
+                                    .into(profile_pic);
                             Toast.makeText(RegisterChoosePictureActivity.this, "Profile picture updated", Toast.LENGTH_SHORT).show();
                         }
                     }
