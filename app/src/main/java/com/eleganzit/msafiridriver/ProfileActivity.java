@@ -5,6 +5,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,8 +19,10 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.widget.CircularProgressDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -446,10 +449,26 @@ public class ProfileActivity extends AppCompatActivity {
                                 editor.commit();
                             }
                             Log.d("photooooooo","photo "+photo);
+                            final int[] width = new int[1];
+                            final int[] height = new int[1];
+                            ViewTreeObserver vto = profile_pic.getViewTreeObserver();
+                            vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                                @Override
+                                public void onGlobalLayout() {
+                                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                                        profile_pic.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                                    } else {
+                                        profile_pic.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                                    }
+                                    width[0] = profile_pic.getMeasuredWidth() + 10;
+                                    height[0] = profile_pic.getMeasuredHeight();
+
+                                }
+                            });
                             Glide
                                     .with(ProfileActivity.this)
                                     .asBitmap()
-                                    .apply(new RequestOptions().override(200, 200).placeholder(R.drawable.pr).centerCrop().circleCrop().format(PREFER_ARGB_8888).diskCacheStrategy(DiskCacheStrategy.ALL))
+                                    .apply(new RequestOptions().override(width[0], height[0]).placeholder(R.drawable.pr).centerCrop().circleCrop().format(PREFER_ARGB_8888).diskCacheStrategy(DiskCacheStrategy.ALL))
                                     .load(photo)
                                     .thumbnail(.1f)
                                     .into(profile_pic);
@@ -487,17 +506,35 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
     }
+    public static float convertPixelsToDp(float px, Context context) {
+        return px / ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+    }
 
     public void getApprovalStatus()
     {
+        final int[] width = new int[1];
+        final int[] height = new int[1];
+        ViewTreeObserver vto = profile_pic.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                    profile_pic.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                } else {
+                    profile_pic.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+                width[0] = profile_pic.getMeasuredWidth() + 10;
+                height[0] = profile_pic.getMeasuredHeight();
+
+            }
+        });
         Glide
                 .with(ProfileActivity.this)
                 .asBitmap()
-                .apply(new RequestOptions().override(200, 200).placeholder(R.drawable.pr).centerCrop().circleCrop().format(PREFER_ARGB_8888).diskCacheStrategy(DiskCacheStrategy.ALL))
-                .load(pref.getString("photo",""))
+                .apply(new RequestOptions().override(width[0], height[0]).placeholder(R.drawable.pr).centerCrop().circleCrop().format(PREFER_ARGB_8888).diskCacheStrategy(DiskCacheStrategy.ALL))
+                .load(photo)
                 .thumbnail(.1f)
                 .into(profile_pic);
-
         //progressDialog.show();
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
         final MyInterface myInterface = restAdapter.create(MyInterface.class);
@@ -728,14 +765,29 @@ public class ProfileActivity extends AppCompatActivity {
         pref = getSharedPreferences("mysession", MODE_PRIVATE);
         editor=pref.edit();
 
+        final int[] width = new int[1];
+        final int[] height = new int[1];
+        ViewTreeObserver vto = profile_pic.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                    profile_pic.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                } else {
+                    profile_pic.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+                width[0] = profile_pic.getMeasuredWidth() + 10;
+                height[0] = profile_pic.getMeasuredHeight();
+
+            }
+        });
         Glide
                 .with(ProfileActivity.this)
                 .asBitmap()
-                .apply(new RequestOptions().override(200, 200).placeholder(R.drawable.pr).centerCrop().circleCrop().format(PREFER_ARGB_8888).diskCacheStrategy(DiskCacheStrategy.ALL))
-                .load(pref.getString("photo",""))
+                .apply(new RequestOptions().override(width[0], height[0]).placeholder(R.drawable.pr).centerCrop().circleCrop().format(PREFER_ARGB_8888).diskCacheStrategy(DiskCacheStrategy.ALL))
+                .load(photo)
                 .thumbnail(.1f)
                 .into(profile_pic);
-
         if(pref.getString("type","").equalsIgnoreCase("company"))
         {
             vehicle_detail.setVisibility(View.GONE);

@@ -122,14 +122,30 @@ public class ChoosePictureActivity extends AppCompatActivity {
 
         Log.d("photooooooo","photo "+photo);
 
+        final int[] width = new int[1];
+        final int[] height = new int[1];
+        ViewTreeObserver vto = profile_pic.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                    profile_pic.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                } else {
+                    profile_pic.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+                width[0] = profile_pic.getMeasuredWidth() + 10;
+                height[0] = profile_pic.getMeasuredHeight();
+                Log.d("wwwwwhhhhh", "" + width[0] + " - " + convertPixelsToDp(width[0], ChoosePictureActivity.this) + "     " + height[0] + " - " + convertPixelsToDp(height[0], ChoosePictureActivity.this));
+
+            }
+        });
         Glide
-                .with(this)
+                .with(ChoosePictureActivity.this)
                 .asBitmap()
-                .apply(new RequestOptions().override(250, 250).placeholder(R.drawable.pr).centerCrop().circleCrop().diskCacheStrategy(DiskCacheStrategy.ALL))
+                .apply(new RequestOptions().override(width[0], height[0]).placeholder(R.drawable.pr).centerCrop().circleCrop().diskCacheStrategy(DiskCacheStrategy.ALL))
                 .load(photo)
                 .thumbnail(.1f)
                 .into(profile_pic);
-
     }
 
     @Override
@@ -615,17 +631,17 @@ public class ChoosePictureActivity extends AppCompatActivity {
                         {
                             final int[] width = new int[1];
                             final int[] height = new int[1];
-                            ViewTreeObserver vto = active.getViewTreeObserver();
+                            ViewTreeObserver vto = profile_pic.getViewTreeObserver();
                             vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                                 @Override
                                 public void onGlobalLayout() {
                                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                                        active.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                                        profile_pic.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                                     } else {
-                                        active.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                                        profile_pic.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                                     }
-                                    width[0] = active.getMeasuredWidth() + 10;
-                                    height[0] = active.getMeasuredHeight();
+                                    width[0] = profile_pic.getMeasuredWidth() + 10;
+                                    height[0] = profile_pic.getMeasuredHeight();
                                     Log.d("wwwwwhhhhh", "" + width[0] + " - " + convertPixelsToDp(width[0], ChoosePictureActivity.this) + "     " + height[0] + " - " + convertPixelsToDp(height[0], ChoosePictureActivity.this));
 
                                 }
@@ -633,7 +649,7 @@ public class ChoosePictureActivity extends AppCompatActivity {
                             Glide
                                     .with(ChoosePictureActivity.this)
                                     .asBitmap()
-                                    .apply(new RequestOptions().override(300, 300).placeholder(R.drawable.pr).centerCrop().circleCrop().diskCacheStrategy(DiskCacheStrategy.ALL))
+                                    .apply(new RequestOptions().override(width[0], height[0]).placeholder(R.drawable.pr).centerCrop().circleCrop().diskCacheStrategy(DiskCacheStrategy.ALL))
                                     .load(photo)
                                     .thumbnail(.1f)
                                     .into(profile_pic);
