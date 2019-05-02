@@ -224,6 +224,7 @@ public class WelcomeActivity extends AppCompatActivity {
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
                             Bungee.slideLeft(WelcomeActivity.this);
+                            Toast.makeText(WelcomeActivity.this, "Please try again later", Toast.LENGTH_SHORT).show();
 
                             editor.clear();
                             editor.commit();
@@ -338,6 +339,7 @@ public class WelcomeActivity extends AppCompatActivity {
             @Override
             public void failure(RetrofitError error) {
                 progressDialog.dismiss();
+                removeDriver();
                 //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
                 Toast.makeText(WelcomeActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
             }

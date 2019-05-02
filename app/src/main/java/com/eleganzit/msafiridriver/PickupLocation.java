@@ -482,7 +482,7 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
                                 LatLng loc2=new LatLng(Double.parseDouble(lat),Double.parseDouble(lng));
                                 googleMap.moveCamera(CameraUpdateFactory.newLatLng(loc2));
 
-                                BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.location_green_dot);
+                                BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.mipmap.lc_green_dot);
                                 Bitmap b=bitmapdraw.getBitmap();
                                 Bitmap smallMarker = Bitmap.createScaledBitmap(b, 75, 75, false);
 
@@ -1394,12 +1394,12 @@ public class PickupLocation extends AppCompatActivity implements OnMapReadyCallb
                             LatLng loc2=new LatLng(Double.parseDouble(lat2),Double.parseDouble(lng2));
                             //googleMap.moveCamera(CameraUpdateFactory.newLatLng(loc2));
 
-                            BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.location_green_dot);
+                            BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.mipmap.lc_green_dot);
                             Bitmap bm=bitmapdraw.getBitmap();
                             Bitmap smallMarker = Bitmap.createScaledBitmap(bm, 75, 75, false);
 
                             //DrawMarker.getInstance(this).draw(googleMap, loc2, R.drawable.location_red, "Destination Location");
-                            BitmapDrawable bitmapdraw2=(BitmapDrawable)getResources().getDrawable(R.drawable.location_red_dot);
+                            BitmapDrawable bitmapdraw2=(BitmapDrawable)getResources().getDrawable(R.mipmap.lc_red_dot);
                             Bitmap b2=bitmapdraw2.getBitmap();
                             Bitmap smallMarker2 = Bitmap.createScaledBitmap(b2, 75, 75, false);
 

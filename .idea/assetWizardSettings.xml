@@ -47,8 +47,6 @@
                                       <entry key="assetType" value="IMAGE" />
                                       <entry key="imageAsset" value="C:\Users\EleganzIT\Downloads\empty.png" />
                                       <entry key="outputName" value="uncheck_bg2" />
-                                      <entry key="theme" value="CUSTOM" />
-                                      <entry key="themeColor" value="283e4f" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -82,14 +80,25 @@
                                           </PersistentState>
                                         </value>
                                       </entry>
+                                      <entry key="image">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="paddingPercent" value="5" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
                                     </map>
                                   </option>
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
                                       <entry key="iconShape" value="NONE" />
-                                      <entry key="imageAsset" value="C:\Users\EleganzIT\Downloads\location_arrow.png" />
-                                      <entry key="outputName" value="location_arrow" />
+                                      <entry key="imageAsset" value="E:\Zahir new data\SSD Recovered data\Root\laptop-Android Data\MSafiriDriver\MSafiriDriver\app\src\main\res\drawable\location_green_dot.png" />
+                                      <entry key="outputName" value="lc_green_dot" />
                                     </map>
                                   </option>
                                 </PersistentState>
