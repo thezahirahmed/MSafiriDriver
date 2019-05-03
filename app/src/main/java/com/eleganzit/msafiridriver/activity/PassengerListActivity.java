@@ -599,7 +599,7 @@ public class PassengerListActivity extends AppCompatActivity {
                     }
                     else
                     {
-                        Toast.makeText(PassengerListActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PassengerListActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
                     }
 
                 } catch (IOException e) {
@@ -766,7 +766,7 @@ public class PassengerListActivity extends AppCompatActivity {
                             }
                             else
                             {
-                                Toast.makeText(PassengerListActivity.this, ""+stringBuilder, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(PassengerListActivity.this, "Server or Internet Error", Toast.LENGTH_SHORT).show();
                             }
 
                         } catch (IOException e) {
@@ -783,6 +783,7 @@ public class PassengerListActivity extends AppCompatActivity {
                         progressDialog.dismiss();
                         //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
                         Toast.makeText(PassengerListActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
+                        finish();
                     }
                 });
     }

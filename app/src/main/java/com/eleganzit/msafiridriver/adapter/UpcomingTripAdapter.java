@@ -471,9 +471,17 @@ public class UpcomingTripAdapter extends RecyclerView.Adapter<UpcomingTripAdapte
                         else
                         {
                             //Toast.makeText(context, diff+"   is lesser", Toast.LENGTH_SHORT).show();
-                            
-                            delete.setVisibility(View.GONE);
-                            divider_delete.setVisibility(View.GONE);
+
+                            if(tripData.getCountpassanger().equalsIgnoreCase("0") || tripData.getCountpassanger().equalsIgnoreCase(""))
+                            {
+                                delete.setVisibility(View.VISIBLE);
+                                divider_delete.setVisibility(View.VISIBLE);
+                            }
+                            else
+                            {
+                                delete.setVisibility(View.GONE);
+                                divider_delete.setVisibility(View.GONE);
+                            }
                         }
 
                     } catch (ParseException e) {

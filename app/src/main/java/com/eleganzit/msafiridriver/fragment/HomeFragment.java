@@ -555,6 +555,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                                 String destination_time = jsonObject1.getString("end_datetime");
                                 String statuss = jsonObject1.getString("status");
                                 String trip_price = jsonObject1.getString("trip_price");
+                                String countpassanger = jsonObject1.getString("countpassanger");
                                 Date date = null;
                                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                                 try {
@@ -564,7 +565,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                                     e.printStackTrace();
                                 }
 
-                                TripData tripData=new TripData(trip_type,id,from_title,from_lat,from_lng,from_address,to_title,to_lat,to_lng,to_address,pickup_time,date,destination_time,statuss,trip_price);
+                                TripData tripData=new TripData(trip_type,id,from_title,from_lat,from_lng,from_address,to_title,to_lat,to_lng,to_address,pickup_time,date,destination_time,statuss,trip_price,countpassanger);
                                 arrayList.add(tripData);
 
                             }
@@ -676,6 +677,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                                 String destination_time = jsonObject1.getString("end_datetime");
                                 String statuss = jsonObject1.getString("status");
                                 String trip_price = jsonObject1.getString("trip_price");
+                                String countpassanger = jsonObject1.getString("countpassanger");
                                 Date date = null;
                                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                                 try {
@@ -685,7 +687,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                                     e.printStackTrace();
                                 }
 
-                                TripData tripData=new TripData("current",id,from_title,from_lat,from_lng,from_address,to_title,to_lat,to_lng,to_address,pickup_time,date,destination_time,statuss,trip_price);
+                                TripData tripData=new TripData("current",id,from_title,from_lat,from_lng,from_address,to_title,to_lat,to_lng,to_address,pickup_time,date,destination_time,statuss,trip_price,countpassanger);
                                 arrayList.add(tripData);
 
                             }

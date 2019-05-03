@@ -5,8 +5,27 @@ import java.util.Date;
 public class TripData
 
 {
-    String trip_type,id,from_title,from_lat,from_lng,from_address,to_title,to_lat,to_lng,to_address,str_pickup_time,destination_time,statuss,trip_price;
+    String trip_type,id,from_title,from_lat,from_lng,from_address,to_title,to_lat,to_lng,to_address,str_pickup_time,destination_time,statuss,trip_price,countpassanger;
     Date pickup_time;
+
+    public TripData(String trip_type, String id, String from_title, String from_lat, String from_lng, String from_address, String to_title, String to_lat, String to_lng, String to_address, String str_pickup_time, Date pickup_time, String destination_time, String statuss, String trip_price, String countpassanger) {
+        this.trip_type = trip_type;
+        this.id = id;
+        this.from_title = from_title;
+        this.from_lat = from_lat;
+        this.from_lng = from_lng;
+        this.from_address = from_address;
+        this.to_title = to_title;
+        this.to_lat = to_lat;
+        this.to_lng = to_lng;
+        this.to_address = to_address;
+        this.pickup_time = pickup_time;
+        this.str_pickup_time = str_pickup_time;
+        this.destination_time = destination_time;
+        this.statuss = statuss;
+        this.trip_price = trip_price;
+        this.countpassanger = countpassanger;
+    }
 
     public TripData(String trip_type, String id, String from_title, String from_lat, String from_lng, String from_address, String to_title, String to_lat, String to_lng, String to_address, String str_pickup_time, Date pickup_time, String destination_time, String statuss, String trip_price) {
         this.trip_type = trip_type;
@@ -24,6 +43,7 @@ public class TripData
         this.destination_time = destination_time;
         this.statuss = statuss;
         this.trip_price = trip_price;
+        this.countpassanger = countpassanger;
     }
 
     public String getTrip_type() {
@@ -144,5 +164,13 @@ public class TripData
 
     public void setTrip_price(String trip_price) {
         this.trip_price = trip_price;
+    }
+
+    public String getCountpassanger() {
+        return countpassanger;
+    }
+
+    public void setCountpassanger(String countpassanger) {
+        this.countpassanger = countpassanger;
     }
 }
