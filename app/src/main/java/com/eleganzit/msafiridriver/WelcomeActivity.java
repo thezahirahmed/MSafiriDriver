@@ -77,7 +77,7 @@ public class WelcomeActivity extends AppCompatActivity {
             }
         });
 
-        blankaddVehicledetail();
+        //blankaddVehicledetail();
 
     }
 
@@ -290,7 +290,7 @@ public class WelcomeActivity extends AppCompatActivity {
                         if(status.equalsIgnoreCase("1"))
                         {
 
-                            uploadVehicleProfile();
+                            //uploadVehicleProfile();
 
                             //addBankdetails();
                             //Toast.makeText(RegistrationActivity.this, "" + jsonObject.getString("message"), Toast.LENGTH_SHORT).show();

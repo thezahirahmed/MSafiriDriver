@@ -329,7 +329,9 @@ public class RegisterationActivity extends AppCompatActivity {
                             }
                             else
                             {
-                                addBankdetails();
+                                startActivity(new Intent(RegisterationActivity.this, WelcomeActivity.class));
+                                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                                finish();
                             }
                             //Toast.makeText(RegistrationActivity.this, "" + jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
                             /*startActivity(new Intent(RegisterationActivity.this, WelcomeActivity.class));
@@ -414,7 +416,7 @@ public class RegisterationActivity extends AppCompatActivity {
                                 JSONArray jsonArray = null;
                                 if(status.equalsIgnoreCase("1"))
                                 {
-                                    uploadDocument();
+                                    //uploadDocument();
                                     jsonArray = jsonObject.getJSONArray("data");
                                     for(int i=0;i<jsonArray.length();i++)
                                     {

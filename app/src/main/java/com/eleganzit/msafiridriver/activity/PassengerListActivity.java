@@ -559,7 +559,7 @@ public class PassengerListActivity extends AppCompatActivity {
 
         Log.d("productsssssssss",sb2+"");
 
-        myInterface.onboardUserlist(trip_id, sb.toString(), new retrofit.Callback<retrofit.client.Response>() {
+        myInterface.onboardUserlist(trip_id, sb.toString(), "onboard",new retrofit.Callback<retrofit.client.Response>() {
             @Override
             public void success(retrofit.client.Response response, retrofit.client.Response response2) {
                 //progressDialog.dismiss();
@@ -589,6 +589,104 @@ public class PassengerListActivity extends AppCompatActivity {
                                 JSONObject jsonObject1=jsonArray.getJSONObject(i);
                                 String trip_status=jsonObject1.getString("status");
                             }
+
+                        }
+                        else
+                        {
+                            Toast.makeText(PassengerListActivity.this, message+"", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                    else
+                    {
+                        Toast.makeText(PassengerListActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
+                    }
+
+                } catch (IOException e) {
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                progressDialog.dismiss();
+                //Toast.makeText(RegistrationActivity.this, "failure", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PassengerListActivity.this, "Server or Internet Error", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void removePassengers(final String tstatus, final PassengerAdapter.MyViewHolder holder)
+    {
+        progressDialog.show();
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://itechgaints.com/M-safiri-API/").build();
+        final MyInterface myInterface = restAdapter.create(MyInterface.class);
+        Log.d("uuuuuuuuuuu",userslist+"");
+        StringBuilder sb = new StringBuilder();
+        for(int i=0;i<userslist.size();i++)
+        {
+            Log.d("productsssssssss",userslist.get(i)+"");
+            if (i==userslist.size()-1)
+            {
+                sb.append(userslist.get(i)).append("");
+            }
+            else {
+                sb.append(userslist.get(i)).append(",");
+
+            }
+        }
+
+        Log.d("uuuuuuuuuuu",bookIdlist+"");
+        StringBuilder sb2 = new StringBuilder();
+        for(int i=0;i<bookIdlist.size();i++)
+        {
+            Log.d("productsssssssss",bookIdlist.get(i)+"");
+            if (i==bookIdlist.size()-1)
+            {
+                sb2.append(bookIdlist.get(i)).append("");
+            }
+            else {
+                sb2.append(bookIdlist.get(i)).append(",");
+
+            }
+        }
+
+        Log.d("productsssssssss",sb2+"");
+
+        myInterface.onboardUserlist(trip_id, sb.toString(), "booked",new retrofit.Callback<retrofit.client.Response>() {
+            @Override
+            public void success(retrofit.client.Response response, retrofit.client.Response response2) {
+                //progressDialog.dismiss();
+                final StringBuilder stringBuilder = new StringBuilder();
+                try {
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody().in()));
+
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line);
+                    }
+                    Log.d("trrrrstringBuilder", "" + stringBuilder);
+                    //Toast.makeText(RegistrationActivity.this, "sssss" + stringBuilder, Toast.LENGTH_SHORT).show();
+
+                    if (stringBuilder != null || !stringBuilder.toString().equalsIgnoreCase("")) {
+
+                        JSONObject jsonObject = new JSONObject("" + stringBuilder);
+                        String status = jsonObject.getString("status");
+                        String message = jsonObject.getString("message");
+                        JSONArray jsonArray = null;
+                        if(status.equalsIgnoreCase("1"))
+                        {
+                            updateActiveStatus(tstatus,holder);
+                            jsonArray = jsonObject.getJSONArray("data");
+                            for(int i=0;i<jsonArray.length();i++)
+                            {
+                                JSONObject jsonObject1=jsonArray.getJSONObject(i);
+                                String trip_status=jsonObject1.getString("status");
+                            }
+                            Toast.makeText(PassengerListActivity.this, "Please try again", Toast.LENGTH_LONG).show();
 
                         }
                         else

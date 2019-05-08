@@ -29,8 +29,6 @@ public class CallAPiActivity extends AppCompatActivity {
     }
 
 
-
-
     public void doPostWithFiles(final Activity activity, final HashMap<String, String> map, final String url , final String mFiles, final String fileParamName, final GetResponse getApiResult) {
 
         if(appDialogs.isNetworkAvailable(context)) {

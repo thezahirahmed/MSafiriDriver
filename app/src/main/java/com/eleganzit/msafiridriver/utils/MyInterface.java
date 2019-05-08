@@ -254,6 +254,7 @@ public interface MyInterface
     @retrofit.http.POST("/onboardUserlist")
     public void onboardUserlist(@retrofit.http.Field("trip_id") String trip_id,
                                 @retrofit.http.Field("user_id") String user_id,
+                                @retrofit.http.Field("status") String status,
                                 Callback<Response> callback
     );
 
